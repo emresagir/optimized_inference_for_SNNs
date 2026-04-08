@@ -1,0 +1,6 @@
+[submodule "Soft_Reset_recurrent_for_STM/for-soft-reset/Drivers/CMSIS-DSP"]
+	path = Soft_Reset_recurrent_for_STM/for-soft-reset/Drivers/CMSIS-DSP
+	url = https://github.com/ARM-software/CMSIS-DSP.git
+[submodule "Soft_Reset_recurrent_for_STM/for-soft-reset/Drivers/CMSIS-NN"]
+	path = Soft_Reset_recurrent_for_STM/for-soft-reset/Drivers/CMSIS-NN
+	url = https://github.com/ARM-software/CMSIS-NN.git
