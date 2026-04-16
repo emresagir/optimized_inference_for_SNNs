@@ -26,7 +26,7 @@ store_training = True
 store_validation = True
 
 ### DEVICE SETTINGS
-use_gpu = False
+use_gpu = True
 
 if use_gpu:
     gpu_sel = 0
