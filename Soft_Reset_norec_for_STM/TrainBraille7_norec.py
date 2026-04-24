@@ -300,7 +300,7 @@ print(f"Final Test Accuracy (best model): {final_acc:.2f}%")
 
 
 # net_for_nir = NetForNIR(net)                          # wraps same weights, no copy
-#sample_data = torch.zeros(1, num_inputs).to(device)   # (1, 12) — single timestep
+# sample_data = torch.zeros(1, num_inputs).to(device)   # (1, 12) — single timestep
 # sample_data = torch.zeros(num_inputs).to(device)
 # nir_graph   = export_to_nir(net_for_nir, sample_data)
 
