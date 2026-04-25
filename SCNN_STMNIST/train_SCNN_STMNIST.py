@@ -25,11 +25,38 @@ from IPython.display import display
 import numpy as np
 import torchdata
 import os
+
+# For determinism
+os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"  
+
 from ipywidgets import IntProgress
 import time
 import statistics
 
 from datetime import datetime
+import random
+
+# For determinism
+seed = 42
+random.seed(seed)
+np.random.seed(seed)
+torch.manual_seed(seed)
+torch.manual_seed(seed)
+torch.use_deterministic_algorithms(True)
+
+def seed_worker(worker_id):
+    worker_seed = torch.initial_seed() % 2**32
+    np.random.seed(worker_seed)
+    random.seed(worker_seed)
+
+g = torch.Generator()
+g.manual_seed(seed)
+
+# For CUDA
+torch.cuda.manual_seed(seed)
+torch.cuda.manual_seed_all(seed) # for multi-GPU
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
 
 # Create a timestamp string (YearMonthDay_HourMinuteSecond)
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -37,6 +64,8 @@ timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 # Define the dynamic filename
 model_name = f"scnn_net_{timestamp}.pth"
 
+# Reset Mechanism
+reset_mechanism = "subtract"
 
 # Initialize tracking variables before the loop
 best_val_acc = 0.0
@@ -57,9 +86,9 @@ batch_size = 32
 # batch_first=False is standard for snnTorch (Time, Batch, Channel, X, Y)
 collate = tonic.collation.PadTensors(batch_first=False)
 
-trainloader = DataLoader(trainset, batch_size=batch_size, collate_fn=collate, shuffle=True)
-valloader   = DataLoader(valset,   batch_size=batch_size, collate_fn=collate)
-testloader  = DataLoader(testset,  batch_size=batch_size, collate_fn=collate)
+trainloader = DataLoader(trainset, batch_size=batch_size, collate_fn=collate, shuffle=True, worker_init_fn=seed_worker, generator=g)
+valloader  = DataLoader(valset,  batch_size=batch_size, collate_fn=collate, worker_init_fn=seed_worker, generator=g)
+testloader = DataLoader(testset, batch_size=batch_size, collate_fn=collate, worker_init_fn=seed_worker, generator=g)
 
 
 
@@ -76,15 +105,20 @@ device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cp
 beta = 0.95
 
 # This is the same architecture that was used in the STMNIST Paper
+# Modified architecture for easier C-generation, discarded maxpool2d and used strides. 
 scnn_net = nn.Sequential(
-    nn.Conv2d(2, 32, kernel_size=4),
-    snn.Leaky(beta=beta, init_hidden=True),
-    nn.Conv2d(32, 64, kernel_size=3),
-    snn.Leaky(beta=beta, init_hidden=True),
-    nn.MaxPool2d(2),
+    # Input: 10x10x2
+    nn.Conv2d(2, 32, kernel_size=4, stride=1), # Output: 7x7
+    snn.Leaky(beta=beta, init_hidden=True, reset_mechanism=reset_mechanism),
+    
+    # We add stride=2 here to replace the MaxPool
+    nn.Conv2d(32, 64, kernel_size=3, stride=2), # Output: 3x3
+    snn.Leaky(beta=beta, init_hidden=True, reset_mechanism=reset_mechanism),
+    
     nn.Flatten(),
-    nn.Linear(64 * 2 * 2, 10),  # Increased size of the linear layer
-    snn.Leaky(beta=beta, init_hidden=True, output=True)
+    # Update the linear layer input: 64 channels * 3 * 3 = 576
+    nn.Linear(64 * 3 * 3, 10), 
+    snn.Leaky(beta=beta, init_hidden=True, output=True, reset_mechanism=reset_mechanism)
 ).to(device)
 
 optimizer = torch.optim.Adam(scnn_net.parameters(), lr=2e-2, betas=(0.9, 0.999))
