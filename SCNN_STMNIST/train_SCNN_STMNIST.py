@@ -108,16 +108,16 @@ beta = 0.95
 # Modified architecture for easier C-generation, discarded maxpool2d and used strides. 
 scnn_net = nn.Sequential(
     # Input: 10x10x2
-    nn.Conv2d(2, 32, kernel_size=4, stride=1), # Output: 7x7
+    nn.Conv2d(2, 32, kernel_size=4, stride=1, bias=False), # Output: 7x7
     snn.Leaky(beta=beta, init_hidden=True, reset_mechanism=reset_mechanism),
     
     # We add stride=2 here to replace the MaxPool
-    nn.Conv2d(32, 64, kernel_size=3, stride=2), # Output: 3x3
+    nn.Conv2d(32, 64, kernel_size=3, stride=2, bias=False), # Output: 3x3
     snn.Leaky(beta=beta, init_hidden=True, reset_mechanism=reset_mechanism),
     
     nn.Flatten(),
     # Update the linear layer input: 64 channels * 3 * 3 = 576
-    nn.Linear(64 * 3 * 3, 10), 
+    nn.Linear(64 * 3 * 3, 10, bias=False), 
     snn.Leaky(beta=beta, init_hidden=True, output=True, reset_mechanism=reset_mechanism)
 ).to(device)
 
