@@ -44,6 +44,8 @@ import numpy as np
 import os
 from typing import Dict, List, Tuple
 
+DEBUG = True
+
 class NIRToCGenerator:
     def __init__(self, nir_file_path: str, output_prefix: str = "snn"):
         """
@@ -97,21 +99,38 @@ class NIRToCGenerator:
         if input_node is None:
             raise ValueError("No input node found in NIR graph")
         
+        # TODO: Check the changes works with linear input. 
         # input_type is a dictionary with 'input' key containing numpy array
         if isinstance(input_node.input_type, dict):
             # Get the first value from the dictionary
             input_type_value = list(input_node.input_type.values())[0]
-            if isinstance(input_type_value, np.ndarray):
-                self.num_inputs = int(input_type_value[0])
+            if isinstance(input_type_value, np.ndarray) and input_type_value.ndim > 0:
+                if len(input_type_value) == 1:
+                    # Flat input: scalar size (original FC-only case)
+                    self.num_inputs = int(input_type_value[0])
+                    self.input_shape = (self.num_inputs,)
+                else:
+                    # Spatial input: e.g. [2, 10, 10] → (C, H, W)
+                    self.input_shape = tuple(int(x) for x in input_type_value)
+                    self.num_inputs = int(np.prod(self.input_shape))  # total elements = 200
             else:
+                # Scalar value
                 self.num_inputs = int(input_type_value)
+                self.input_shape = (self.num_inputs,)
+
         elif isinstance(input_node.input_type, np.ndarray):
-            # If it's directly a numpy array
-            self.num_inputs = int(input_node.input_type[0])
+                # input_type is directly a numpy array (no dict wrapper)
+            if len(input_node.input_type) == 1:
+                self.num_inputs = int(input_node.input_type[0])
+                self.input_shape = (self.num_inputs,)
+            else:
+                self.input_shape = tuple(int(x) for x in input_node.input_type)
+                self.num_inputs = int(np.prod(self.input_shape))
         else:
             # If it's a scalar
             self.num_inputs = int(input_node.input_type)
         
+        print(f"Input shape: {self.input_shape}, total elements: {self.num_inputs}")
         # Traverse the graph to identify layers (avoiding recurrent loops)
         current = 'input'
         layer_idx = 0
@@ -120,13 +139,23 @@ class NIRToCGenerator:
         while current in adjacency:
             next_nodes = adjacency[current]
             
-            # Look for Affine or Linear (weight) node (skip recurrent connections)
+            # Look for Affine or Linear (weight) or Conv2d node (skip recurrent connections)
             affine_node = None
             for node_name in next_nodes:
                 node = self.nir_graph.nodes[node_name]
-                if (isinstance(node, (nir.Affine, nir.Linear)) and 'rec' not in node_name):  # Skip recurrent nodes
+                if (isinstance(node, (nir.Affine, nir.Linear, nir.Conv2d)) and 'rec' not in node_name):  # Skip recurrent nodes
                     affine_node = node_name
                     break
+                # For the flatten layer.
+                if isinstance(node, nir.Flatten):
+                    # Find the node AFTER Flatten
+                    flatten_successors = adjacency.get(node_name, [])
+                    for f_node_name in flatten_successors:
+                        f_node = self.nir_graph.nodes[f_node_name]
+                        if isinstance(f_node, (nir.Affine, nir.Linear, nir.Conv2d)):
+                            affine_node = f_node_name
+                            break
+                    if affine_node: break # Found it through the Flatten node
             
             if affine_node is None:
                 break
@@ -165,38 +194,95 @@ class NIRToCGenerator:
             # Extract layer information
             affine = self.nir_graph.nodes[affine_node]
             lif = self.nir_graph.nodes[lif_node]
-            
-            # Check connection type: fully connected or 1-to-1
-            is_one_to_one = (affine.weight.shape[0] == affine.weight.shape[1] and 
-                           np.allclose(affine.weight, np.diag(np.diag(affine.weight))))
-            
-            # Extract weights: if 1-to-1, just take diagonal; if fully connected, keep full matrix
-            if is_one_to_one:
-                weights_to_store = np.diag(affine.weight)  # Extract diagonal as 1D vector
+            weights_to_store = affine.weight
+            is_conv = (weights_to_store.ndim == 4)
+
+            # Convolutional Case
+            if is_conv:
+                # weights_to_store shape: [out_channels, in_channels, k_height, k_width]
+                out_c, in_c, kh, kw = weights_to_store.shape
+                in_shape = self.nir_graph.nodes[affine_node].input_type['input']
+                # print("out_c =", out_c, "in_c =", in_c,"kh =", kh, "kw =", kw)
+                is_one_to_one = False
+                stride_h, stride_w = getattr(affine, 'stride', (1, 1))
+                padding_h, padding_w = getattr(affine, 'padding', (0, 0))
+                dil_h, dil_w = getattr(affine, 'dilation', (1, 1))
+
+                in_h = in_shape[1]
+                in_w = in_shape[2]
+                # Standard conv output size formula:
+                # out = floor((in + 2*pad - dilation*(kernel-1) - 1) / stride + 1)
+                out_h = int((in_h + 2 * padding_h - dil_h * (kh - 1) - 1) / stride_h + 1)
+                out_w = int((in_w + 2 * padding_w - dil_w * (kw - 1) - 1) / stride_w + 1)
+                print(stride_h, stride_w, padding_h, padding_w, dil_h, dil_w, out_h, out_w, in_h, in_w)
+
+            # Linear Case
             else:
-                weights_to_store = affine.weight  # Keep full matrix
+                # Check connection type: fully connected or 1-to-1
+                is_one_to_one = (affine.weight.shape[0] == affine.weight.shape[1] and 
+                            np.allclose(affine.weight, np.diag(np.diag(affine.weight))))
+                
+                # Extract weights: if 1-to-1, just take diagonal; if fully connected, keep full matrix
+                if is_one_to_one:
+                    weights_to_store = np.diag(affine.weight)  # Extract diagonal as 1D vector
+                else:
+                    weights_to_store = affine.weight  # Keep full matrix
             
             # Check if bias exists and is non-zero (only for Affine, Linear has no bias)
             has_bias = hasattr(affine, 'bias') and affine.bias is not None
             if has_bias and not np.allclose(affine.bias, 0.0):
                 print(f"WARNING: Layer {layer_idx} has non-zero bias values. Bias is NOT supported and will be ignored!")
             
+            # TODO EMRE: Need to double check this situation
             # Calculate beta from NIR tau parameter
             # SNNTorch export_nir.py uses dt = 1e-4 (hardcoded) and tau = dt/(1-beta)
             # To recover beta: beta = 1 - dt/tau
             dt = 1e-4  # Fixed timestep used by snntorch export_nir.py
             beta = 1.0 - dt / lif.tau  # Discrete-time decay factor
             
+            # --- Inputs/Neurons Calculation ---
+            if is_conv:
+
+                # For n_inputs of conv.
+                in_shape = self.nir_graph.nodes[affine_node].input_type['input']
+                total_inputs = int(np.prod(in_shape))
+                
+                # Overwriting
+                n_inputs = total_inputs
+                n_neurons = int(np.prod(lif.v_threshold.shape))
+            else:
+                n_inputs = weights_to_store.shape[1]
+                n_neurons = weights_to_store.shape[0]
+
             # Store per-neuron parameters (each neuron can have different values)
             layer_info = {
                 'index': layer_idx,
                 'affine_name': affine_node,
                 'lif_name': lif_node,
-                'num_inputs': affine.weight.shape[1],
-                'num_neurons': affine.weight.shape[0],
-                'weights': weights_to_store,  # Either 1D vector (1-to-1) or 2D matrix (fully connected)
+                'type': 'conv2d' if is_conv else 'linear',
+                'num_inputs':n_inputs,
+                'num_neurons': n_neurons,
+                'weights': weights_to_store,  # Either 1D vector (1-to-1) or 2D matrix (fully connected) or 4D matrix for conv2d
                 # NOTE: bias is NOT supported in the embedded C implementation
+
+                # Conv2d specific attributes (default to None for Linear)
+                'kernel_size': (weights_to_store.shape[2], weights_to_store.shape[3]) if is_conv else None,
+                'stride_h': stride_h if is_conv else None,
+                'stride_w': stride_w if is_conv else None,
+                'padding_h': padding_h if is_conv else None,
+                'padding_w': padding_w if is_conv else None,
+
+                'out_c': out_c if is_conv else None,
+                'in_c': in_c if is_conv else None,
+                'in_h': in_h if is_conv else None,
+                'in_w': in_w if is_conv else None,
+                'kw': kw if is_conv else None,
+                'kh': kh if is_conv else None,
+                'out_h': out_h if is_conv else None,
+                'out_w': out_w if is_conv else None,
+
                 'is_one_to_one': is_one_to_one,
+                'is_conv' : is_conv,
                 # Per-neuron parameters
                 'tau': lif.tau,  # Array of tau values (one per neuron)
                 'threshold': lif.v_threshold,  # Array
@@ -206,6 +292,27 @@ class NIRToCGenerator:
                 'has_recurrent': has_recurrent,
                 'recurrent_weights': np.diag(recurrent_weights) if has_recurrent else None  # 1D vector
             }
+
+            if DEBUG:
+                print(f"--- Layer {layer_info['index']} Information ---")
+                print(f"Affine Node:    {layer_info['affine_name']}")
+                print(f"LIF Node:       {layer_info['lif_name']}")
+                print(f"Is One-to-One:  {layer_info['is_one_to_one']}")
+                print(f"Is conv:        {layer_info['is_conv']}")
+                print(f"Num Inputs:     {layer_info['num_inputs']}")
+                print(f"Num Neurons:    {layer_info['num_neurons']}")
+                print(f"Weights Shape:  {layer_info['weights'].shape}")
+                #print(f"Tau:            {layer_info['tau']}")
+                #print(f"Threshold:      {layer_info['threshold']}")
+                #print(f"Beta (Decay):   {layer_info['beta']}")
+                print(f"kernel_size:    {layer_info['kernel_size']}")
+                print(f"stride:         {layer_info['stride_h']}")
+                print(f"padding:        {layer_info['padding_h']}")
+                print(f"Has Recurrent:  {layer_info['has_recurrent']}")
+
+                if layer_info['has_recurrent']:
+                    print(f"Rec. Weights:   {layer_info['recurrent_weights'].shape}")
+                print("-" * 30)
             
             # Check if all neurons in layer have same parameters (for optimization)
             layer_info['uniform_params'] = (
@@ -216,14 +323,37 @@ class NIRToCGenerator:
             )
             
             self.layers.append(layer_info)
-            conn_type = "1-to-1" if is_one_to_one else "fully connected"
+            
+            if is_conv:
+                conn_type = "convolutional"
+            elif is_one_to_one:
+                conn_type = "1-to-1"
+            else:
+                conn_type = "fully connected"
+
             param_type = "uniform" if layer_info['uniform_params'] else "per-neuron"
+
+            if DEBUG:
+                print(f"Layer {layer_idx} type: {conn_type}")
+                print(f"Parameters:   {param_type}")
+                if is_conv:
+                    print(f"Stride_h:       {layer_info['stride_h']}")
+                    print(f"Stride_w:       {layer_info['stride_w']}")
+
+            
+            # To be able to print tau, need to flatten before because the conv tau is a matrix.
+            tau_val = layer_info['tau'].flatten()[0]
+            if np.isscalar(layer_info['beta']):
+                beta_val = layer_info['beta']
+            else:
+                beta_val = layer_info['beta'].flatten()[0]
+
             
             # Print layer details for verification
             if layer_info['uniform_params']:
                 print(f"Layer {layer_idx}: {layer_info['num_inputs']} -> {layer_info['num_neurons']} neurons, "
                       f"Connection: {conn_type}, Recurrent: {has_recurrent}, Params: {param_type}")
-                print(f"  tau={layer_info['tau'][0]:.6f}, beta={layer_info['beta'] if np.isscalar(layer_info['beta']) else layer_info['beta'][0]:.6f}")
+                print(f"  tau={tau_val:.6f}, beta={beta_val:.6f}")
             else:
                 print(f"Layer {layer_idx}: {layer_info['num_inputs']} -> {layer_info['num_neurons']} neurons, "
                       f"Connection: {conn_type}, Recurrent: {has_recurrent}, Params: {param_type}")
@@ -305,6 +435,9 @@ void SNN_Reset_State(void);
         
         # Generate LIF neuron functions
         lif_funcs = self._generate_lif_functions()
+
+        # Generate Naive Conv LIF neuron functions
+        naive_conv_lif_funcs = self._generate_naive_conv_lif_functions()
         
         # Generate weight loading function
         weight_load_func = self._generate_weight_loading_function()
@@ -340,6 +473,8 @@ void SNN_Reset_State(void);
 
 {lif_funcs}
 
+{naive_conv_lif_funcs}
+
 {weight_load_func}
 
 {snn_init}
@@ -355,17 +490,41 @@ void SNN_Reset_State(void);
         lines = []
         for layer in self.layers:
             rec_str = "with recurrent" if layer['has_recurrent'] else "no recurrent"
-            conn_str = "1-to-1" if layer['is_one_to_one'] else "fully connected"
+            #conn_str = "1-to-1" if layer['is_one_to_one'] else "fully connected"
+            if layer['is_one_to_one']:
+                conn_str = "1-to-1"
+            elif layer ['is_conv']:
+                conn_str = "convolutional"
+            else:
+                conn_str = "fully connected"
             param_str = "uniform params" if layer['uniform_params'] else "per-neuron params"
             lines.append(f"// Layer {layer['index']}: {layer['num_inputs']} -> {layer['num_neurons']} ({conn_str}, {rec_str}, {param_str})")
         return '\n'.join(lines)
     
+    # EMRE TODO: Need to check this func
     def _generate_layer_definitions(self) -> str:
         """Generate layer array definitions."""
         lines = [f"// Global variables for the SNN"]
         lines.append(f"#define NUM_INPUTS {self.num_inputs}")
+        lines.append(f"#define NUM_INPUT_CHANNEL {self.input_shape[0]}")
         
         for i, layer in enumerate(self.layers):
+            if layer['is_conv']:
+                lines.append(f"#define L{i+1}_OUT_CH      {layer['out_c']}")
+                lines.append(f"#define L{i+1}_IN_CH       {layer['in_c']}")
+                lines.append(f"#define L{i+1}_KERNEL_H    {layer['kh']}")
+                lines.append(f"#define L{i+1}_KERNEL_W    {layer['kw']}")
+                lines.append(f"#define L{i+1}_KERNEL_SIZE {layer['kh'] * layer['kw']}")
+                lines.append(f"#define L{i+1}_STRIDE_H    {layer['stride_h']}")
+                lines.append(f"#define L{i+1}_STRIDE_W    {layer['stride_w']}")
+                lines.append(f"#define L{i+1}_PAD_H       {layer['padding_h']}")
+                lines.append(f"#define L{i+1}_PAD_W       {layer['padding_w']}")
+                lines.append(f"#define L{i+1}_OUT_H       {layer['out_h']}")
+                lines.append(f"#define L{i+1}_OUT_W       {layer['out_w']}")
+                # im2col scratch buffer size: 2 * in_ch * kH * kW (CMSIS-NN requirement)
+                col_buf_size = 2 * layer['in_c'] * layer['kh'] * layer['kw']
+                lines.append(f"#define L{i+1}_COL_BUF_SIZE {col_buf_size}  // 2 * in_ch * kH * kW")
+
             lines.append(f"#define NUM_NEURONS_LAYER{i+1} {layer['num_neurons']}")
         
         lines.append("")
@@ -385,6 +544,7 @@ void SNN_Reset_State(void);
         
         return '\n'.join(lines)
     
+    # Emre: This is okay 
     def _generate_weight_definitions(self) -> str:
         """Generate weight array definitions."""
         lines = []
@@ -397,6 +557,9 @@ void SNN_Reset_State(void);
                     lines.append(f"static __attribute__((aligned(32))) q15_t weights{i+1}[NUM_INPUTS]; // 1-to-1 connection (vector)")
                 else:
                     lines.append(f"static __attribute__((aligned(32))) q15_t weights{i+1}[NUM_NEURONS_LAYER{i}]; // 1-to-1 connection (vector)")
+            elif layer['is_conv']:
+                # Conv2d connection
+                lines.append(f"static __attribute__((aligned(32))) q15_t weights{i+1}[L{i}_OUT_CH * L{i}_IN_CH * L{i}_KERNEL_H * L{i}_KERNEL_W]; // Conv connected")
             else:
                 # Fully connected: full weight matrix
                 if i == 0:
@@ -431,7 +594,7 @@ void print_float(const char* prefix, float_t value) {
     }
     usart1_print(buf);
 }"""
-    
+    # TODO: NEED TO CHECK
     def _generate_lif_functions(self) -> str:
         """Generate LIF neuron update functions."""
         return """
@@ -702,6 +865,81 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
     }
 }
 """
+    # EMRE TODO: Add hard-reset function.
+    def _generate_naive_conv_lif_functions(self) -> str:
+        """Generates the C code for Convolutional SNN layers."""
+        return """
+void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array of neurons for this layer
+    const q7_t* input_spikes,  // Input feature map [In_CH * In_H * In_W]
+    const q15_t* weights,       // Weights [Out_CH * In_CH * KH * KW]
+    q7_t* output_spikes,        // Output spikes [Out_CH * Out_H * Out_W]
+    uint16_t in_h, uint16_t in_w,
+    uint16_t in_ch,
+    uint16_t out_h, uint16_t out_w,
+    uint16_t out_ch,
+    uint16_t kh, uint16_t kw,
+    uint16_t stride,
+    uint16_t padding
+) {
+    // 1. Iterate over every output "pixel" (which is one LIF neuron)
+    for (uint16_t oc = 0; oc < out_ch; oc++) {
+        for (uint16_t oh = 0; oh < out_h; oh++) {
+            for (uint16_t ow = 0; ow < out_w; ow++) {
+                
+                // Accumulator for the current (this is the weighted input)
+                q31_t acc = 0; 
+
+                // 2. Perform the Convolution (Sliding Window)
+                for (uint16_t ic = 0; ic < in_ch; ic++) {
+                    for (uint16_t fy = 0; fy < kh; fy++) {
+                        for (uint16_t fx = 0; fx < kw; fx++) {
+                            
+                            // Calculate input coordinates
+                            int16_t ih = oh * stride + fy - padding;
+                            int16_t iw = ow * stride + fx - padding;
+
+                            // Check boundaries (Padding logic)
+                            if (ih >= 0 && ih < in_h && iw >= 0 && iw < in_w) {
+                                // Indexing for [CH][H][W] format
+                                uint32_t input_idx = (ic * in_h * in_w) + (ih * in_w) + iw;
+                                // Indexing for [OutCH][InCH][KH][KW] format
+                                uint32_t weight_idx = (oc * in_ch * kh * kw) + (ic * kh * kw) + (fy * kw) + fx;
+
+                                acc += (q31_t)input_spikes[input_idx] * weights[weight_idx];
+                            }
+                        }
+                    }
+                }
+
+                // 3. LIF Neuron Update Logic
+                // Index of the specific neuron in the flat array
+                uint32_t n_idx = (oc * out_h * out_w) + (oh * out_w) + ow;
+
+                q15_t v_prev   = neurons[n_idx].membrane_potential;
+                q15_t reset    = neurons[n_idx].reset_value;
+                q15_t decay    = neurons[n_idx].decay_factor;
+
+                // Scale back the accumulated value (Q15 * Q15 results in Q30)
+                q15_t weighted_input = (q15_t)(acc >> 15);
+
+                q15_t v_shifted = (q15_t)(((q31_t)(v_prev - reset) * decay) >> 15);
+                neurons[n_idx].membrane_potential = reset + v_shifted + weighted_input;
+
+                // SOFT RESET
+                if (neurons[n_idx].membrane_potential > neurons[n_idx].threshold) {
+                    output_spikes[n_idx] = 1;
+                    neurons[n_idx].membrane_potential -= neurons[n_idx].threshold;
+                } else {
+                    output_spikes[n_idx] = 0;
+                }
+
+
+            }
+        }
+    }
+}
+        """
+
     
     def _generate_weight_loading_function(self) -> str:
         """Generate function to load weights from NIR data."""
@@ -730,6 +968,40 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
                         lines.append("")
                 
                 lines.append("    };")
+
+            elif layer['is_conv']:
+                # Convolutional connection, weights are 4D matrix, 
+                #  Conv2D weights (flattened)                
+                #  Original shape:
+                #    weights[out_ch][in_ch][kh][kw]
+                #  Flattened as:
+                #    [oc][ic][kh][kw] → 1D array
+                #  Index:
+                #    idx = oc*(IN_CH*KH*KW) + ic*(KH*KW) + kh*KW + kw
+                #  Each output neuron uses:
+                #    IN_CH × KH × KW weights (receptive field)
+                #  Usage:
+                #    sum += weights[oc * RF_SIZE + k] * input_patch[k];
+                
+                out_ch, in_ch, kh, kw = layer['weights'].shape
+                total_w = out_ch * in_ch * kh * kw
+
+                lines.append(f"    // Layer {i+1} conv weights - Conv2d ({out_ch}x{in_ch}x{kh}x{kw})")
+                lines.append(f"    // Stored in OUT_CH-MAJOR order: [oc][ic][kh][kw]")
+                lines.append(f"    static const float conv{i+1}_weights_vector[{total_w}] = {{")
+
+                weights_flat = layer['weights'].reshape(-1)  # shape: [out_ch, in_ch, kh, kw]
+
+                for idx, w in enumerate(weights_flat):
+                    if idx % 8 == 0:
+                        lines.append("        ")
+                    lines[-1] += self._format_weight(w)
+                    if idx < len(weights_flat) - 1:
+                        lines[-1] += ", "
+                    if (idx + 1) % 8 == 0 and idx < len(weights_flat) - 1:
+                        lines.append("")
+                lines.append("    };")
+
             else:
                 # Fully connected: weights is 2D matrix, flatten in input-major order
                 # NIR format: [neurons, inputs] - need to TRANSPOSE to get [inputs, neurons]
@@ -777,14 +1049,32 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
         for i, layer in enumerate(self.layers):
             if layer['is_one_to_one']:
                 size = layer['weights'].shape[0]
+            
+                lines.append(f"    for (int i = 0; i < {size}; i++) {{")
+                lines.append(f"        float scaled = fc{i+1}_weights_vector[i] / scale;")
+                lines.append(f"        arm_float_to_q15(&scaled, &weights{i+1}[i], 1);")
+                lines.append("    }")
+                lines.append("")
+
+            elif layer['is_conv']:
+                out_ch, in_ch, kh, kw = layer['weights'].shape
+                size = out_ch * in_ch * kh * kw
+
+                lines.append(f"    for (int j = 0; j < {size}; j++) {{")
+                lines.append(f"        float scaled = conv{i+1}_weights_vector[j] / scale;")
+                lines.append(f"        arm_float_to_q15(&scaled, &weights{i+1}[j], 1);")
+                lines.append("    }")
+                lines.append("")
+                
             else:
                 size = layer['num_inputs'] * layer['num_neurons']
             
-            lines.append(f"    for (int i = 0; i < {size}; i++) {{")
-            lines.append(f"        float scaled = fc{i+1}_weights_vector[i] / scale;")
-            lines.append(f"        arm_float_to_q15(&scaled, &weights{i+1}[i], 1);")
-            lines.append("    }")
-            lines.append("")
+                lines.append(f"    for (int i = 0; i < {size}; i++) {{")
+                lines.append(f"        float scaled = fc{i+1}_weights_vector[i] / scale;")
+                lines.append(f"        arm_float_to_q15(&scaled, &weights{i+1}[i], 1);")
+                lines.append("    }")
+                lines.append("")
+
         
         # Convert recurrent weights
         for i, layer in enumerate(self.layers):
@@ -815,9 +1105,9 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
                 # All neurons have same parameters - optimize
                 lines.append(f"    // Uniform parameters for all neurons")
                 lines.append(f"    q15_t threshold_{i+1}, reset_value_{i+1}, decay_factor_{i+1};")
-                lines.append(f"    float threshold_f_{i+1} = {self._format_weight(layer['threshold'][0])[:-1]} / scale;")  # Remove 'f' suffix
-                lines.append(f"    float reset_value_f_{i+1} = {self._format_weight(layer['v_reset'][0])[:-1]} / scale;")
-                lines.append(f"    float beta_{i+1} = {self._format_weight(layer['beta'][0])};")
+                lines.append(f"    float threshold_f_{i+1} = {self._format_weight(layer['threshold'].flat[0])[:-1]} / scale;")  # Remove 'f' suffix
+                lines.append(f"    float reset_value_f_{i+1} = {self._format_weight(layer['v_reset'].flat[0])[:-1]} / scale;")
+                lines.append(f"    float beta_{i+1} = {self._format_weight(layer['beta'].flat[0])};")
                 lines.append("")
                 lines.append(f"    arm_float_to_q15(&threshold_f_{i+1}, &threshold_{i+1}, 1);")
                 lines.append(f"    arm_float_to_q15(&reset_value_f_{i+1}, &reset_value_{i+1}, 1);")
@@ -918,6 +1208,16 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
             if layer['has_recurrent']:
                 lines.append(f"    // Layer {i+1} with recurrent connections ({'1-to-1' if layer['is_one_to_one'] else 'fully connected'})")
                 lines.append(f"    {update_func_rec}(layer{i+1}, {input_var}, weights{i+1}, {input_size}, NUM_NEURONS_LAYER{i+1}, l{i+1}_spikes, l{i+1}_spikes_prev, recurrent_weights{i+1}, {is_one_to_one_flag});")
+
+            # EMRE TODO: Edit for hard-reset.
+            elif layer['is_conv']:
+                lines.append(f"    // Layer {i+1} (convolutional)")
+                lines.append(f"    LIFNeuron_Conv2d_Update_Subtract_Base(layer{i+1}, {input_var}, weights{i+1}, l{i+1}_spikes, "
+                             f"{layer['in_h']}, {layer['in_w']}, {layer['in_c']}, "
+                             f"{layer['out_h']}, {layer['out_w']}, {layer['out_c']}, "
+                             f"{layer['kh']}, {layer['kw']}, "
+                             f"{layer['stride_h']}, {layer['padding_h']});")
+
             else:
                 lines.append(f"    // Layer {i+1} (no recurrent, {'1-to-1' if layer['is_one_to_one'] else 'fully connected'})")
                 lines.append(f"    {update_func_norec}(layer{i+1}, {input_var}, weights{i+1}, {input_size}, NUM_NEURONS_LAYER{i+1}, l{i+1}_spikes, {is_one_to_one_flag});")
@@ -1070,13 +1370,13 @@ void example_usage(void) {{
             print(f"    Connection: {'1-to-1' if layer['is_one_to_one'] else 'Fully connected'}")
             print(f"    Parameters: {'Uniform' if layer['uniform_params'] else 'Per-neuron'}")
             if layer['uniform_params']:
-                print(f"    Beta (decay): {layer['beta'][0]:.6f}")
-                print(f"    Threshold: {layer['threshold'][0]:.6f}")
-                print(f"    Reset: {layer['v_reset'][0]:.6f}")
+                print(f"    Beta (decay): {layer['beta'].flat[0]:.6f}")
+                print(f"    Threshold: {layer['threshold'].flat[0]:.6f}")
+                print(f"    Reset: {layer['v_reset'].flat[0]:.6f}")
             else:
-                print(f"    Beta (decay): {layer['beta'][0]:.6f} to {layer['beta'][-1]:.6f}")
-                print(f"    Threshold: {layer['threshold'][0]:.6f} to {layer['threshold'][-1]:.6f}")
-                print(f"    Reset: {layer['v_reset'][0]:.6f} to {layer['v_reset'][-1]:.6f}")
+                print(f"    Beta (decay): {layer['beta'].flat[0]:.6f} to {layer['beta'].flat[-1]:.6f}")
+                print(f"    Threshold: {layer['threshold'].flat[0]:.6f} to {layer['threshold'].flat[-1]:.6f}")
+                print(f"    Reset: {layer['v_reset'].flat[0]:.6f} to {layer['v_reset'].flat[-1]:.6f}")
             print(f"    Recurrent: {'Yes (1-to-1)' if layer['has_recurrent'] else 'No'}")
         
         total_params = sum(l['num_inputs'] * l['num_neurons'] for l in self.layers)
@@ -1110,7 +1410,7 @@ def main():
     if len(sys.argv) > 1:
         nir_file = sys.argv[1]
     else:
-        nir_file = 'snntorch_braille7_model.nir'
+        nir_file = 'stmnist_with_reset.nir'
     
     if not os.path.exists(nir_file):
         print(f"Error: NIR file '{nir_file}' not found!")
