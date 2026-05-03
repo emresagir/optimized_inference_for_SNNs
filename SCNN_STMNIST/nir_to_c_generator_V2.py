@@ -559,7 +559,7 @@ void SNN_Reset_State(void);
                     lines.append(f"static __attribute__((aligned(32))) q15_t weights{i+1}[NUM_NEURONS_LAYER{i}]; // 1-to-1 connection (vector)")
             elif layer['is_conv']:
                 # Conv2d connection
-                lines.append(f"static __attribute__((aligned(32))) q15_t weights{i+1}[L{i}_OUT_CH * L{i}_IN_CH * L{i}_KERNEL_H * L{i}_KERNEL_W]; // Conv connected")
+                lines.append(f"static __attribute__((aligned(32))) q15_t weights{i+1}[L{i+1}_OUT_CH * L{i+1}_IN_CH * L{i+1}_KERNEL_H * L{i+1}_KERNEL_W]; // Conv connected")
             else:
                 # Fully connected: full weight matrix
                 if i == 0:
