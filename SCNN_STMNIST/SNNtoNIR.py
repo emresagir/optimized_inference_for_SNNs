@@ -39,7 +39,7 @@ nodes = {
     ),
     
     "1": nir.LIF(
-        tau=np.full((32, 7, 7), 1.0/(1.0-beta)), 
+        tau=np.full((32, 7, 7), 1e-4/(1.0-beta)), 
         v_threshold=np.ones((32, 7, 7)),
         v_leak=np.zeros((32, 7, 7)),
         r=np.ones((32, 7, 7))
@@ -56,7 +56,7 @@ nodes = {
     ),
     
     "3": nir.LIF(
-        tau=np.full((64, 3, 3), 1.0/(1.0-beta)),
+        tau=np.full((64, 3, 3), 1e-4/(1.0-beta)),
         v_threshold=np.ones((64, 3, 3)),
         v_leak=np.zeros((64, 3, 3)),
         r=np.ones((64, 3, 3))
@@ -77,7 +77,7 @@ nodes = {
     ),
     
     "6": nir.LIF(
-        tau=np.full((10,), 1.0/(1.0-beta)),
+        tau=np.full((10,), 1e-4/(1.0-beta)),
         v_threshold=np.ones((10,)),
         v_leak=np.zeros((10,)),
         r=np.ones((10,)),
