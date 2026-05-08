@@ -233,7 +233,6 @@ class NIRToCGenerator:
             if has_bias and not np.allclose(affine.bias, 0.0):
                 print(f"WARNING: Layer {layer_idx} has non-zero bias values. Bias is NOT supported and will be ignored!")
             
-            # TODO EMRE: Need to double check this situation
             # Calculate beta from NIR tau parameter
             # SNNTorch export_nir.py uses dt = 1e-4 (hardcoded) and tau = dt/(1-beta)
             # To recover beta: beta = 1 - dt/tau
@@ -409,6 +408,16 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
                                                   uint16_t num_neurons, q7_t* output_spikes,
                                                   uint8_t is_one_to_one);
 
+void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         
+    const q7_t* input_spikes,  // Input feature map [In_CH * In_H * In_W]
+    const q15_t* weights,       // Weights [Out_CH * In_CH * KH * KW]
+    q7_t* output_spikes,        // Output spikes [Out_CH * Out_H * Out_W]
+    uint16_t in_h, uint16_t in_w, uint16_t in_ch,
+    uint16_t out_h, uint16_t out_w, uint16_t out_ch,
+    uint16_t kh, uint16_t kw,
+    uint16_t stride, uint16_t padding
+);                                                  
+
 // Weight loading function
 void Load_NIR_Weights(void);
 
@@ -578,7 +587,7 @@ void SNN_Reset_State(void);
         """Generate utility functions for USART printing."""
         return """// Utility functions for USART printing
 void usart1_print(const char* str) {
-    HAL_UART_Transmit(&huart1, (uint8_t*)str, strlen(str), 1000);
+    HAL_UART_Transmit(&huart3, (uint8_t*)str, strlen(str), 1000);
 }
 
 void print_float(const char* prefix, float_t value) {
@@ -915,15 +924,32 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
                 // Index of the specific neuron in the flat array
                 uint32_t n_idx = (oc * out_h * out_w) + (oh * out_w) + ow;
 
-                q15_t v_prev   = neurons[n_idx].membrane_potential;
-                q15_t reset    = neurons[n_idx].reset_value;
-                q15_t decay    = neurons[n_idx].decay_factor;
+                // Pull parameters into q31 to avoid premature saturation
+                q31_t v_prev    = (q31_t)neurons[n_idx].membrane_potential;
+                q31_t reset     = (q31_t)neurons[n_idx].reset_value;
+                q31_t decay     = (q31_t)neurons[n_idx].decay_factor;
 
-                // Scale back the accumulated value (Q15 * Q15 results in Q30)
-                q15_t weighted_input = (q15_t)(acc >> 15);
+                // All arithmetic stays in q31 — acc is already in Q15 scale (spike * Q15_weight)
+                q31_t v_shifted = ((v_prev - reset) * decay) >> 15;
+                q31_t v_new     = reset + v_shifted + acc;  // acc added here before any saturation
 
-                q15_t v_shifted = (q15_t)(((q31_t)(v_prev - reset) * decay) >> 15);
-                neurons[n_idx].membrane_potential = reset + v_shifted + weighted_input;
+                // Only saturate when writing back to the q15_t struct field
+                neurons[n_idx].membrane_potential = (q15_t)__SSAT(v_new, 16);
+
+                
+                // TODO: DELETE THIS DEBUG PRINT FROM GENERATOR WHEN ITS FULLY WORKING
+                // WILL FOLLOW WITH DEBUG TO SEE THE MEMBRANE POTENTIAL FOR THAT SPECIFIC NEURON.
+                // oc == 10 oh == 0 ow == 0, makes index 490 for the first layer. 90 for the second layer.
+                // I will watch the membrane potential of the firts layer's this neuron.
+                // if (n_idx == 490 && oc == 10 && oh == 0 && ow == 0 ) {
+                //     char buf[200];
+                //     // Use %ld for q31_t (long int) to avoid format warnings
+                //     // We print the raw integer. 60 = 1.0 in float terms.
+                //     snprintf(buf, sizeof(buf), "V:%ld = Reset:%ld + v_shifted:%ld + acc: %ld| threshold: %d S:%d | nindex = %ld | v_prev = %ld | decay = %ld \\r\\n", 
+                //             (long)neurons[n_idx].membrane_potential, reset, v_shifted, acc, neurons[n_idx].threshold, 
+                //              output_spikes[n_idx], n_idx, v_prev, decay);
+                //     usart1_print(buf);
+                // }
 
                 // SOFT RESET
                 if (neurons[n_idx].membrane_potential > neurons[n_idx].threshold) {
