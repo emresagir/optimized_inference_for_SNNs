@@ -128,9 +128,9 @@ uint8_t classify_sample(const TestSample *sample,
     for (uint16_t t = 0; t < sample->num_timesteps; t++) {
 
       //TEST 
-        char bufferotso [50];
-        snprintf(bufferotso, sizeof(bufferotso), "timestep = %d, \t\n", t);
-        usart1_print(bufferotso);
+        // char bufferotso [50];
+        // snprintf(bufferotso, sizeof(bufferotso), "timestep = %d, \t\n", t);
+        // usart1_print(bufferotso);
 
         SNN_Run_Timestep(sample->spikes[t], output_spikes);
 
