@@ -401,19 +401,6 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
                 // Only saturate when writing back to the q15_t struct field
                 neurons[n_idx].membrane_potential = (q15_t)__SSAT(v_new, 16);
                 
-                // TODO: DELETE THIS DEBUG PRINT FROM GENERATOR WHEN ITS FULLY WORKING
-                // WILL FOLLOW WITH DEBUG TO SEE THE MEMBRANE POTENTIAL FOR THAT SPECIFIC NEURON.
-                // oc == 10 oh == 0 ow == 0, makes index 490 for the first layer. 90 for the second layer.
-                // I will watch the membrane potential of the firts layer's this neuron.
-                if (n_idx == 490 && oc == 10 && oh == 0 && ow == 0 ) {
-                    char buf[200];
-                    // Use %ld for q31_t (long int) to avoid format warnings
-                    // We print the raw integer. 60 = 1.0 in float terms.
-                    snprintf(buf, sizeof(buf), "V:%ld = Reset:%ld + v_shifted:%ld + acc: %ld| threshold: %d S:%d | nindex = %ld | v_prev = %ld | decay = %ld \r\n", 
-                            (long)neurons[n_idx].membrane_potential, reset, v_shifted, acc, neurons[n_idx].threshold, 
-                             output_spikes[n_idx], n_idx, v_prev, decay);
-                    usart1_print(buf);
-                }
 
                 // SOFT RESET
                 if (neurons[n_idx].membrane_potential > neurons[n_idx].threshold) {
@@ -423,6 +410,17 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
                     output_spikes[n_idx] = 0;
                 }
 
+                                                // WILL FOLLOW WITH DEBUG TO SEE THE MEMBRANE POTENTIAL FOR THAT SPECIFIC NEURON.
+                // oc == 10 oh == 0 ow == 0, makes index 490 for the first layer. 90 for the second layer.
+                // I will watch the membrane potential of the firts layer's this neuron.
+                // if (n_idx == 490 && oc == 10 && oh == 0 && ow == 0 ) {
+                //     char buf[200];
+                //     // Use %ld for q31_t (long int) to avoid format warnings
+                //     // We print the raw integer. 60 = 1.0 in float terms.
+                //     snprintf(buf, sizeof(buf), "V:%ld = Reset:%ld + v_shifted:%ld + acc: %ld| threshold: %d S:%d | nindex = %ld | v_prev = %ld | decay = %ld \r\n", 
+                //             (long)neurons[n_idx].membrane_potential, reset, v_shifted, acc, neurons[n_idx].threshold, output_spikes[n_idx], n_idx, v_prev, decay);
+                //     usart1_print(buf);
+                // }
 
             }
         }

@@ -11,6 +11,7 @@
             "origin": "snippet",
             "cwd": "${workspaceFolder}",
             "preBuild": "${command:st-stm32-ide-debug-launch.build}",
+            "preLaunchTask": "Strip Weights",
             "runEntry": "main",
             "imagesAndSymbols": [
                 {

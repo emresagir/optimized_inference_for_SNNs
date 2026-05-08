@@ -1,9 +1,11 @@
+#include "arm_math_types.h"
 #include "stm32h7xx_hal.h"
 #include "../Inc/lif_neuron_gen.h"
 #include "arm_math.h"
 #include "arm_nnfunctions.h"
 #include "../Inc/usart.h"
 #include <math.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -355,6 +357,16 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
     uint16_t stride,
     uint16_t padding
 ) {
+
+    // DEBUG Optional: Pre-check input spikes for the whole buffer (matches Python's "Input Spikes")
+    int layer_input_spikes = 0;
+    for(uint32_t i = 0; i < (in_ch * in_h * in_w); i++) {
+        if(input_spikes[i] > 0) {
+            layer_input_spikes = layer_input_spikes + input_spikes[i];}
+    }
+    char buf[80];
+    snprintf(buf,sizeof(buf), "İnput spikes = %d \t\n", layer_input_spikes );
+    usart1_print(buf);
     // 1. Iterate over every output "pixel" (which is one LIF neuron)
     for (uint16_t oc = 0; oc < out_ch; oc++) {
         for (uint16_t oh = 0; oh < out_h; oh++) {
@@ -363,6 +375,7 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
                 // Accumulator for the current (this is the weighted input)
                 q31_t acc = 0; 
 
+            
                 // 2. Perform the Convolution (Sliding Window)
                 for (uint16_t ic = 0; ic < in_ch; ic++) {
                     for (uint16_t fy = 0; fy < kh; fy++) {
@@ -379,7 +392,23 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
                                 // Indexing for [OutCH][InCH][KH][KW] format
                                 uint32_t weight_idx = (oc * in_ch * kh * kw) + (ic * kh * kw) + (fy * kw) + fx;
 
-                                acc += (q31_t)input_spikes[input_idx] * weights[weight_idx];
+                                if (input_spikes[input_idx] != 0) {
+                                acc += (q31_t)weights[weight_idx] * input_spikes[input_idx];
+                                }
+
+                                // // DEBUG PRINT
+                                // if (oc == 0 && oh == 0 && ow == 0 && ic == 0 && fy == 0 && fx < 3) {
+                                //     char dbg[160];
+                                //     snprintf(dbg, sizeof(dbg),
+                                //              "MAC: oc=%u oh=%u ow=%u ic=%u fy=%u fx=%u in_idx=%lu w_idx=%lu in=%d w=%d acc=%ld\r\n",
+                                //              oc, oh, ow, ic, fy, fx,
+                                //              (unsigned long)input_idx,
+                                //              (unsigned long)weight_idx,
+                                //              (int)input_spikes[input_idx],
+                                //              (int)weights[weight_idx],
+                                //              (long)acc);
+                                //     usart1_print(dbg);
+                                //}
                             }
                         }
                     }
@@ -389,19 +418,35 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
                 // Index of the specific neuron in the flat array
                 uint32_t n_idx = (oc * out_h * out_w) + (oh * out_w) + ow;
 
-                // Pull parameters into q31 to avoid premature saturation
-                q31_t v_prev    = (q31_t)neurons[n_idx].membrane_potential;
-                q31_t reset     = (q31_t)neurons[n_idx].reset_value;
-                q31_t decay     = (q31_t)neurons[n_idx].decay_factor;
+                q31_t v_prev   = neurons[n_idx].membrane_potential;
+                q31_t reset    = neurons[n_idx].reset_value;
+                q31_t decay    = neurons[n_idx].decay_factor;
 
-                // All arithmetic stays in q31 — acc is already in Q15 scale (spike * Q15_weight)
-                q31_t v_shifted = ((v_prev - reset) * decay) >> 15;
-                q31_t v_new     = reset + v_shifted + acc;  // acc added here before any saturation
+                // No need to scale back the accumulated value
+                q31_t weighted_input = (q31_t)(acc);
 
-                // Only saturate when writing back to the q15_t struct field
-                neurons[n_idx].membrane_potential = (q15_t)__SSAT(v_new, 16);
-                
-                // TODO: DELETE THIS DEBUG PRINT FROM GENERATOR WHEN ITS FULLY WORKING
+                // if (weighted_input_bq > 1073741824 || weighted_input_bq < -1073741824 ) {
+                //     // This is your bug! Your scale is too high or your input is too "heavy"
+                //     // and it's breaking your 16-bit integers.
+                //     char buf1[80];
+                //     snprintf(buf1,sizeof(buf1), "BUG! weighted input IS over the q15!" );
+                //     usart1_print(buf1);
+                // }
+
+
+                // 1. Decay step: Must shift 15 because decay is Q15
+                q31_t v_decayed = (q31_t)(((q63_t)(v_prev - reset) * decay) >> 15);
+
+                // //DEBUG TO CHECK IF MEMBRANE POTENTIAL OVERFLOW, DUPLICATING THE SAME CALCULATION.
+                // q31_t membranePotential_test = reset + v_decayed + weighted_input;
+                // if( membranePotential_test > 1073741824 || membranePotential_test < -1073741824){
+                //     char buf3[80];
+                //     snprintf(buf3,sizeof(buf3), "MEMBRANE POTENTIAL OVERFLOWING! \n" );
+                //     usart1_print(buf3);
+                // }
+
+                neurons[n_idx].membrane_potential = reset + v_decayed + weighted_input;
+
                 // WILL FOLLOW WITH DEBUG TO SEE THE MEMBRANE POTENTIAL FOR THAT SPECIFIC NEURON.
                 // oc == 10 oh == 0 ow == 0, makes index 490 for the first layer. 90 for the second layer.
                 // I will watch the membrane potential of the firts layer's this neuron.
@@ -409,9 +454,8 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
                     char buf[200];
                     // Use %ld for q31_t (long int) to avoid format warnings
                     // We print the raw integer. 60 = 1.0 in float terms.
-                    snprintf(buf, sizeof(buf), "V:%ld = Reset:%ld + v_shifted:%ld + acc: %ld| threshold: %d S:%d | nindex = %ld | v_prev = %ld | decay = %ld \r\n", 
-                            (long)neurons[n_idx].membrane_potential, reset, v_shifted, acc, neurons[n_idx].threshold, 
-                             output_spikes[n_idx], n_idx, v_prev, decay);
+                    snprintf(buf, sizeof(buf), "V:%ld = Reset:%ld + v_decayed:%ld + weighted_input:%ld | threshold: %d S:%d | nindex = %ld | v_prev = %ld | decay = %ld \r\n", 
+                            (long)neurons[n_idx].membrane_potential, reset, v_decayed, weighted_input,neurons[n_idx].threshold, output_spikes[n_idx], n_idx, v_prev, decay);
                     usart1_print(buf);
                 }
 
@@ -6756,11 +6800,13 @@ void Load_NIR_Weights(void) {
         arm_float_to_q15(&scaled, &weights1[j], 1);
     }
 
+
     for (int j = 0; j < 18432; j++) {
         float scaled = conv2_weights_vector[j] / scale;
         arm_float_to_q15(&scaled, &weights2[j], 1);
     }
 
+    
     for (int i = 0; i < 5760; i++) {
         float scaled = fc3_weights_vector[i] / scale;
         arm_float_to_q15(&scaled, &weights3[i], 1);
@@ -6776,7 +6822,7 @@ void SNN_Init(void) {
     q15_t threshold_1, reset_value_1, decay_factor_1;
     float threshold_f_1 = 1.0000e+00 / scale;
     float reset_value_f_1 = 0.0000e+00 / scale;
-    float beta_1 = 9.5000e-01f;
+    float beta_1 = 9.95e-01f; // Changed by hand
 
     arm_float_to_q15(&threshold_f_1, &threshold_1, 1);
     arm_float_to_q15(&reset_value_f_1, &reset_value_1, 1);
@@ -6792,7 +6838,7 @@ void SNN_Init(void) {
     q15_t threshold_2, reset_value_2, decay_factor_2;
     float threshold_f_2 = 1.0000e+00 / scale;
     float reset_value_f_2 = 0.0000e+00 / scale;
-    float beta_2 = 9.5000e-01f;
+    float beta_2 = 9.95e-01f; // Changed by hand
 
     arm_float_to_q15(&threshold_f_2, &threshold_2, 1);
     arm_float_to_q15(&reset_value_f_2, &reset_value_2, 1);
@@ -6808,7 +6854,7 @@ void SNN_Init(void) {
     q15_t threshold_3, reset_value_3, decay_factor_3;
     float threshold_f_3 = 1.0000e+00 / scale;
     float reset_value_f_3 = 0.0000e+00 / scale;
-    float beta_3 = 9.5000e-01f;
+    float beta_3 = 9.9999e-01f;
 
     arm_float_to_q15(&threshold_f_3, &threshold_3, 1);
     arm_float_to_q15(&reset_value_f_3, &reset_value_3, 1);
@@ -6825,9 +6871,18 @@ void SNN_Init(void) {
 }
 
 void SNN_Run_Timestep(const q7_t* input_spikes, q7_t* output_spikes) {
+
     // Layer 1 (convolutional)
     LIFNeuron_Conv2d_Update_Subtract_Base(layer1, input_spikes, weights1, l1_spikes, 10, 10, 2, 7, 7, 32, 4, 4, 1, 0);
 
+    usart1_print("second layer is being called\n");
+    // for(int i = 0; i < 18432; i++){
+    //     if(weights2[i] == 0){
+    //         char buf[50];
+    //         snprintf(buf, sizeof(buf), "Index %d, has zero", i);
+    //         usart1_print(buf);
+    //     }
+    // }
     // Layer 2 (convolutional)
     LIFNeuron_Conv2d_Update_Subtract_Base(layer2, l1_spikes, weights2, l2_spikes, 7, 7, 32, 3, 3, 64, 3, 3, 2, 0);
 

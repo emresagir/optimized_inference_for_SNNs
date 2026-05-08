@@ -6,9 +6,9 @@
 
 typedef struct {
     q15_t threshold;     // Firing threshold in Q15
-    q15_t reset_value;   // Reset potential in Q15
-    q15_t membrane_potential; // Current membrane potential in Q15
-    q15_t decay_factor;  // Precomputed beta (decay factor) in Q15
+    q31_t reset_value;   // Reset potential in Q15
+    q31_t membrane_potential; // Current membrane potential in Q15
+    q31_t decay_factor;  // Precomputed beta (decay factor) in Q15
 } LIFNeuron;
 
 // Utility functions
@@ -41,16 +41,6 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
                                                   const q15_t* weights, uint16_t num_inputs,
                                                   uint16_t num_neurons, q7_t* output_spikes,
                                                   uint8_t is_one_to_one);
-
-void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         
-    const q7_t* input_spikes,  // Input feature map [In_CH * In_H * In_W]
-    const q15_t* weights,       // Weights [Out_CH * In_CH * KH * KW]
-    q7_t* output_spikes,        // Output spikes [Out_CH * Out_H * Out_W]
-    uint16_t in_h, uint16_t in_w, uint16_t in_ch,
-    uint16_t out_h, uint16_t out_w, uint16_t out_ch,
-    uint16_t kh, uint16_t kw,
-    uint16_t stride, uint16_t padding
-);                                                  
 
 // Weight loading function
 void Load_NIR_Weights(void);
