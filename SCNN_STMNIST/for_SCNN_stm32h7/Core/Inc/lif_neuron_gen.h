@@ -11,13 +11,6 @@ typedef struct {
     q15_t decay_factor;  // Precomputed beta (decay factor) in Q15
 } LIFNeuron;
 
-typedef struct {
-    q15_t threshold;     // Firing threshold in Q15
-    q31_t reset_value;   // Reset potential in Q31
-    q31_t membrane_potential; // Current membrane potential in Q31
-    q31_t decay_factor;  // Precomputed beta (decay factor) in Q31
-} LIFNeuron_forConv;
-
 // Utility functions
 void usart1_print(const char* str);
 void print_float(const char* prefix, float_t value);
@@ -49,7 +42,7 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
                                                   uint16_t num_neurons, q7_t* output_spikes,
                                                   uint8_t is_one_to_one);
 
-void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron_forConv* neurons,         
+void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         
     const q7_t* input_spikes,  // Input feature map [In_CH * In_H * In_W]
     const q15_t* weights,       // Weights [Out_CH * In_CH * KH * KW]
     q7_t* output_spikes,        // Output spikes [Out_CH * Out_H * Out_W]

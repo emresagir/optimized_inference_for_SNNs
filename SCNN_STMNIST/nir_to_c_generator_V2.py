@@ -57,7 +57,7 @@ class NIRToCGenerator:
         """
         self.nir_graph = nir.read(nir_file_path)
         self.output_prefix = output_prefix
-        self.scale_factor = 60.0  # Q15 scaling factor
+        self.scale_factor = 360.0  # Q15 scaling factor
         
         # Extract network architecture
         self.layers = []
@@ -926,17 +926,31 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
 
                 // Pull parameters into q31 to avoid premature saturation
                 q31_t v_prev    = (q31_t)neurons[n_idx].membrane_potential;
-                q31_t reset     = (q31_t)neurons[n_idx].reset_value;
+                q31_t reset     = (q31_t)neurons[n_idx].reset_value; // I will use this reset to achieve soft-reset subtraction in the next timestep.
                 q31_t decay     = (q31_t)neurons[n_idx].decay_factor;
+                q31_t threshold = (q31_t)neurons[n_idx].threshold;
 
                 // All arithmetic stays in q31 — acc is already in Q15 scale (spike * Q15_weight)
-                q31_t v_shifted = ((v_prev - reset) * decay) >> 15;
-                q31_t v_new     = reset + v_shifted + acc;  // acc added here before any saturation
+                q31_t v_shifted = (v_prev * decay) >> 15;
+                q31_t v_new     = v_shifted + acc - reset;  // acc added here before any saturation
+                // Reset value consist the threshold from the last timestep if there was any spike, otherwise its zero. (Uth*S(t)).
+                // v_new = ((v_prev)*decay) + acc - reset
+                // U(t+1) = (U(t)*Beta) + W*X(t+1) - Uth*S(t)
+                // This is the equation from the snntorch tutorial 3. 
 
                 // Only saturate when writing back to the q15_t struct field
                 neurons[n_idx].membrane_potential = (q15_t)__SSAT(v_new, 16);
 
-                
+
+                // SOFT RESET
+                if (neurons[n_idx].membrane_potential > neurons[n_idx].threshold) {
+                    output_spikes[n_idx] = 1;
+                    neurons[n_idx].reset_value    = (q15_t)threshold;  // will subtract next step
+                } else {
+                    output_spikes[n_idx] = 0;
+                    neurons[n_idx].reset_value    = 0;                 // clear if there is no spike
+                }
+
                 // TODO: DELETE THIS DEBUG PRINT FROM GENERATOR WHEN ITS FULLY WORKING
                 // WILL FOLLOW WITH DEBUG TO SEE THE MEMBRANE POTENTIAL FOR THAT SPECIFIC NEURON.
                 // oc == 10 oh == 0 ow == 0, makes index 490 for the first layer. 90 for the second layer.
@@ -950,14 +964,6 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
                 //              output_spikes[n_idx], n_idx, v_prev, decay);
                 //     usart1_print(buf);
                 // }
-
-                // SOFT RESET
-                if (neurons[n_idx].membrane_potential > neurons[n_idx].threshold) {
-                    output_spikes[n_idx] = 1;
-                    neurons[n_idx].membrane_potential -= neurons[n_idx].threshold;
-                } else {
-                    output_spikes[n_idx] = 0;
-                }
 
 
             }

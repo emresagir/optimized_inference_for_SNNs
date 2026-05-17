@@ -45,9 +45,7 @@
 #define NUM_NEURONS_LAYER2 576
 #define NUM_NEURONS_LAYER3 10
 
-static __attribute__((aligned(32))) LIFNeuron layer3[NUM_NEURONS_LAYER3];
-static __attribute__((aligned(32))) LIFNeuron_forConv layer1[NUM_NEURONS_LAYER1], layer2[NUM_NEURONS_LAYER2];
-
+static __attribute__((aligned(32))) LIFNeuron layer1[NUM_NEURONS_LAYER1], layer2[NUM_NEURONS_LAYER2], layer3[NUM_NEURONS_LAYER3];
 static __attribute__((aligned(32))) q7_t l1_spikes[NUM_NEURONS_LAYER1];
 static __attribute__((aligned(32))) q7_t l2_spikes[NUM_NEURONS_LAYER2];
 static __attribute__((aligned(32))) q7_t l3_spikes[NUM_NEURONS_LAYER3];
@@ -77,13 +75,6 @@ void print_float(const char* prefix, float_t value) {
 
 
 void LIFNeuron_Init(LIFNeuron* neuron, q15_t threshold, q15_t reset_value) {
-    neuron->threshold = threshold;
-    neuron->reset_value = reset_value;
-    neuron->membrane_potential = reset_value;
-    // decay_factor (beta) will be set in SNN_Init
-}
-
-void LIFNeuron_Init_forConv(LIFNeuron_forConv* neuron, q15_t threshold, q15_t reset_value) {
     neuron->threshold = threshold;
     neuron->reset_value = reset_value;
     neuron->membrane_potential = reset_value;
@@ -352,7 +343,7 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
 
 
 
-void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron_forConv* neurons,         // Array of neurons for this layer
+void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array of neurons for this layer
     const q7_t* input_spikes,  // Input feature map [In_CH * In_H * In_W]
     const q15_t* weights,       // Weights [Out_CH * In_CH * KH * KW]
     q7_t* output_spikes,        // Output spikes [Out_CH * Out_H * Out_W]
@@ -400,37 +391,44 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron_forConv* neurons,         /
 
                 // Pull parameters into q31 to avoid premature saturation
                 q31_t v_prev    = (q31_t)neurons[n_idx].membrane_potential;
-                q31_t reset     = (q31_t)neurons[n_idx].reset_value;
+                q31_t reset     = (q31_t)neurons[n_idx].reset_value; // I will use this reset to achieve soft-reset subtraction in the next timestep.
                 q31_t decay     = (q31_t)neurons[n_idx].decay_factor;
+                q31_t threshold = (q31_t)neurons[n_idx].threshold;
 
                 // All arithmetic stays in q31 — acc is already in Q15 scale (spike * Q15_weight)
-                q31_t v_shifted = (q31_t)(((q63_t)(v_prev - reset) * decay) >> 31);
-                q31_t v_new     = reset + v_shifted + acc;  // acc added here before any saturation
+                q31_t v_shifted = (v_prev * decay) >> 15;
+                q31_t v_new     = v_shifted + acc - reset;  // acc added here before any saturation
+                // Reset value consist the threshold from the last timestep if there was any spike, otherwise its zero. (Uth*S(t)).
+                // v_new = ((v_prev)*decay) + acc - reset
+                // U(t+1) = (U(t)*Beta) + W*X(t+1) - Uth*S(t)
+                // This is the equation from the snntorch tutorial 3. 
 
                 // Only saturate when writing back to the q15_t struct field
-                neurons[n_idx].membrane_potential = v_new;
-                
+                neurons[n_idx].membrane_potential = (q15_t)__SSAT(v_new, 16);
+
+
+                // SOFT RESET
+                if (neurons[n_idx].membrane_potential > neurons[n_idx].threshold) {
+                    output_spikes[n_idx] = 1;
+                    neurons[n_idx].reset_value    = (q15_t)threshold;  // will subtract next step
+                } else {
+                    output_spikes[n_idx] = 0;
+                    neurons[n_idx].reset_value    = 0;                 // clear if there is no spike
+                }
+
                 // TODO: DELETE THIS DEBUG PRINT FROM GENERATOR WHEN ITS FULLY WORKING
                 // WILL FOLLOW WITH DEBUG TO SEE THE MEMBRANE POTENTIAL FOR THAT SPECIFIC NEURON.
                 // oc == 10 oh == 0 ow == 0, makes index 490 for the first layer. 90 for the second layer.
                 // I will watch the membrane potential of the firts layer's this neuron.
-                if (n_idx == 490 && oc == 10 && oh == 0 && ow == 0 ) {
-                    char buf[200];
-                    // Use %ld for q31_t (long int) to avoid format warnings
-                    // We print the raw integer. 60 = 1.0 in float terms.
-                    snprintf(buf, sizeof(buf), "V:%ld = Reset:%ld + v_shifted:%ld + acc: %ld| threshold: %d S:%d | nindex = %ld | v_prev = %ld | decay = %ld \r\n", 
-                            (long)neurons[n_idx].membrane_potential, reset, v_shifted, acc, (neurons[n_idx].threshold), 
-                             output_spikes[n_idx], n_idx, v_prev, decay);
-                    usart1_print(buf);
-                }
-
-                // SOFT RESET
-                if (neurons[n_idx].membrane_potential > neurons[n_idx].threshold ) {
-                    output_spikes[n_idx] = 1;
-                    neurons[n_idx].membrane_potential -= neurons[n_idx].threshold;
-                } else {
-                    output_spikes[n_idx] = 0;
-                }
+                // if (n_idx == 490 && oc == 10 && oh == 0 && ow == 0 ) {
+                //     char buf[200];
+                //     // Use %ld for q31_t (long int) to avoid format warnings
+                //     // We print the raw integer. 60 = 1.0 in float terms.
+                //     snprintf(buf, sizeof(buf), "V:%ld = Reset:%ld + v_shifted:%ld + acc: %ld| threshold: %d S:%d | nindex = %ld | v_prev = %ld | decay = %ld \r\n", 
+                //             (long)neurons[n_idx].membrane_potential, reset, v_shifted, acc, neurons[n_idx].threshold, 
+                //              output_spikes[n_idx], n_idx, v_prev, decay);
+                //     usart1_print(buf);
+                // }
 
 
             }
@@ -440,7 +438,7 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron_forConv* neurons,         /
         
 
 void Load_NIR_Weights(void) {
-    const float scale = 60.0f;
+    const float scale = 360.0f;
 
     // Layer 1 conv weights - Conv2d (32x2x4x4)
     // Stored in OUT_CH-MAJOR order: [oc][ic][kh][kw]
@@ -6778,39 +6776,37 @@ void Load_NIR_Weights(void) {
 }
 
 void SNN_Init(void) {
-    const float scale = 60.0f;
+    const float scale = 360.0f;
 
     // Layer 1 initialization
     // Uniform parameters for all neurons
-    q15_t threshold_1;
-    q31_t reset_value_1, decay_factor_1;
+    q15_t threshold_1, reset_value_1, decay_factor_1;
     float threshold_f_1 = 1.0000e+00 / scale;
     float reset_value_f_1 = 0.0000e+00 / scale;
     float beta_1 = 9.5000e-01f;
 
     arm_float_to_q15(&threshold_f_1, &threshold_1, 1);
-    arm_float_to_q31(&reset_value_f_1, &reset_value_1, 1);
-    arm_float_to_q31(&beta_1, &decay_factor_1, 1);
+    arm_float_to_q15(&reset_value_f_1, &reset_value_1, 1);
+    arm_float_to_q15(&beta_1, &decay_factor_1, 1);
 
     for (int i = 0; i < NUM_NEURONS_LAYER1; i++) {
-        LIFNeuron_Init_forConv(&layer1[i], threshold_1, reset_value_1);
+        LIFNeuron_Init(&layer1[i], threshold_1, reset_value_1);
         layer1[i].decay_factor = decay_factor_1;
     }
 
     // Layer 2 initialization
     // Uniform parameters for all neurons
-    q15_t threshold_2;
-    q31_t reset_value_2, decay_factor_2;
+    q15_t threshold_2, reset_value_2, decay_factor_2;
     float threshold_f_2 = 1.0000e+00 / scale;
     float reset_value_f_2 = 0.0000e+00 / scale;
     float beta_2 = 9.5000e-01f;
 
     arm_float_to_q15(&threshold_f_2, &threshold_2, 1);
-    arm_float_to_q31(&reset_value_f_2, &reset_value_2, 1);
-    arm_float_to_q31(&beta_2, &decay_factor_2, 1);
+    arm_float_to_q15(&reset_value_f_2, &reset_value_2, 1);
+    arm_float_to_q15(&beta_2, &decay_factor_2, 1);
 
     for (int i = 0; i < NUM_NEURONS_LAYER2; i++) {
-        LIFNeuron_Init_forConv(&layer2[i], threshold_2, reset_value_2);
+        LIFNeuron_Init(&layer2[i], threshold_2, reset_value_2);
         layer2[i].decay_factor = decay_factor_2;
     }
 
