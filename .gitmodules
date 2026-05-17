@@ -22,3 +22,9 @@
 [submodule "Soft_Reset_recurrent_for_STM/for-soft-reset-with-UART-for-data/Drivers/CMSIS-NN"]
 	path = Soft_Reset_recurrent_for_STM/for-soft-reset-with-UART-for-data/Drivers/CMSIS-NN
 	url = https://github.com/ARM-software/CMSIS-NN.git
+[submodule "SCNN_STMNIST/mini_model_test/for_mini_model_stm32h7/Drivers/CMSIS-DSP"]
+	path = SCNN_STMNIST/mini_model_test/for_mini_model_stm32h7/Drivers/CMSIS-DSP
+	url = https://github.com/ARM-software/CMSIS-DSP.git
+[submodule "SCNN_STMNIST/mini_model_test/for_mini_model_stm32h7/Drivers/CMSIS-NN"]
+	path = SCNN_STMNIST/mini_model_test/for_mini_model_stm32h7/Drivers/CMSIS-NN
+	url = https://github.com/ARM-software/CMSIS-NN.git
