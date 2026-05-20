@@ -28,3 +28,9 @@
 [submodule "SCNN_STMNIST/mini_model_test/for_mini_model_stm32h7/Drivers/CMSIS-NN"]
 	path = SCNN_STMNIST/mini_model_test/for_mini_model_stm32h7/Drivers/CMSIS-NN
 	url = https://github.com/ARM-software/CMSIS-NN.git
+[submodule "Soft_Reset_norec_for_STM/mini_model/for-soft-mini-model/Drivers/CMSIS-DSP"]
+	path = Soft_Reset_norec_for_STM/mini_model/for-soft-mini-model/Drivers/CMSIS-DSP
+	url = https://github.com/ARM-software/CMSIS-DSP.git
+[submodule "Soft_Reset_norec_for_STM/mini_model/for-soft-mini-model/Drivers/CMSIS-NN"]
+	path = Soft_Reset_norec_for_STM/mini_model/for-soft-mini-model/Drivers/CMSIS-NN
+	url = https://github.com/ARM-software/CMSIS-NN.git
