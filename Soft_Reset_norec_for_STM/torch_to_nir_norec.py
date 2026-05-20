@@ -30,7 +30,7 @@ nodes = {
     ),
     
     'lif1': nir.LIF(
-        tau=np.full(NUM_HID, -1.0 / np.log(beta1)),
+        tau=np.full(NUM_HID, 1e-4 / (1- beta1)),
         v_threshold=np.full(NUM_HID, vthr),
         v_leak=np.zeros(NUM_HID),
         v_reset=np.zeros(NUM_HID),
@@ -43,7 +43,7 @@ nodes = {
     ),
     
     'lif2': nir.LIF(
-        tau=np.full(NUM_OUT, -1.0 / np.log(beta2)),
+        tau=np.full(NUM_OUT, 1e-4/(1-beta2)),
         v_threshold=np.full(NUM_OUT, vthr),
         v_leak=np.zeros(NUM_OUT),
         v_reset=np.zeros(NUM_OUT),

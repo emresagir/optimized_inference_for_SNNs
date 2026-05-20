@@ -202,6 +202,11 @@ void example_usage(void) {
       for (int k = 0; k < INPUTS; k++) {
         input_spikes[k] = test_input[i][j][k]; //take each 12 elements array to compute, 256 for each classification until 140 classifications
       }
+      //DEBUG PRINT
+      // char buf[100];
+      // snprintf(buf, sizeof(buf), "Timestep=%d \n", j);
+      // usart1_print(buf);
+
       SNN_Run_Timestep(input_spikes, output_spikes);
       // accumulate integer spike counts for classification
       for (int o = 0; o < OUTPUTS; o++) {

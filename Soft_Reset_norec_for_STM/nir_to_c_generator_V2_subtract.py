@@ -622,22 +622,23 @@ void LIFNeuron_Layer_Update_Subtract(LIFNeuron* neurons, const q7_t* input_spike
         }
     }
 
-    // Vectorized membrane potential update: V = reset + (V - reset) * beta + weighted_input
-    q15_t temp1[num_neurons], temp2[num_neurons], temp3[num_neurons];
+    // Vectorized membrane potential update
+    // Update membrane for soft reset:
+    // v(t+1) = decay * v(t) + weighted_inputs - reset_value(previous step)
+    q15_t temp1[num_neurons], temp2[num_neurons];
     
-    arm_sub_q15(membrane_potentials, reset_values, temp1, num_neurons);
-    arm_mult_q15(temp1, decay_factors, temp2, num_neurons);
-    arm_add_q15(reset_values, temp2, temp3, num_neurons);
-    arm_add_q15(temp3, weighted_inputs, membrane_potentials, num_neurons);
+    arm_mult_q15(membrane_potentials, decay_factors, temp1, num_neurons);
+    arm_add_q15(temp1, weighted_inputs, temp2, num_neurons);
+    arm_sub_q15(temp2, reset_values, membrane_potentials, num_neurons);
 
-
-    // Spike-reset: SUBTRACT threshold instead of resetting to reset_value
+    // Spike check, then store reset_value for the NEXT step
     for (uint16_t i = 0; i < num_neurons; i++) {
         if (membrane_potentials[i] > thresholds[i]) {
             output_spikes[i] = 1;
-            membrane_potentials[i] -= thresholds[i];
+            neurons[i].reset_value = thresholds[i];   // subtract next step
         } else {
             output_spikes[i] = 0;
+            neurons[i].reset_value = 0;
         }
         neurons[i].membrane_potential = membrane_potentials[i];
     }
@@ -683,20 +684,22 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
     }
 
     // Vectorized membrane potential update
-    q15_t temp1[num_neurons], temp2[num_neurons], temp3[num_neurons];
+    // Update membrane for soft reset:
+    // v(t+1) = decay * v(t) + weighted_inputs - reset_value(previous step)
+    q15_t temp1[num_neurons], temp2[num_neurons];
     
-    arm_sub_q15(membrane_potentials, reset_values, temp1, num_neurons);
-    arm_mult_q15(temp1, decay_factors, temp2, num_neurons);
-    arm_add_q15(reset_values, temp2, temp3, num_neurons);
-    arm_add_q15(temp3, weighted_inputs, membrane_potentials, num_neurons);
+    arm_mult_q15(membrane_potentials, decay_factors, temp1, num_neurons);
+    arm_add_q15(temp1, weighted_inputs, temp2, num_neurons);
+    arm_sub_q15(temp2, reset_values, membrane_potentials, num_neurons);
 
-    // Spike-reset: SUBTRACT threshold instead of resetting to reset_value
+    // Spike check, then store reset_value for the NEXT step
     for (uint16_t i = 0; i < num_neurons; i++) {
         if (membrane_potentials[i] > thresholds[i]) {
             output_spikes[i] = 1;
-            membrane_potentials[i] -= thresholds[i];
+            neurons[i].reset_value = thresholds[i];   // subtract next step
         } else {
             output_spikes[i] = 0;
+            neurons[i].reset_value = 0;
         }
         neurons[i].membrane_potential = membrane_potentials[i];
     }
@@ -1110,7 +1113,7 @@ def main():
     if len(sys.argv) > 1:
         nir_file = sys.argv[1]
     else:
-        nir_file = 'snntorch_braille7_model.nir'
+        nir_file = 'manual_braille_model.nir'
     
     if not os.path.exists(nir_file):
         print(f"Error: NIR file '{nir_file}' not found!")

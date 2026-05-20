@@ -232,23 +232,22 @@ void LIFNeuron_Layer_Update_Subtract(LIFNeuron* neurons, const q7_t* input_spike
         }
     }
 
-    // Vectorized membrane potential update
-    // Update membrane for soft reset:
-    // v(t+1) = decay * v(t) + weighted_inputs - reset_value(previous step)
-    q15_t temp1[num_neurons], temp2[num_neurons];
+    // Vectorized membrane potential update: V = reset + (V - reset) * beta + weighted_input
+    q15_t temp1[num_neurons], temp2[num_neurons], temp3[num_neurons];
     
-    arm_mult_q15(membrane_potentials, decay_factors, temp1, num_neurons);
-    arm_add_q15(temp1, weighted_inputs, temp2, num_neurons);
-    arm_sub_q15(temp2, reset_values, membrane_potentials, num_neurons);
+    arm_sub_q15(membrane_potentials, reset_values, temp1, num_neurons);
+    arm_mult_q15(temp1, decay_factors, temp2, num_neurons);
+    arm_add_q15(reset_values, temp2, temp3, num_neurons);
+    arm_add_q15(temp3, weighted_inputs, membrane_potentials, num_neurons);
 
-    // Spike check, then store reset_value for the NEXT step
+
+    // Spike-reset: SUBTRACT threshold instead of resetting to reset_value
     for (uint16_t i = 0; i < num_neurons; i++) {
         if (membrane_potentials[i] > thresholds[i]) {
             output_spikes[i] = 1;
-            neurons[i].reset_value = thresholds[i];   // subtract next step
+            membrane_potentials[i] -= thresholds[i];
         } else {
             output_spikes[i] = 0;
-            neurons[i].reset_value = 0;
         }
         neurons[i].membrane_potential = membrane_potentials[i];
     }
@@ -294,25 +293,35 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
     }
 
     // Vectorized membrane potential update
-    // Update membrane for soft reset:
-    // v(t+1) = decay * v(t) + weighted_inputs - reset_value(previous step)
-    q15_t temp1[num_neurons], temp2[num_neurons];
+    q15_t temp1[num_neurons], temp2[num_neurons], temp3[num_neurons];
     
-    arm_mult_q15(membrane_potentials, decay_factors, temp1, num_neurons);
-    arm_add_q15(temp1, weighted_inputs, temp2, num_neurons);
-    arm_sub_q15(temp2, reset_values, membrane_potentials, num_neurons);
+    arm_sub_q15(membrane_potentials, reset_values, temp1, num_neurons);
+    arm_mult_q15(temp1, decay_factors, temp2, num_neurons);
+    arm_add_q15(reset_values, temp2, temp3, num_neurons);
+    arm_add_q15(temp3, weighted_inputs, membrane_potentials, num_neurons);
 
-    // Spike check, then store reset_value for the NEXT step
+    // Spike-reset: SUBTRACT threshold instead of resetting to reset_value
     for (uint16_t i = 0; i < num_neurons; i++) {
         if (membrane_potentials[i] > thresholds[i]) {
             output_spikes[i] = 1;
-            neurons[i].reset_value = thresholds[i];   // subtract next step
+            membrane_potentials[i] -= thresholds[i];
         } else {
             output_spikes[i] = 0;
-            neurons[i].reset_value = 0;
         }
         neurons[i].membrane_potential = membrane_potentials[i];
     }
+    // Detailed diagnostic print for Neuron 0
+    char buf[256];
+    snprintf(buf, sizeof(buf), 
+             "N0 -> Decay: %d | ResetV: %d | Input: %d | Thresh: %d | Spike: %d | V_final: %d\r\n",
+             (int)decay_factors[0],
+             (int)reset_values[0],
+             (int)weighted_inputs[0],
+             (int)thresholds[0],
+             (int)output_spikes[0],
+             (int)neurons[0].membrane_potential);
+    usart1_print(buf);
+    
 }
 
 
@@ -582,9 +591,15 @@ void SNN_Init(void) {
 
 void SNN_Run_Timestep(const q7_t* input_spikes, q7_t* output_spikes) {
     // Layer 1 (no recurrent, fully connected)
+          char buf[100];
+      snprintf(buf, sizeof(buf), "1.Layer Called\n");
+      usart1_print(buf);
     LIFNeuron_Layer_Update_Subtract_NoRecurrent(layer1, input_spikes, weights1, NUM_INPUTS, NUM_NEURONS_LAYER1, l1_spikes, 0);
 
     // Layer 2 (no recurrent, fully connected)
+          char buf2[100];
+      snprintf(buf2, sizeof(buf2), "2.Layer Called\n");
+      usart1_print(buf2);
     LIFNeuron_Layer_Update_Subtract_NoRecurrent(layer2, l1_spikes, weights2, NUM_NEURONS_LAYER1, NUM_NEURONS_LAYER2, l2_spikes, 0);
 
     // Copy output spikes
