@@ -95,12 +95,8 @@ edges = [
 ]
 
 # 4. Assemble the Graph
-nir_graph = nir.NIRGraph(nodes, edges)
+nir_graph = nir.NIRGraph(nodes, edges, metadata={'reset_mechanism': 'subtract'})
 
-# Add your metadata for the reset mechanism
-for node in nir_graph.nodes.values():
-    if isinstance(node, nir.LIF):
-        node.metadata = {"reset": reset_mechanism}
 
 # 5. Save and Verify
 nir.write("stmnist_with_reset.nir", nir_graph)
