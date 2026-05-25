@@ -132,7 +132,7 @@ neuron_spike_history = []
 layer = 3
 # More than one sample? 
 moresamples = True
-num_test_samples = 50  
+num_test_samples = 200  
 
 # Choose the neuron you want to track
 if(layer == 1):
@@ -263,4 +263,4 @@ if(moresamples):
         spike_list = total_spikes.int().tolist()
         print(f"Sample {i} | Target: {target} | Pred: {pred} | {'✓' if is_correct else '✗'}" + f"   Spike Counts: {spike_list}")
 
-    print(f"\nFinal Accuracy: {correct_count/num_test_samples * 100:.2f}%")
+    print(f"\nFinal Accuracy: {correct_count}/{num_test_samples}, {correct_count/num_test_samples * 100:.2f}%")

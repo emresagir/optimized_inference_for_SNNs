@@ -11,8 +11,8 @@ HDF5 file layout expected (as produced by ST-MNIST pipeline):
 
 Usage:
   pip install h5py numpy
-  python3 generate_test_data.py --hdf_dir ./test_hdf5 --num_samples 50 --out test_data.h
-
+  python3 generate_test_data.py --hdf_dir ./cache/stmnist/test/ --num_samples 200 --out test_data_200.h
+  
 File naming convention assumed: {index}_0.hdf5  (e.g. 0_0.hdf5 … 49_0.hdf5)
 If your files use a different pattern, adjust the glob below.
 """
