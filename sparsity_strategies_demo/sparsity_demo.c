@@ -320,7 +320,7 @@ void LIFNeuron_Conv2d_Update_Subtract_Demo(LIFNeuron* neurons,         // Array 
         }
         
         // Spike check
-        if (neurons[output].membrane_potential >= neurons[output].threshold) 
+        if (neurons[output].membrane_potential > neurons[output].threshold) 
         {
             output_spikes[output] = 1;
 
@@ -387,7 +387,7 @@ void SNN_Run_Timestep(const uint8_t* input_spikes, uint8_t* output_spikes) {
 void SNN_Reset_State(void) {
     // Reset layer 1
     for (int i = 0; i < NUM_NEURONS_LAYER1; i++) {
-        layer1[i].membrane_potential = layer1[i].reset_value;
+        layer1[i].membrane_potential = 0;
         l1_spikes[i] = 0;
     }
 }
