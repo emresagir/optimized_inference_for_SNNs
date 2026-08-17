@@ -1,0 +1,14 @@
+\begin{thebibliography}{1}
+
+\bibitem{diehl2015fast}
+Peter~U. Diehl, Daniel Neil, Jonathan Binas, Matthew Cook, Shih-Chii Liu, and Michael Pfeiffer.
+\newblock Fast-classifying, high-accuracy spiking deep networks through weight and threshold balancing.
+\newblock In {\em 2015 International Joint Conference on Neural Networks (IJCNN)}, pages 1--8, 2015.
+
+\bibitem{eshraghian2023snntorch}
+Jason~K. Eshraghian, Max Ward, Emre~O. Neftci, Xinxin Wang, Gregor Lenz, Girish Dwivedi, Mohammed Bennamoun, Doo~Seok Jeong, and Wei~D. Lu.
+\newblock Training spiking neural networks using lessons from deep learning.
+\newblock {\em Proceedings of the IEEE}, 2023.
+\newblock snnTorch reference paper.
+
+\end{thebibliography}

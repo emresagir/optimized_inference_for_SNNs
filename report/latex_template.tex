@@ -1,0 +1,249 @@
+\documentclass[11pt,a4paper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{booktabs}
+
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstset{frame=tb,
+  language=C,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+\title{Lab 2: Energy Efficient Displays}
+\author{Your Name \\ Student ID}
+\author{Your Name \\ Student ID}
+
+\date{\today}
+
+\begin{document}
+
+
+\maketitle
+
+
+\section{Introduction}
+% General introduction about the thesis%
+
+\section{Background}
+% Go into the detail of the math especially for the convolution
+% Also the sparsity (not implemented yet)
+
+\subsection{Spiking Neural Networks}
+
+\subsubsection{Hard vs Soft Reset}
+
+\subsection{Spiking Convolutional Neural Networks}
+% Check the 13-17/04 Week for detail
+Spiking Convolutional Neural Networks are SNNs with convolutional connections. 
+One of the best networks that achieves 99.1\% accuracy on the MNIST dataset is a Spiking ConvNet, which is trained as an ANN and then transformed into a Spiking ConvNet in Diehl et al.~\cite{diehl2015fast}.
+This work also has the Spiking fully connected network version, which has a 98.6\% accuracy with the MNIST dataset. 
+These results show us that the convolutional connectivity achieves a higher accuracy. 
+Thus, making the convolutional support for the C code generation crucial.
+
+
+The C code implementation is done with the 
+
+
+
+\subsubsection{Backward Pass}
+
+\subsubsection{Forward Pass (Inference)}
+
+
+
+
+\section{Related Work}
+% Explain the Simone's work
+
+\section{Methodology and Pipeline Overview}
+% Will explain what methods are being used like to test golden ref, speed up calculation etc.
+% Will include baseline vs contributions (and maybe its table)%
+
+\section{Optimized C Code Generation}
+
+The basis is the nir\_to\_c\_generator.py script, which generates optimized C code for Cortex-M7 ARM MCUs. 
+In the previous version, the capabilities include linear and recurrent connected neural networks with a hard-reset (Reset-to-value) mechanism. 
+With my work, the soft-reset (reset-by-subtract) mechanism, convolutional (conv2d) support, and sparsity optimization were introduced.
+
+TODO: Rephrase the sparsity part after implement it.
+
+
+\subsection{Soft Reset}
+The first thing to implement is Soft Reset (Reset-by-subtraction), 
+The previous work had only the hard reset (Reset-to-value) and lacked the soft reset mechanism.
+
+First of all, the soft-reset mechanism introduced here follows the same approach as in Eshraghian et al. \cite{eshraghian2023snntorch}.
+Also, it is implemented in the \texttt{snnTorch} Python library in the same way, enabling the Python golden reference to match this work. 
+The mathematical representation of the soft-reset mechanism is given in the last part of Equation~\ref{eq:soft_reset}.
+
+\begin{equation}\label{eq:soft_reset}
+U[t] = \underbrace{\beta U[t - 1]}_{\text{decay}} + \underbrace{W X[t]}_{\text{input}} - \underbrace{S_{\text{out}}[t - 1]\theta}_{\text{reset}}
+\end{equation}
+
+
+In Figure~\ref{fig:soft-reset-c}, the soft-reset implementation in C is given.
+First, the current timestep membrane update is being calculated with vectorized ARM functions. 
+After the membrane update, the spike check is done. 
+While comparing the potential to the threshold, if there is a spike, 
+the threshold value is saved to be subtracted at the next timestep. 
+
+\begin{figure}[h]
+\centering
+\begin{lstlisting}
+
+    // Membrane Update
+    q15_t temp1[num_neurons], temp2[num_neurons];
+
+    arm_mult_q15(membrane_potentials, decay_factors, temp1, num_neurons);
+    arm_add_q15(temp1, weighted_inputs, temp2, num_neurons);
+    arm_sub_q15(temp2, reset_values, membrane_potentials, num_neurons);
+
+    // Spike check, then store reset_value for the NEXT step
+    for (uint16_t i = 0; i < num_neurons; i++) {
+        if (membrane_potentials[i] > thresholds[i]) {
+            output_spikes[i] = 1;
+            neurons[i].reset_value = thresholds[i];   // subtract next step
+        } else {
+            output_spikes[i] = 0;
+            neurons[i].reset_value = 0;
+        }
+        neurons[i].membrane_potential = membrane_potentials[i];
+    }
+
+\end{lstlisting}
+\caption{Soft-Reset Implementation in C}
+\label{fig:soft-reset-c}
+\end{figure}
+
+
+
+
+
+\subsection{Convolutional Support}
+
+First of all a basic convolutional support added. Its pseudo-code shown in the Figure~\ref{}.
+% Add pseudo-code
+The convolution calculation is done with a sliding window in a deductive manner, from the output neuron to the input neuron.
+For every output neuron, the sliding window is being calculated first
+
+
+\subsection{Sparsity-Aware Inference}
+
+
+\section{Embedded Deployment}
+
+\subsection{CMSIS-DSP and CMSIS-NN}
+
+\subsection{UART DMA}
+% Check the 13-17/04 week for the details.
+
+\subsection{Quad-SPI Flash Chips}
+% Week 27-01/05 
+
+\subsection{}
+
+
+\section{Model Training and Testing}
+% I can explain the how I trained the models and how I tested them 
+% ???????????????????
+% Should I explain the nir problem and manual graph generation in here, or where?
+
+\subsection{Braille}
+% Same dataseet used by Simone's.
+% to check if the soft-reset implementation is working a network without a recurrent connection is created.
+% Check 06-10/04 week for more detail
+
+\subsection{ST-MNIST}
+% Explain the ST-MNIST
+% Cite this paper https://arxiv.org/abs/2005.04319
+% Explain the network and its training
+% 20-24/04 for more detail
+
+% MAYBE explain the nir graph generation???????
+
+
+\section{Experimental Results}
+
+\section{Discussion}
+
+
+\cite{eshraghian2023snntorch}
+
+
+
+\appendix
+\section{Appendix}
+
+
+\bibliographystyle{unsrt} 
+\addcontentsline{toc}{chapter}{References}
+\bibliography{references}
+
+
+
+
+\begin{figure}[h]
+\centering
+\begin{lstlisting}
+ Example Code
+\end{lstlisting}
+\caption{Transformation function definitons}
+\label{fig:transformation_defs}
+\end{figure}
+
+
+\graphicspath{{images}}
+\begin{figure}[H]
+  \centering
+  %\includegraphics[width=0.7\textwidth]{Pareto_of_default_image_provided.png}
+  \caption{Pareto graph of different image transformation techniques}
+  \label{fig:pareto_graph1}
+\end{figure}
+
+
+
+\begin{table}[htbp]
+\centering
+\caption{Power saving statistics for each transformation}
+\label{tab:power_saving_stats}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Transform} &
+\textbf{Mean PS (\%)} &
+\textbf{Min PS (\%)} &
+\textbf{Max PS (\%)} \\
+\midrule
+Bright scale & 17.18 & 16.85 & 18.46 \\
+Histogram    & -5.53 & -135.09 & 30.56 \\
+Hungry blue  & 6.43 & 2.78 & 20.24 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+\end{document}
