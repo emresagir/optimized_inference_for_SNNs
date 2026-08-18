@@ -1310,7 +1310,12 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
         for i, layer in enumerate(self.layers):
             lines.append(f"    // Reset layer {i+1}")
             lines.append(f"    for (int i = 0; i < NUM_NEURONS_LAYER{i+1}; i++) {{")
-            lines.append(f"        layer{i+1}[i].membrane_potential = layer{i+1}[i].reset_value;")
+            # The subtract mechanism uses reset_value to subtract at the next step so if there was a spike, the reset value would be the threshold.
+            if self.reset_mechanism == 'subtract':
+                lines.append(f"        layer{i+1}[i].membrane_potential = 0;")
+                lines.append(f"        layer{i+1}[i].reset_value = 0;")
+            else:
+                lines.append(f"        layer{i+1}[i].membrane_potential = layer{i+1}[i].reset_value;")
             lines.append(f"        l{i+1}_spikes[i] = 0;")
             if layer['has_recurrent']:
                 lines.append(f"        l{i+1}_spikes_prev[i] = 0;")
