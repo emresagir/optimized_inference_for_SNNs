@@ -262,23 +262,34 @@ void LIFNeuron_Layer_Update_Subtract(LIFNeuron* neurons, const q7_t* input_spike
     }
 
     // Vectorized membrane potential update: V = reset + (V - reset) * beta + weighted_input
-    q15_t temp1[num_neurons], temp2[num_neurons], temp3[num_neurons];
+    // Update membrane for soft reset:
+    // v(t+1) = decay * v(t) + weighted_inputs - reset_value(previous step)
+    q15_t temp1[num_neurons], temp2[num_neurons];
     
-    arm_sub_q15(membrane_potentials, reset_values, temp1, num_neurons);
-    arm_mult_q15(temp1, decay_factors, temp2, num_neurons);
-    arm_add_q15(reset_values, temp2, temp3, num_neurons);
-    arm_add_q15(temp3, weighted_inputs, membrane_potentials, num_neurons);
+    arm_mult_q15(membrane_potentials, decay_factors, temp1, num_neurons);
+    arm_add_q15(temp1, weighted_inputs, temp2, num_neurons);
+    arm_sub_q15(temp2, reset_values, membrane_potentials, num_neurons);
 
-
-    // Spike-reset: SUBTRACT threshold instead of resetting to reset_value
+    // Spike check, then store reset_value for the NEXT step
     for (uint16_t i = 0; i < num_neurons; i++) {
         if (membrane_potentials[i] > thresholds[i]) {
             output_spikes[i] = 1;
-            membrane_potentials[i] -= thresholds[i];
+            neurons[i].reset_value = thresholds[i];   // subtract next step
         } else {
             output_spikes[i] = 0;
+            neurons[i].reset_value = 0;
         }
         neurons[i].membrane_potential = membrane_potentials[i];
+
+        // Debug print for the most spiking output neuron.
+        // if(i == 8){
+        //     char buf[200];
+        //     snprintf(buf, sizeof(buf), "V:%ld = Reset:%d + acc: %hu| threshold: %d S:%d | nindex = %d \r\n", 
+        //             (long)neurons[i].membrane_potential, neurons[i].reset_value, weighted_inputs[i] , neurons[i].threshold, 
+        //                 output_spikes[i], i);
+        //     usart1_print(buf);
+        // }
+        
     }
 }
 
@@ -341,6 +352,7 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
         }
         neurons[i].membrane_potential = membrane_potentials[i];
 
+        // TODO : Delete this part when the all tests are done.
         // Debug print for the most spiking output neuron.
         // if(i == 8){
         //     char buf[200];
@@ -435,7 +447,7 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
                 //if (n_idx == 490 && oc == 10 && oh == 0 && ow == 0 ) {
                 
                 // For Layer 2 most spiking one is C14, H1, W2 which makes the n_idx = (14×3×3)+(1×3)+2 = 131
-                // if (n_idx == 131 && oc == 14 && oh == 1 && ow == 2 ) {
+                //if (n_idx == 131 && oc == 14 && oh == 1 && ow == 2 ) {
                 //     char buf[200];
                 //     // Use %ld for q31_t (long int) to avoid format warnings
                 //     // We print the raw integer. 60 = 1.0 in float terms.
@@ -6865,19 +6877,22 @@ void SNN_Run_Timestep(const q7_t* input_spikes, q7_t* output_spikes) {
 void SNN_Reset_State(void) {
     // Reset layer 1
     for (int i = 0; i < NUM_NEURONS_LAYER1; i++) {
-        layer1[i].membrane_potential = layer1[i].reset_value;
+        layer1[i].membrane_potential = 0;
+        layer1[i].reset_value = 0;
         l1_spikes[i] = 0;
     }
 
     // Reset layer 2
     for (int i = 0; i < NUM_NEURONS_LAYER2; i++) {
-        layer2[i].membrane_potential = layer2[i].reset_value;
+        layer2[i].membrane_potential = 0;
+        layer2[i].reset_value = 0;
         l2_spikes[i] = 0;
     }
 
     // Reset layer 3
     for (int i = 0; i < NUM_NEURONS_LAYER3; i++) {
-        layer3[i].membrane_potential = layer3[i].reset_value;
+        layer3[i].membrane_potential = 0;
+        layer3[i].reset_value = 0;
         l3_spikes[i] = 0;
     }
 
