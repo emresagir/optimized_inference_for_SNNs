@@ -1,0 +1,20 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Strip Weights",
+            "type": "shell",
+            "command": "arm-none-eabi-objcopy",
+            "args": [
+                "--remove-section=.ext_weights",
+                "${workspaceFolder}/build/Debug/for_opt_SCNN_stm32h7.elf",
+                "${workspaceFolder}/build/Debug/for_opt_SCNN_stm32h7_debug.elf"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
