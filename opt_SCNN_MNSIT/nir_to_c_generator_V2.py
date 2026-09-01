@@ -42,22 +42,26 @@ Limitations:
 import nir
 import numpy as np
 import os
+import argparse
 from typing import Dict, List, Tuple
 
 DEBUG = True
 
 class NIRToCGenerator:
-    def __init__(self, nir_file_path: str, output_prefix: str = "snn"):
+    def __init__(self, nir_file_path: str, output_prefix: str = "snn", opt_conv: bool = True):
         """
         Initialize the NIR to C code generator.
         
         Args:
             nir_file_path: Path to the .nir file
             output_prefix: Prefix for output files (default: "snn")
+            opt_conv: Whether to use optimized code generation (default: True)
         """
         self.nir_graph = nir.read(nir_file_path)
         self.output_prefix = output_prefix
         self.scale_factor = 60.0  # Q15 scaling factor
+        self.opt_conv = opt_conv
+        print(f"Is optimized: {self.opt_conv}")
         
         # Extract network architecture
         self.layers = []
@@ -77,6 +81,116 @@ class NIRToCGenerator:
         """
         # Use scientific notation with 4 decimal places
         return f"{value:.4e}f"
+        
+        
+    @staticmethod
+    def _build_conv_csr(in_h, in_w, in_c,
+                        out_h, out_w, out_c,
+                        kh, kw,
+                        stride_h, stride_w,
+                        padding_h, padding_w):
+        """
+        Build the CSR (input-indexed) connectivity table for one conv layer.
+    
+        Returns:
+            row_ptr:    list[int], len == num_inputs + 1
+            out_idx:    list[int], len == num_connections   (output neuron idx)
+            weight_idx: list[int], len == num_connections   (idx into the flat
+                        [out_ch, in_ch, kh, kw] weight tensor)
+            num_connections: int
+    
+        """
+        num_inputs = in_c * in_h * in_w
+        num_outputs = out_c * out_h * out_w
+        num_weights = out_c * in_c * kh * kw
+    
+        # Same overflow guards as the C version (uint16_t indices and weight idx)
+        if num_inputs > 0xFFFF or num_outputs > 0xFFFF:
+            raise ValueError(
+                f"CSR build: num_inputs={num_inputs} or num_outputs={num_outputs} "
+                f"exceeds uint16_t range"
+            )
+        if num_weights > 0xFFFF:
+            raise ValueError(
+                f"CSR build: num_weights={num_weights} exceeds uint16_t weight_idx range"
+            )
+    
+        # ---- Pass 1 -----------------------
+        # First pass to learn the connections.
+        # At every input_index, increase the connection count of that specific row_ptr array.
+        # When input_index 1 is found, increment the row_ptr[1] by 1. 
+        # This way we will know how many connections each input neuron has.
+
+        row_ptr = [0] * (num_inputs + 1)
+    
+        for oc in range(out_c):
+            for oh in range(out_h):
+                for ow in range(out_w):
+                    for ic in range(in_c):
+                        for fy in range(kh):
+                            for fx in range(kw):
+                                ih = oh * stride_h + fy - padding_h
+                                iw = ow * stride_w + fx - padding_w
+                                if ih < 0 or ih >= in_h or iw < 0 or iw >= in_w:
+                                    continue
+                                input_index = ic * in_h * in_w + ih * in_w + iw
+                                row_ptr[input_index + 1] += 1
+    
+        # ---- Convert per-row counts into CSR offsets ------------------------
+        for i in range(num_inputs):
+            row_ptr[i + 1] += row_ptr[i]
+    
+        num_connections = row_ptr[num_inputs]
+    
+        # ---- Pass 2 ----------------------
+        # Creating a cursor to be used for each row_ptr.
+        # When a connection has found to a specific row(input) 
+        # the out_index and weigh_index will be filled, 
+        # and the cursor will be incremented for the next connection for that specific row(input).
+
+        out_idx = [0] * num_connections
+        weight_idx = [0] * num_connections
+        cursor = list(row_ptr)  # per-row write cursor, starts at each row's offset
+    
+        for oc in range(out_c):
+            for oh in range(out_h):
+                for ow in range(out_w):
+                    output_index = oc * out_h * out_w + oh * out_w + ow
+                    for ic in range(in_c):
+                        for fy in range(kh):
+                            for fx in range(kw):
+                                ih = oh * stride_h + fy - padding_h
+                                iw = ow * stride_w + fx - padding_w
+                                if ih < 0 or ih >= in_h or iw < 0 or iw >= in_w:
+                                    continue
+                                input_index = ic * in_h * in_w + ih * in_w + iw
+                                weight_index = (oc * in_c * kh * kw +
+                                                ic * kh * kw +
+                                                fy * kw + fx)
+                                c = cursor[input_index]
+                                out_idx[c] = output_index
+                                weight_idx[c] = weight_index
+                                cursor[input_index] = c + 1
+    
+        return row_ptr, out_idx, weight_idx, num_connections
+    
+    
+    @staticmethod
+    def _format_int_array(name: str, ctype: str, values, size_expr: str, per_line: int = 16) -> str:
+        """Emit `static const <ctype> <name>[<size_expr>] = { ... };` with wrapped lines.
+        Used for row_ptr/out_idx/weight_idx — these are plain integers, no Q15
+        scaling/conversion needed (unlike the float weight arrays)."""
+        lines = [f"static const {ctype} {name}[{size_expr}] = {{"]
+        for idx in range(0, len(values), per_line):
+            chunk = values[idx: idx + per_line]
+            row = "    " + ", ".join(str(v) for v in chunk)
+            if idx + per_line < len(values):
+                row += ","
+            lines.append(row)
+        lines.append("};")
+        return "\n".join(lines)
+    
+    
         
     def analyze_network(self):
         """Analyze the NIR graph to extract layer information."""
@@ -282,6 +396,13 @@ class NIRToCGenerator:
 
                 'is_one_to_one': is_one_to_one,
                 'is_conv' : is_conv,
+
+                # CSR map (conv layers only)
+                'row_ptr': None,
+                'out_idx': None,
+                'weight_idx': None,
+                'num_connections': None,
+
                 # Per-neuron parameters
                 'tau': lif.tau,  # Array of tau values (one per neuron)
                 'threshold': lif.v_threshold,  # Array
@@ -291,6 +412,25 @@ class NIRToCGenerator:
                 'has_recurrent': has_recurrent,
                 'recurrent_weights': np.diag(recurrent_weights) if has_recurrent else None  # 1D vector
             }
+
+            # Filling the necessary info for the optimized convolution execution.
+            if self.opt_conv:
+                row_ptr, out_idx, weight_idx, num_connections = self._build_conv_csr(
+                    in_h, in_w, in_c,
+                    out_h, out_w, out_c,
+                    kh, kw,
+                    stride_h, stride_w,
+                    padding_h, padding_w,
+                )
+                layer_info['row_ptr'] = row_ptr
+                layer_info['out_idx'] = out_idx
+                layer_info['weight_idx'] = weight_idx
+                layer_info['num_connections'] = num_connections
+        
+                if DEBUG:
+                    print(f"CSR: {num_connections} connections "
+                        f"({num_connections / (out_c*out_h*out_w*in_c*kh*kw):.1%} density)")
+
 
             if DEBUG:
                 print(f"--- Layer {layer_info['index']} Information ---")
@@ -361,7 +501,7 @@ class NIRToCGenerator:
             current = lif_node
         
         print(f"Found {len(self.layers)} layers")
-        
+
     def generate_header_file(self) -> str:
         """Generate the .h header file content."""
         h_content = f"""#ifndef LIF_NEURON_GEN_H
@@ -418,6 +558,19 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,
     uint16_t stride, uint16_t padding
 );                                                  
 
+void LIFNeuron_Conv2d_Update_Subtract_CSR(
+    LIFNeuron* neurons,
+    const q7_t* input_spikes,
+    const q15_t* weights,
+    const uint16_t* row_ptr,
+    const uint16_t* out_idx,
+    const uint16_t* weight_idx,
+    uint16_t num_inputs,
+    uint16_t num_outputs,
+    q7_t* output_spikes
+);
+
+
 // Weight loading function
 void Load_NIR_Weights(void);
 
@@ -438,6 +591,9 @@ void SNN_Reset_State(void);
         
         # Generate weight array definitions
         weight_defs = self._generate_weight_definitions()
+
+        # Generate csr array definitions
+        csr_defs = self._generate_csr_definitions()
         
         # Generate utility functions
         utility_funcs = self._generate_utility_functions()
@@ -445,8 +601,12 @@ void SNN_Reset_State(void);
         # Generate LIF neuron functions
         lif_funcs = self._generate_lif_functions()
 
-        # Generate Naive Conv LIF neuron functions
-        naive_conv_lif_funcs = self._generate_naive_conv_lif_functions()
+        if self.opt_conv:
+            # Generate Optimized Conv LIF neuron functions.
+            sparse_or_naive_conv_lif_funcs = self._generate_sparse_conv_lif_functions()
+        else:
+            # Generate Naive Conv LIF neuron functions
+            sparse_or_naive_conv_lif_funcs = self._generate_naive_conv_lif_functions()
         
         # Generate weight loading function
         weight_load_func = self._generate_weight_loading_function()
@@ -478,11 +638,13 @@ void SNN_Reset_State(void);
 
 {weight_defs}
 
+{csr_defs}
+
 {utility_funcs}
 
 {lif_funcs}
 
-{naive_conv_lif_funcs}
+{sparse_or_naive_conv_lif_funcs}
 
 {weight_load_func}
 
@@ -530,9 +692,8 @@ void SNN_Reset_State(void);
                 lines.append(f"#define L{i+1}_PAD_W       {layer['padding_w']}")
                 lines.append(f"#define L{i+1}_OUT_H       {layer['out_h']}")
                 lines.append(f"#define L{i+1}_OUT_W       {layer['out_w']}")
-                # im2col scratch buffer size: 2 * in_ch * kH * kW (CMSIS-NN requirement)
-                col_buf_size = 2 * layer['in_c'] * layer['kh'] * layer['kw']
-                lines.append(f"#define L{i+1}_COL_BUF_SIZE {col_buf_size}  // 2 * in_ch * kH * kW")
+                #For optimized
+                lines.append(f"#define L{i+1}_NUM_CONNECTIONS {layer['num_connections']}")
 
             lines.append(f"#define NUM_NEURONS_LAYER{i+1} {layer['num_neurons']}")
         
@@ -552,6 +713,30 @@ void SNN_Reset_State(void);
                 lines.append(f"static __attribute__((aligned(32))) q7_t l{i+1}_spikes_prev[NUM_NEURONS_LAYER{i+1}];")
         
         return '\n'.join(lines)
+
+
+    def _generate_csr_definitions(self) -> str:
+        """Generate static CSR connectivity tables (row_ptr/out_idx/weight_idx) for every conv layer."""
+        lines = []
+        for i, layer in enumerate(self.layers):
+            if not layer['is_conv']:
+                continue
+    
+            input_size_str = "NUM_INPUTS" if i == 0 else f"NUM_NEURONS_LAYER{i}"
+    
+            lines.append(f"// Layer {i+1} CSR sparse connectivity table (precomputed in Python)")
+            lines.append(self._format_int_array(
+                f"row_ptr{i+1}", "uint16_t", layer['row_ptr'],
+                size_expr=f"{input_size_str} + 1"))
+            lines.append(self._format_int_array(
+                f"out_idx{i+1}", "uint16_t", layer['out_idx'],
+                size_expr=f"L{i+1}_NUM_CONNECTIONS"))
+            lines.append(self._format_int_array(
+                f"weight_idx{i+1}", "uint16_t", layer['weight_idx'],
+                size_expr=f"L{i+1}_NUM_CONNECTIONS"))
+            lines.append("")
+        return '\n'.join(lines)
+
     
     # Emre: This is okay 
     def _generate_weight_definitions(self) -> str:
@@ -999,6 +1184,58 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
 }
         """
 
+    # TODO Emre: Add Hard-reset version.
+    def _generate_sparse_conv_lif_functions(self) -> str:
+        """Generates the CSR/event-driven convolutional LIF update function."""
+        return """
+    void LIFNeuron_Conv2d_Update_Subtract_CSR(
+        LIFNeuron* neurons,           // Array of neurons for this layer
+        const q7_t* input_spikes,     // Input feature map, flattened [in_ch*in_h*in_w]
+        const q15_t* weights,         // Shared kernel weights [out_ch*in_ch*kh*kw]
+        const uint16_t* row_ptr,      // CSR row offsets, length num_inputs + 1
+        const uint16_t* out_idx,      // CSR column data: output neuron per connection
+        const uint16_t* weight_idx,    // CSR column data: weight index per connection
+        uint16_t num_inputs,
+        uint16_t num_outputs,
+        q7_t* output_spikes           // Output spikes [out_ch*out_h*out_w]
+    ) {
+        // Decay: V(t+1) = V(t) * beta   (Q15 fixed point)
+        for (uint16_t o = 0; o < num_outputs; o++) {
+            q31_t decayed = ((q31_t)neurons[o].membrane_potential *
+                            (q31_t)neurons[o].decay_factor) >> 15;
+            neurons[o].membrane_potential = (q15_t)__SSAT(decayed, 16);
+        }
+    
+        // Event-driven accumulation: only walk rows for inputs that spiked,
+        // instead of visiting every (output, kernel-tap) pair unconditionally.
+        for (uint16_t i = 0; i < num_inputs; i++) {
+            if (input_spikes[i] == 0) {
+                continue;
+            }
+            for (uint16_t c = row_ptr[i]; c < row_ptr[i + 1]; c++) {
+                const uint16_t o = out_idx[c];
+                const uint16_t  w = weight_idx[c];
+                // BCS the ST-MNIST dataset has input spikes other than 0 and 1s the MAC is needed.
+                q31_t v = (q31_t)neurons[o].membrane_potential + (q31_t)input_spikes[i] * (q31_t)weights[w];
+                neurons[o].membrane_potential = (q15_t)__SSAT(v, 16);
+            }
+        }
+    
+        // Soft reset (subtract previous threshold if it spiked last step) + spike check
+        for (uint16_t o = 0; o < num_outputs; o++) {
+
+            neurons[o].membrane_potential -= neurons[o].reset_value;
+    
+            if (neurons[o].membrane_potential > neurons[o].threshold) {
+                output_spikes[o] = 1;
+                neurons[o].reset_value = neurons[o].threshold;  // subtract next step
+            } else {
+                output_spikes[o] = 0;
+                neurons[o].reset_value = 0;
+            }
+        }
+    }"""
+
     
     def _generate_weight_loading_function(self) -> str:
         """Generate function to load weights from NIR data."""
@@ -1270,12 +1507,22 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
 
             # EMRE TODO: Edit for hard-reset.
             elif layer['is_conv']:
-                lines.append(f"    // Layer {i+1} (convolutional)")
-                lines.append(f"    LIFNeuron_Conv2d_Update_Subtract_Base(layer{i+1}, {input_var}, weights{i+1}, l{i+1}_spikes, "
-                             f"{layer['in_h']}, {layer['in_w']}, {layer['in_c']}, "
-                             f"{layer['out_h']}, {layer['out_w']}, {layer['out_c']}, "
-                             f"{layer['kh']}, {layer['kw']}, "
-                             f"{layer['stride_h']}, {layer['padding_h']});")
+                
+                if not self.opt_conv:
+                    lines.append(f"    // Layer {i+1} (convolutional)")
+                    lines.append(f"    LIFNeuron_Conv2d_Update_Subtract_Base(layer{i+1}, {input_var}, weights{i+1}, l{i+1}_spikes, "
+                                f"{layer['in_h']}, {layer['in_w']}, {layer['in_c']}, "
+                                f"{layer['out_h']}, {layer['out_w']}, {layer['out_c']}, "
+                                f"{layer['kh']}, {layer['kw']}, "
+                                f"{layer['stride_h']}, {layer['padding_h']});")
+
+                
+                else:
+                    lines.append(f"    // Layer {i+1} (convolutional, CSR event-driven)")
+                    lines.append(
+                            f"    LIFNeuron_Conv2d_Update_Subtract_CSR(layer{i+1}, {input_var}, weights{i+1}, "
+                            f"row_ptr{i+1}, out_idx{i+1}, weight_idx{i+1}, "
+                            f"{input_size}, NUM_NEURONS_LAYER{i+1}, l{i+1}_spikes);")
 
             else:
                 lines.append(f"    // Layer {i+1} (no recurrent, {'1-to-1' if layer['is_one_to_one'] else 'fully connected'})")
@@ -1471,21 +1718,38 @@ def main():
     print("="*70)
     
     # Check command line arguments
-    if len(sys.argv) > 1:
-        nir_file = sys.argv[1]
-    else:
-        nir_file = 'stmnist_with_reset.nir'
-    
+    parser = argparse.ArgumentParser(
+        description="Generate C code from a NIR file."
+    )
+
+    parser.add_argument(
+        "--nir_file",
+        default="stmnist_with_reset.nir",
+        help="Path to the NIR file"
+    )
+
+    parser.add_argument(
+        "--optimized",
+        type=lambda x: str(x).lower() in ['true', '1', 't', 'y', 'yes'],
+        default=True,
+        help="Enable or disable optimization (true/false, default: true)"
+    )
+
+    args = parser.parse_args()
+
+    nir_file = args.nir_file
+    use_optimization = args.optimized
+
     if not os.path.exists(nir_file):
         print(f"Error: NIR file '{nir_file}' not found!")
-        print(f"\nUsage: python nir_to_c_generator.py [nir_file.nir]")
         return
-    
+
     print(f"\nInput NIR file: {nir_file}")
-    
+    print(f"Optimization: {'enabled' if use_optimization else 'disabled'}")
+
     try:
         # Create generator
-        generator = NIRToCGenerator(nir_file)
+        generator = NIRToCGenerator(nir_file, opt_conv=use_optimization)
         
         # Generate files
         generator.generate_files()
