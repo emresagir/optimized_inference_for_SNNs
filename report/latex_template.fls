@@ -151,8 +151,6 @@ INPUT /home/emre/.TinyTeX/texmf-dist/fonts/tfm/public/cm/cmr12.tfm
 INPUT /home/emre/.TinyTeX/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
 INPUT /home/emre/.TinyTeX/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
 INPUT /home/emre/.TinyTeX/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm
-INPUT /home/emre/.TinyTeX/texmf-dist/fonts/tfm/public/cm/cmtt10.tfm
-INPUT /home/emre/.TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map
 INPUT /home/emre/.TinyTeX/texmf-dist/fonts/tfm/public/cm/cmr8.tfm
 INPUT /home/emre/.TinyTeX/texmf-dist/fonts/tfm/public/cm/cmr6.tfm
 INPUT /home/emre/.TinyTeX/texmf-dist/fonts/tfm/public/cm/cmmi10.tfm
@@ -164,6 +162,16 @@ INPUT /home/emre/.TinyTeX/texmf-dist/fonts/tfm/public/cm/cmsy6.tfm
 INPUT /home/emre/.TinyTeX/texmf-dist/fonts/tfm/public/cm/cmex10.tfm
 INPUT /home/emre/.TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm
 INPUT /home/emre/.TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
+INPUT /home/emre/.TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map
+INPUT ./images/Example_Conv_Layer.png
+INPUT ./images/Example_Conv_Layer.png
+INPUT ./images/Example_Conv_Layer.png
+INPUT ./images/Example_Conv_Layer.png
+INPUT ./images/Conv_Steps.png
+INPUT ./images/Conv_Steps.png
+INPUT ./images/Conv_Steps.png
+INPUT ./images/Conv_Steps.png
+INPUT /home/emre/.TinyTeX/texmf-dist/fonts/tfm/public/cm/cmtt10.tfm
 INPUT /home/emre/.TinyTeX/texmf-dist/fonts/tfm/public/cm/cmtt10.tfm
 INPUT ./latex_template.bbl
 INPUT ./latex_template.bbl

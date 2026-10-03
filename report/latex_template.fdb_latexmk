@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex latex_template"] 1783266843.11719 "latex_template.aux" "latex_template.bbl" "latex_template" 1783266843.4795 0
-  "./references.bib" 1783000433.57821 2934 8cc7df34734d0290eb56b7c0e473c60c ""
+["bibtex latex_template"] 1791011612.47135 "latex_template.aux" "latex_template.bbl" "latex_template" 1791011613.04 0
+  "./references.bib" 1790677317.48705 5961 c60da6ea00fbb3988cd7b1c1e7b1a4f5 ""
   "/home/emre/.TinyTeX/texmf-dist/bibtex/bst/base/unsrt.bst" 1292289607 18030 1376b4b231b50c66211e47e42eda2875 ""
-  "latex_template.aux" 1783266843.42203 4538 d747bbc0f98c4b5a3f95a5996ce99112 "pdflatex"
+  "latex_template.aux" 1791011612.95106 6305 7c6dd1ba4001ae418a2a1f9c76e6d0f2 "pdflatex"
   (generated)
   "latex_template.bbl"
   "latex_template.blg"
   (rewritten before read)
-["pdflatex"] 1783266843.12724 "/home/emre/AllProjects/optimized_inference_for_SNNs/report/latex_template.tex" "latex_template.pdf" "latex_template" 1783266843.47966 0
+["pdflatex"] 1791011612.48573 "/home/emre/AllProjects/optimized_inference_for_SNNs/report/latex_template.tex" "latex_template.pdf" "latex_template" 1791011613.04018 0
   "/home/emre/.TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/home/emre/.TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
   "/home/emre/.TinyTeX/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm" 1136768653 1328 c834bbb027764024c09d3d2bf908b5f0 ""
@@ -97,11 +97,13 @@
   "/home/emre/.TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1782708133 92919 301c388eedcd10ac9a90bfa0e39394eb ""
   "/home/emre/.TinyTeX/texmf-var/web2c/pdftex/pdflatex.fmt" 1782708149 2250911 77d3f579f9a392577b6eb54790f05164 ""
   "/home/emre/.TinyTeX/texmf.cnf" 1782708120 637 edd806fb06a89761a6034e1968af9017 ""
-  "/home/emre/AllProjects/optimized_inference_for_SNNs/report/latex_template.tex" 1783266842.53502 6984 98874eb99af4c7622466fbefbb35b4ed ""
-  "latex_template.aux" 1783266843.42203 4538 d747bbc0f98c4b5a3f95a5996ce99112 "pdflatex"
-  "latex_template.bbl" 1783266843.12302 710 9e34214507af9043dde97f56aa3de35e "bibtex latex_template"
-  "latex_template.out" 1783266843.42203 3520 1a7ba1a57d8b78bb909bd0d596d7d10e "pdflatex"
-  "latex_template.tex" 1783266842.53502 6984 98874eb99af4c7622466fbefbb35b4ed ""
+  "/home/emre/AllProjects/optimized_inference_for_SNNs/report/latex_template.tex" 1791011611.65607 17913 fea1a749902195f6da935b723c9d94c9 ""
+  "images/Conv_Steps.png" 1790164444.78998 27028 1d9eccfe6b7b2324b07fe186cdf4250d ""
+  "images/Example_Conv_Layer.png" 1790164617.84898 18426 ca527eb27d4045f66d3d935c51de90f6 ""
+  "latex_template.aux" 1791011612.95106 6305 7c6dd1ba4001ae418a2a1f9c76e6d0f2 "pdflatex"
+  "latex_template.bbl" 1791011612.48106 2505 aa6410a6fb5b1469214a92b81d61de14 "bibtex latex_template"
+  "latex_template.out" 1791011612.95206 4342 31d081fa695f0776614daf178885644f "pdflatex"
+  "latex_template.tex" 1791011611.65607 17913 fea1a749902195f6da935b723c9d94c9 ""
   (generated)
   "latex_template.aux"
   "latex_template.log"

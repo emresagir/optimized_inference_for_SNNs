@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.29)  5 JUL 2026 17:54
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.29)  3 OCT 2026 09:13
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -385,13 +385,71 @@ Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: listings package is loaded.
 Package caption Info: End \AtBeginDocument code.
 \c@lstlisting=\count329
- [1
+
+Underfull \hbox (badness 10000) in paragraph at lines 79--88
+
+ []
+
+[1
 
 {/home/emre/.TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
 
-LaTeX Warning: Reference `' on page 2 undefined on input line 148.
+LaTeX Warning: Citation `li2022survey' on page 2 undefined on input line 122.
 
-[2] (./latex_template.bbl) [3] [4] (./latex_template.aux)
+<images/Example_Conv_Layer.png, id=139, 867.24pt x 325.215pt>
+File: images/Example_Conv_Layer.png Graphic file (type png)
+<use images/Example_Conv_Layer.png>
+Package pdftex.def Info: images/Example_Conv_Layer.png  used on input line 131.
+(pdftex.def)             Requested size: 317.07614pt x 118.90346pt.
+<images/Conv_Steps.png, id=141, 917.4275pt x 561.09625pt>
+File: images/Conv_Steps.png Graphic file (type png)
+<use images/Conv_Steps.png>
+Package pdftex.def Info: images/Conv_Steps.png  used on input line 138.
+(pdftex.def)             Requested size: 317.07614pt x 193.92088pt.
+[2 <./images/Example_Conv_Layer.png>]
+Overfull \hbox (1.85005pt too wide) in paragraph at lines 166--174
+[]\OT1/cmr/m/n/10.95 In re-cent works of de-ploy-ment SNNs on edge de-vices, Del Vec-chio (2025) in-tro-duced snn2mcu,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 166--174
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 175--184
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--190
+
+ []
+
+[3 <./images/Conv_Steps.png>]
+Overfull \hbox (4.25308pt too wide) in paragraph at lines 200--205
+[]\OT1/cmr/m/n/10.95 Spike-based dy-namic com-put-ing with asyn-chronous sensing-computing neu-ro-mor-phic chip [[]],
+ []
+
+
+LaTeX Warning: Citation `eshraghian2023snntorch' on page 4 undefined on input line 252.
+
+[4]
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+Package hyperref Warning: Difference (2) between bookmark levels is greater 
+(hyperref)                than one, level fixed on input line 354.
+
+
+LaTeX Warning: Reference `TODO' on page 5 undefined on input line 357.
+
+[5]
+
+LaTeX Warning: Citation `eshraghian2023snntorch' on page 6 undefined on input line 410.
+
+(./latex_template.bbl [6]) [7] (./latex_template.aux)
  ***********
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-06-18>
@@ -401,21 +459,21 @@ L3 programming layer <2026-06-18>
 LaTeX Warning: There were undefined references.
 
 Package rerunfilecheck Info: File `latex_template.out' has not changed.
-(rerunfilecheck)             Checksum: 1A7BA1A57D8B78BB909BD0D596D7D10E;3520.
+(rerunfilecheck)             Checksum: 31D081FA695F0776614DAF178885644F;4342.
  ) 
 Here is how much of TeX's memory you used:
- 12837 strings out of 469158
- 201181 string characters out of 5460257
- 840223 words of memory out of 5000000
- 41653 multiletter control sequences out of 15000+600000
+ 12948 strings out of 469158
+ 202972 string characters out of 5460257
+ 859223 words of memory out of 5000000
+ 41727 multiletter control sequences out of 15000+600000
  633633 words of font info for 61 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  74i,11n,79p,370b,1408s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </home/emre/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></home/emre/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></home/emre/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></home/emre/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></home/emre/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></home/emre/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></home/emre/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></home/emre/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></home/emre/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></home/emre/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></home/emre/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on latex_template.pdf (4 pages, 160354 bytes).
+Output written on latex_template.pdf (7 pages, 219295 bytes).
 PDF statistics:
- 228 PDF objects out of 1000 (max. 8388607)
- 198 compressed objects within 2 object streams
- 59 named destinations out of 1000 (max. 500000)
- 201 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 316 PDF objects out of 1000 (max. 8388607)
+ 278 compressed objects within 3 object streams
+ 96 named destinations out of 1000 (max. 500000)
+ 243 words of extra memory for PDF output out of 10000 (max. 10000000)
 

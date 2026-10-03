@@ -54,30 +54,183 @@
 
 \subsection{Spiking Neural Networks}
 
-\subsubsection{Hard vs Soft Reset}
+Spiking Neural Networks (SNNs) are a class of artificial intelligence. Aiming to mimic how a brain works.
+They process information in discrete-time with spikes. These spikes are essentially ones and zeros for a neuron's output.
+This makes them great for edge devices with energy and performance constraints.
+
+There are different neuron models; some are focused on biophysical accuracy, and some are focused on simplicity.
+The Leaky Integrate-and-Fire (LIF) models are, in a sense, in the middle.
+
+\subsubsection{Leaky Integrate And Fire Model}
+
+In the LIF neuron model, every neuron has an individual membrane potential that decays over time.
+Every time a neuron's membrane potential passes the specified threshold, a spike occurs, and its membrane potential is reset with a mechanism.
+
+There are two mechanisms: reset-by-subtract (soft reset) and reset-to-zero (hard reset).
+The soft-reset mechanism works by subtracting the threshold when a spike occurs; on the other hand, with a hard-reset, it resets to zero.
+
+The LIF model's membrane potential equation is given in Equation~\ref{eq:lif_eq}. This equation is being used to calculate the membrane potential of the next timestep.
+The membrane potential decays at every timestep with a specific decay rate; then, the accumulated input is summed, and lastly the soft-reset is applied. 
+\begin{equation}
+    U[t+1] = \underbrace{\beta U[t]}_{\text{decay}} + \underbrace{W X[t+1]}_{\text{input}} - \underbrace{S[t] U_{\text{thr}}}_{\text{reset}}
+    \label{eq:lif_eq}
+\end{equation}
+
+\begin{tabular}{r l}
+  $U[t]$ & Membrane potential at time step $t$. \\[0.5em]
+  $\beta$ & Membrane decay factor. \\[0.5em]
+  $W$ & Learnable parameter (weight). \\[0.5em]
+  $X[t+1]$ & Input voltage of the next time step. \\[0.5em]
+  $S[t]$ & Spike indicator. \\[0.5em]
+  $U_{\text{thr}}$ & Thershold potential. 
+\end{tabular}
+\\
+
+\subsubsection{Reset Mechanisms}
+
+The reset mechanisms are reset-by-subtract (soft reset) and reset-to-zero (hard reset), as stated before.
+
+Soft reset is when a spike occurs; it subtracts the threshold, which allows the residual potential to remain, providing more accuracy.
+With a hard reset, the accuracy might drop, but it might be cheaper to reset a register to zero~\cite{eshraghian2023training}.
+
+%% Maybe deepen this part.
 
 \subsection{Spiking Convolutional Neural Networks}
 % Check the 13-17/04 Week for detail
 Spiking Convolutional Neural Networks are SNNs with convolutional connections. 
 One of the best networks that achieves 99.1\% accuracy on the MNIST dataset is a Spiking ConvNet, which is trained as an ANN and then transformed into a Spiking ConvNet in Diehl et al.~\cite{diehl2015fast}.
-This work also has the Spiking fully connected network version, which has a 98.6\% accuracy with the MNIST dataset. 
-These results show us that the convolutional connectivity achieves a higher accuracy. 
+This work also has the fully connected network version, which has a 98.6\% accuracy with the MNIST dataset. 
+These results suggest that the convolutional connectivity can provide an advantage. 
 Thus, making the convolutional support for the C code generation crucial.
 
+\subsubsection{Convolution}
+The convolution operation in neural networks occurs when a learnable kernel shifts over an input tensor.
+The 2-dimensional convolutional neural network has an input tensor of rank 2, with neurons represented in a 2-D array.
+They are connected to the feature map (output matrix) with learnable kernels.
+This introduces weight sharing, which reduces the memory load.
 
-The C code implementation is done with the 
+An example input feature map, kernel, and the output feature map are given in Figure~\ref{fig:example_conv_layer}.
+Every element of the input and output matrices represents a neuron (or activation). The convolution operation's steps are shown in Figure~\ref{fig:conv_Steps}.
+The kernel's every element is multiplied by the corresponding element of the input matrix, and then they are summed up.
+Lastly, this value is saved to the corresponding position of the output neuron.
+This process is repeated until the input matrix is traversed.  
+
+It is understandable that the output matrix's size depends on the kernel, stride and padding parameters.
+The stride parameter decides how much kernel moves to the next position, if stride increases the output matrix dimension will be smaller.
+The padding parameter is also configurable, vary in size and values. 
+It works with adding specific values to the borders to prevent the loss of border feature information.
+And both parameters control the dimensions of the output matrix.~\cite{li2022survey}. 
+
+
+%% Maybe add the arrows to specify which step goes which output neuron. in the conv steps figure
+
+
+\graphicspath{{images}}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{Example_Conv_Layer.png}
+  \caption{An example 2-dimensional convolutional layer}
+  \label{fig:example_conv_layer}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{Conv_Steps.png}
+  \caption{Convolution Steps with padding none and stride one}
+  \label{fig:conv_Steps}
+\end{figure}
 
 
 
-\subsubsection{Backward Pass}
 
-\subsubsection{Forward Pass (Inference)}
+Two dimensional convolution support is added within the thesis scope, as basic and optimized options. 
+While basic convolution uses nested for loops to calculate the indexes and accumulates, 
+optimized convolution uses a pre-computed connectivity table and accumulates only the active (spiked) inputs. 
+
 
 
 
 
 \section{Related Work}
-% Explain the Simone's work
+
+TODO: Bu bi yere eklenebilir
+https://arxiv.org/abs/2406.02528 
+Scalable MatMul-free Language Modeling 
+Basically, they turn the weights into ternary (-1,0,1)  
+This makes the huge LLM MAC operations to just accumulate ops.  
+
+In the area of ************, there are different approaches to optimize the SNN performance. 
+Some of them focuses on the pre-processes like pruning, some exploits the sparse nature of SNN, 
+others optimizes the inference with different methods. 
+
+In recent works of deployment SNNs on edge devices,
+Del Vecchio (2025) introduced snn2mcu, an open-source C code generator for STM32 microcontrollers with cortex-M7 CPU.
+To eliminate manual firmware generation, 
+Del Vecchio created this work to automaticaly generate optimized C codes from Neuromorphic Intermediate Representation (NIR) model graphs. 
+The generator uses optimized CMSIS-DSP and CMSIS-NN library functions to achieve an efficient inference.
+However, snn2mcu lacks the support for soft-reset mechanism and convolution connectivity. 
+Building upon Del Vecchio's work, this thesis extends it with soft-reset mechanism and event-driven convolutional support.
+\\
+
+Several works targets the efficiency with weight sparsity and pruning. 
+Lightweight Software Kernels and Hardware Extensions for Efficient Sparse Deep Neural Networks on Microcontrollers~\cite{daghero2025lightweight},
+uses N:M structured sparsity to store the weights, the indices of the weights are stored to be used in execution.
+They introduce decimated im2col buffer to be used with the weight indices to calculate the inference.
+This approach reduces the memory access count with the cost of not using optimized CMSIS-DSP library. 
+Thus the trade-off point depends on the sparsity ratio.
+Another work, Compression and Inference of Spiking Neural Networks on Resource-Constrained Hardware~\cite{jurzec2025compression},
+built a toolchain which prunes the near-zero weights, compresses the model and generates C representations. 
+\\
+
+
+On the other hand some works focuses on activation sparisty and execution optimization.
+Efficient CNN Inference on Ultra-Low-Power MCUs via Saturation-Aware Convolution~\cite{li2026efficient},
+skips the multiply and accumulate (MAC) operations for the already saturated neurons. 
+\\
+
+
+To achieve activation sparsity in convolutional networks, the effected output neuron needs to be known. 
+There are couple of approaches, storing a pre-computed rulebook or calculating the address on the go, are among those.
+
+Submanifold Sparse Convolutional Networks~\cite{graham2017submanifold}, 
+constructs a rule-book with the active (non ground-state) neurons and its effective output neuron pairs, then this is used in GEMM operation. 
+Moreover, the rule-book has only the output neurons which is their receptive field's center is active.
+Consequently, the features cannot dilate or spread, which results in a slight increase of the error rates.
+
+Spike-based dynamic computing with asynchronous sensing-computing neuromorphic chip~\cite{yao2024spike},
+uses a function to find the affected output to achieve asynchronous, event-driven convolution.
+When a spike occurs, its address mapping function outputs the affected address on the output map.
+Then, the kernel is placed at that input point as an anchor, and the convolution is calculated.
+This eliminates unnecessary calculations and memory, with the cost of overhead resulting from the address mapping.
+
+
+
+One of the earliest examples of event-driven SNNs is Event-Driven Simulation of Networks of Spiking Neurons~\cite{watts1993neurips-eventdriven},
+instead of evaluating every neuron at every timestep, computation is performed only when a spike (an event) occurs.
+This mechanism works dynamically; every event and affected consecutive neuron is queued.
+
+ 
+
+Add this one 
+I am using a similar approach
+SpikeNET: An Event-driven Simulation Package for Modeling Large Networks of Spiking Neurons  
+
+https://sccn.ucsd.edu/~arno/mypapers/delormeN2003.pdf 
+
+From 2003 
+
+And maybe this one:
+They use look up tables for neuron and synapse dynamics to execute fast. 
+From 2006 
+%https://www.researchgate.net/publication/6743959_Event-Driven_Simulation_Scheme_for_Spiking_Neural_Networks_Using_Lookup_Tables_to_Characterize_Neuronal_Dynamics/link/02bfe5146fd27e03d2000000/download 
+Event-Driven Simulation Scheme for Spiking Neural
+Networks Using Lookup Tables to Characterize Neuronal
+Dynamics
+
+
+ 
+
+TODO: Explain different approaches for event-driven solutions 
 
 \section{Methodology and Pipeline Overview}
 % Will explain what methods are being used like to test golden ref, speed up calculation etc.
@@ -96,7 +249,7 @@ TODO: Rephrase the sparsity part after implement it.
 The first thing to implement is Soft Reset (Reset-by-subtraction), 
 The previous work had only the hard reset (Reset-to-value) and lacked the soft reset mechanism.
 
-First of all, the soft-reset mechanism introduced here follows the same approach as in Eshraghian et al. \cite{eshraghian2023snntorch}.
+The soft-reset mechanism introduced here follows the same approach as in Eshraghian et al. \cite{eshraghian2023snntorch}.
 Also, it is implemented in the \texttt{snnTorch} Python library in the same way, enabling the Python golden reference to match this work. 
 The mathematical representation of the soft-reset mechanism is given in the last part of Equation~\ref{eq:soft_reset}.
 
@@ -145,18 +298,81 @@ the threshold value is saved to be subtracted at the next timestep.
 
 \subsection{Convolutional Support}
 
-First of all a basic convolutional support added. Its pseudo-code shown in the Figure~\ref{}.
-% Add pseudo-code
+The basic convolutional support's pseudo-code shown in the Figure~\ref{fig:basic_conv}.
+
 The convolution calculation is done with a sliding window in a deductive manner, from the output neuron to the input neuron.
-For every output neuron, the sliding window is being calculated first
+For every output neuron an accumulator variable is set, 
+then the where sliding window is pointing in the input feature map is calculated. 
+With these coordinates the activation value and the weight is multiplied and added to the accumulation.
+%TODO: Change the multiply part if this is changed.
+This loop is repeated for all the output feature map. 
+
+\begin{figure}[h]
+\centering
+\begin{lstlisting}
+
+for each output channel o:
+  for each output row h:
+    for each output column w:
+      accumulator = 0
+
+      for each input channel i:
+        for each kernel row fy:
+          for each kernel column fx:
+            
+            ih = h * stride + fy - padding 
+            iw = w * stride + fx - padding
+
+            if ih and iw in the bounds:
+              accumulator = accumulator + input[i,ih,iw] * weight [o,i,fy,fx]
+
+      output[o,h,w] = accumulator
+
+\end{lstlisting}
+\caption{Basic Convolution}
+\label{fig:basic_conv}
+\end{figure}
 
 
-\subsection{Sparsity-Aware Inference}
+
+\subsection{Event-Driven Convolution}
+
+\subsubsection{Compressed Sparse Row (CSR) Table}
+\subsubsection{Implementation of CSR}
+\subsubsection{Neuron Update with CSR}
+
 
 
 \section{Embedded Deployment}
 
+In this work, Ubuntu 22.04 used as the development environment, github used as the version control and 
+the STM32H750B-DK platform is used as a primary deployment environment. 
+
+TODO: Detail it more
+
+
+\subsubsection{STM32H750B-DK Discovery Kit}
+
+The STM32H750B-DK Discovery Kit, has an STM32H750xB Arm Cortex-M7 microcontroller. 
+It has a LCD with a touch panel, two 512 Mbit Quad-SPI NOR flash memory, 128 Mbit SDRAM. The board's image is shown in Figure~\ref{TODO}.
+
+PUT THE BOARDS IMAGE.
+
+The STM32H750xB is a 32-bit microcontroller built around the Arm Cortex-M7 core operating at clock frequencies up to 480 MHz. 
+It has a 128 KBytes flash and a 1 Mbyte of RAM. 
+
+ST Microelectronics has several highly optimized Common Microcontroller Software Interface Standard (CMSIS) libraries for to be used by their microcontrollers. 
+Such as CMSIS-DSP and CMSIS-NN, which are used in this work.
+
+
+
 \subsection{CMSIS-DSP and CMSIS-NN}
+
+The CMSIS-DSP~\cite{cmsis_dsp}, is a library for common compute processing functions. 
+TODO: Explain
+
+The CMSIS-NN~\cite{lai2018cmsisnnefficientneuralnetwork}~\cite{cmsis_nn}
+TODO: Explain
 
 \subsection{UART DMA}
 % Check the 13-17/04 week for the details.
@@ -226,23 +442,23 @@ For every output neuron, the sliding window is being calculated first
 
 
 
-\begin{table}[htbp]
-\centering
-\caption{Power saving statistics for each transformation}
-\label{tab:power_saving_stats}
-\begin{tabular}{lrrr}
-\toprule
-\textbf{Transform} &
-\textbf{Mean PS (\%)} &
-\textbf{Min PS (\%)} &
-\textbf{Max PS (\%)} \\
-\midrule
-Bright scale & 17.18 & 16.85 & 18.46 \\
-Histogram    & -5.53 & -135.09 & 30.56 \\
-Hungry blue  & 6.43 & 2.78 & 20.24 \\
-\bottomrule
-\end{tabular}
-\end{table}
+% \begin{table}[htbp]
+% \centering
+% \caption{Power saving statistics for each transformation}
+% \label{tab:power_saving_stats}
+% \begin{tabular}{lrrr}
+% \toprule
+% \textbf{Transform} &
+% \textbf{Mean PS (\%)} &
+% \textbf{Min PS (\%)} &
+% \textbf{Max PS (\%)} \\
+% \midrule
+% Bright scale & 17.18 & 16.85 & 18.46 \\
+% Histogram    & -5.53 & -135.09 & 30.56 \\
+% Hungry blue  & 6.43 & 2.78 & 20.24 \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
 
 
 

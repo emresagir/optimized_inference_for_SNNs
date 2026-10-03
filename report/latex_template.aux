@@ -2,46 +2,75 @@
 \providecommand\hyper@newdestlabel[2]{}
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
-\citation{diehl2015fast}
-\citation{eshraghian2023snntorch}
+\citation{eshraghian2023training}
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {2}Background}{1}{section.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Spiking Neural Networks}{1}{subsection.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.1}Hard vs Soft Reset}{1}{subsubsection.2.1.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Spiking Convolutional Neural Networks}{1}{subsection.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.1}Backward Pass}{1}{subsubsection.2.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.2}Forward Pass (Inference)}{1}{subsubsection.2.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3}Related Work}{1}{section.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}Methodology and Pipeline Overview}{1}{section.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}Optimized C Code Generation}{1}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Soft Reset}{1}{subsection.5.1}\protected@file@percent }
-\citation{eshraghian2023snntorch}
-\newlabel{eq:soft_reset}{{1}{2}{Soft Reset}{equation.1}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Soft-Reset Implementation in C}}{2}{figure.caption.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.1}Leaky Integrate And Fire Model}{1}{subsubsection.2.1.1}\protected@file@percent }
+\newlabel{eq:lif_eq}{{1}{1}{Leaky Integrate And Fire Model}{equation.1}{}}
+\citation{diehl2015fast}
+\citation{li2022survey}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.2}Reset Mechanisms}{2}{subsubsection.2.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Spiking Convolutional Neural Networks}{2}{subsection.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.1}Convolution}{2}{subsubsection.2.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces An example 2-dimensional convolutional layer}}{2}{figure.caption.1}\protected@file@percent }
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{fig:soft-reset-c}{{1}{2}{Soft-Reset Implementation in C}{figure.caption.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Convolutional Support}{2}{subsection.5.2}\protected@file@percent }
+\newlabel{fig:example_conv_layer}{{1}{2}{An example 2-dimensional convolutional layer}{figure.caption.1}{}}
+\citation{daghero2025lightweight}
+\citation{jurzec2025compression}
+\citation{li2026efficient}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Convolution Steps with padding none and stride one}}{3}{figure.caption.2}\protected@file@percent }
+\newlabel{fig:conv_Steps}{{2}{3}{Convolution Steps with padding none and stride one}{figure.caption.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Related Work}{3}{section.3}\protected@file@percent }
+\citation{graham2017submanifold}
+\citation{yao2024spike}
+\citation{watts1993neurips-eventdriven}
+\citation{eshraghian2023snntorch}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Methodology and Pipeline Overview}{4}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Optimized C Code Generation}{4}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Soft Reset}{4}{subsection.5.1}\protected@file@percent }
+\newlabel{eq:soft_reset}{{2}{4}{Soft Reset}{equation.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Soft-Reset Implementation in C}}{5}{figure.caption.3}\protected@file@percent }
+\newlabel{fig:soft-reset-c}{{3}{5}{Soft-Reset Implementation in C}{figure.caption.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Convolutional Support}{5}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Event-Driven Convolution}{5}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.1}Compressed Sparse Row (CSR) Table}{5}{subsubsection.5.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.2}Implementation of CSR}{5}{subsubsection.5.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.3}Neuron Update with CSR}{5}{subsubsection.5.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Embedded Deployment}{5}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.0.1}STM32H750B-DK Discovery Kit}{5}{subsubsection.6.0.1}\protected@file@percent }
+\citation{cmsis_dsp}
+\citation{lai2018cmsisnnefficientneuralnetwork}
+\citation{cmsis_nn}
+\citation{eshraghian2023snntorch}
 \bibstyle{unsrt}
 \bibdata{references}
-\bibcite{diehl2015fast}{1}
-\bibcite{eshraghian2023snntorch}{2}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Sparsity-Aware Inference}{3}{subsection.5.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}Embedded Deployment}{3}{section.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}CMSIS-DSP and CMSIS-NN}{3}{subsection.6.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}UART DMA}{3}{subsection.6.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Quad-SPI Flash Chips}{3}{subsection.6.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}}{3}{subsection.6.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7}Model Training and Testing}{3}{section.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Braille}{3}{subsection.7.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}ST-MNIST}{3}{subsection.7.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {8}Experimental Results}{3}{section.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {9}Discussion}{3}{section.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {A}Appendix}{3}{appendix.A}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{References}{3}{appendix.A}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Transformation function definitons}}{3}{figure.caption.3}\protected@file@percent }
-\newlabel{fig:transformation_defs}{{2}{3}{Transformation function definitons}{figure.caption.3}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Pareto graph of different image transformation techniques}}{3}{figure.caption.4}\protected@file@percent }
-\newlabel{fig:pareto_graph1}{{3}{3}{Pareto graph of different image transformation techniques}{figure.caption.4}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Power saving statistics for each transformation}}{4}{table.caption.5}\protected@file@percent }
-\newlabel{tab:power_saving_stats}{{1}{4}{Power saving statistics for each transformation}{table.caption.5}{}}
-\gdef \@abspage@last{4}
+\bibcite{eshraghian2023training}{1}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Basic Convolution}}{6}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:basic_conv}{{4}{6}{Basic Convolution}{figure.caption.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}CMSIS-DSP and CMSIS-NN}{6}{subsection.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}UART DMA}{6}{subsection.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Quad-SPI Flash Chips}{6}{subsection.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}}{6}{subsection.6.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Model Training and Testing}{6}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Braille}{6}{subsection.7.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}ST-MNIST}{6}{subsection.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}Experimental Results}{6}{section.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Discussion}{6}{section.9}\protected@file@percent }
+\bibcite{diehl2015fast}{2}
+\bibcite{daghero2025lightweight}{3}
+\bibcite{jurzec2025compression}{4}
+\bibcite{li2026efficient}{5}
+\bibcite{graham2017submanifold}{6}
+\bibcite{yao2024spike}{7}
+\bibcite{watts1993neurips-eventdriven}{8}
+\bibcite{cmsis_dsp}{9}
+\bibcite{lai2018cmsisnnefficientneuralnetwork}{10}
+\bibcite{cmsis_nn}{11}
+\@writefile{toc}{\contentsline {section}{\numberline {A}Appendix}{7}{appendix.A}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{References}{7}{appendix.A}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Transformation function definitons}}{7}{figure.caption.6}\protected@file@percent }
+\newlabel{fig:transformation_defs}{{5}{7}{Transformation function definitons}{figure.caption.6}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Pareto graph of different image transformation techniques}}{7}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:pareto_graph1}{{6}{7}{Pareto graph of different image transformation techniques}{figure.caption.7}{}}
+\gdef \@abspage@last{7}
