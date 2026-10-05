@@ -71,7 +71,7 @@ nodes = {
     
     "5": nir.Affine(
         weight=sd['5.weight'].numpy(),
-        bias=np.zeros(32, dtype=np.float32),
+        bias=np.zeros(10, dtype=np.float32),
         input_type={'input': np.array([576])},
         output_type={'output': np.array([10])}
     ),
