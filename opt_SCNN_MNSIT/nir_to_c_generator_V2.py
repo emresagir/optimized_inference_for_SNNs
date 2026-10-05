@@ -311,8 +311,23 @@ class NIRToCGenerator:
             weights_to_store = affine.weight
             is_conv = (weights_to_store.ndim == 4)
 
+            # Flatten the lif parameters
+            tau       = np.asarray(lif.tau).reshape(-1)
+            threshold = np.asarray(lif.v_threshold).reshape(-1)
+            v_leak    = np.asarray(lif.v_leak).reshape(-1)
+            v_reset   = np.asarray(lif.v_reset).reshape(-1)
+
             # Convolutional Case
             if is_conv:
+                # Conv kernels currently implement reset-by-subtract only.
+                # TODO: Delete when the zero mechanism added.
+                if self.reset_mechanism != 'subtract':
+                    raise NotImplementedError(
+                        f"Layer {layer_idx} ('{affine_node}') is convolutional, but "
+                        f"reset_mechanism='{self.reset_mechanism}'. Conv2d layers currently "
+                        f"support only reset-by-subtract (reset-to-zero is not implemented yet)."
+                    )
+
                 # weights_to_store shape: [out_channels, in_channels, k_height, k_width]
                 out_c, in_c, kh, kw = weights_to_store.shape
                 in_shape = self.nir_graph.nodes[affine_node].input_type['input']
@@ -321,6 +336,13 @@ class NIRToCGenerator:
                 stride_h, stride_w = getattr(affine, 'stride', (1, 1))
                 padding_h, padding_w = getattr(affine, 'padding', (0, 0))
                 dil_h, dil_w = getattr(affine, 'dilation', (1, 1))
+
+                if stride_h != stride_w or padding_h != padding_w:
+                    raise NotImplementedError(
+                        f"Layer {layer_idx} ('{affine_node}'): asymmetric stride {(stride_h, stride_w)} / "
+                        f"padding {(padding_h, padding_w)} is not supported; the C conv kernel uses a "
+                        f"single stride and padding for both axes."
+                    )
 
                 in_h = in_shape[1]
                 in_w = in_shape[2]
@@ -351,7 +373,7 @@ class NIRToCGenerator:
             # SNNTorch export_nir.py uses dt = 1e-4 (hardcoded) and tau = dt/(1-beta)
             # To recover beta: beta = 1 - dt/tau
             dt = 1e-4  # Fixed timestep used by snntorch export_nir.py
-            beta = 1.0 - dt / lif.tau  # Discrete-time decay factor
+            beta = 1.0 - dt / tau  # Discrete-time decay factor
             
             # --- Inputs/Neurons Calculation ---
             if is_conv:
@@ -404,10 +426,10 @@ class NIRToCGenerator:
                 'num_connections': None,
 
                 # Per-neuron parameters
-                'tau': lif.tau,  # Array of tau values (one per neuron)
-                'threshold': lif.v_threshold,  # Array
-                'v_leak': lif.v_leak,  # Array
-                'v_reset': lif.v_reset,  # Array
+                'tau': tau,  # Array of tau values (one per neuron)
+                'threshold': threshold,  # Array
+                'v_leak': v_leak,  # Array
+                'v_reset': v_reset,  # Array
                 'beta': beta,  # Decay factor: beta = 1 - dt/tau (matches snntorch)
                 'has_recurrent': has_recurrent,
                 'recurrent_weights': np.diag(recurrent_weights) if has_recurrent else None  # 1D vector
@@ -455,10 +477,10 @@ class NIRToCGenerator:
             
             # Check if all neurons in layer have same parameters (for optimization)
             layer_info['uniform_params'] = (
-                np.all(lif.tau == lif.tau[0]) and
-                np.all(lif.v_threshold == lif.v_threshold[0]) and
-                np.all(lif.v_leak == lif.v_leak[0]) and
-                np.all(lif.v_reset == lif.v_reset[0])
+                np.all(tau == tau[0]) and
+                np.all(threshold == threshold[0]) and
+                np.all(v_leak == v_leak[0]) and
+                np.all(v_reset == v_reset[0])
             )
             
             self.layers.append(layer_info)
