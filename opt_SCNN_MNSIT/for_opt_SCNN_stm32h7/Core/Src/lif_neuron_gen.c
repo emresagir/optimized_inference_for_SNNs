@@ -54,8 +54,8 @@ static __attribute__((aligned(32))) q15_t weights1[L1_OUT_CH * L1_IN_CH * L1_KER
 static __attribute__((aligned(32))) q15_t weights2[L2_OUT_CH * L2_IN_CH * L2_KERNEL_H * L2_KERNEL_W]; // Conv connected
 static __attribute__((aligned(32))) q15_t weights3[NUM_NEURONS_LAYER2*NUM_NEURONS_LAYER3]; // Fully connected
 
-// Layer 1 CSR sparse connectivity table (precomputed in Python)
 __attribute__((section(".ext_weights")))
+// Layer 1 CSR sparse connectivity table (precomputed in Python)
 static const uint16_t row_ptr1[NUM_INPUTS + 1] = {
     0, 8, 24, 48, 80, 112, 144, 176, 200, 216, 224, 240, 272, 320, 384, 448,
     512, 576, 624, 656, 672, 696, 744, 816, 912, 1008, 1104, 1200, 1272, 1320, 1344, 1376,
@@ -72,7 +72,6 @@ static const uint16_t row_ptr1[NUM_INPUTS + 1] = {
     12344, 12368, 12400, 12432, 12464, 12496, 12520, 12536, 12544
 };
 __attribute__((section(".ext_weights")))
-
 static const uint16_t out_idx1[L1_NUM_CONNECTIONS] = {
     0, 49, 98, 147, 196, 245, 294, 343, 0, 1, 49, 50, 98, 99, 147, 148,
     196, 197, 245, 246, 294, 295, 343, 344, 0, 1, 2, 49, 50, 51, 98, 99,
@@ -860,7 +859,6 @@ static const uint16_t out_idx1[L1_NUM_CONNECTIONS] = {
     243, 244, 292, 293, 341, 342, 390, 391, 48, 97, 146, 195, 244, 293, 342, 391
 };
 __attribute__((section(".ext_weights")))
-
 static const uint16_t weight_idx1[L1_NUM_CONNECTIONS] = {
     0, 32, 64, 96, 128, 160, 192, 224, 1, 0, 33, 32, 65, 64, 97, 96,
     129, 128, 161, 160, 193, 192, 225, 224, 2, 1, 0, 34, 33, 32, 66, 65,
@@ -1648,7 +1646,6 @@ static const uint16_t weight_idx1[L1_NUM_CONNECTIONS] = {
     159, 158, 191, 190, 223, 222, 255, 254, 31, 63, 95, 127, 159, 191, 223, 255
 };
 __attribute__((section(".ext_weights")))
-
 // Layer 2 CSR sparse connectivity table (precomputed in Python)
 static const uint16_t row_ptr2[NUM_NEURONS_LAYER1 + 1] = {
     0, 16, 32, 64, 80, 112, 128, 144, 160, 176, 208, 224, 256, 272, 288, 320,
@@ -1678,7 +1675,6 @@ static const uint16_t row_ptr2[NUM_NEURONS_LAYER1 + 1] = {
     10208, 10224, 10240, 10256, 10288, 10304, 10336, 10352, 10368
 };
 __attribute__((section(".ext_weights")))
-
 static const uint16_t out_idx2[L2_NUM_CONNECTIONS] = {
     0, 9, 18, 27, 36, 45, 54, 63, 72, 81, 90, 99, 108, 117, 126, 135,
     0, 9, 18, 27, 36, 45, 54, 63, 72, 81, 90, 99, 108, 117, 126, 135,
@@ -2330,7 +2326,6 @@ static const uint16_t out_idx2[L2_NUM_CONNECTIONS] = {
     8, 17, 26, 35, 44, 53, 62, 71, 80, 89, 98, 107, 116, 125, 134, 143
 };
 __attribute__((section(".ext_weights")))
-
 static const uint16_t weight_idx2[L2_NUM_CONNECTIONS] = {
     0, 72, 144, 216, 288, 360, 432, 504, 576, 648, 720, 792, 864, 936, 1008, 1080,
     1, 73, 145, 217, 289, 361, 433, 505, 577, 649, 721, 793, 865, 937, 1009, 1081,
