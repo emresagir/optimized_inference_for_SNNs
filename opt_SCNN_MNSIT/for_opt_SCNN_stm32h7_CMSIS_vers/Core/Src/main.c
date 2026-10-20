@@ -117,6 +117,8 @@ int tiny_itoa(uint32_t v, char *buf) {
 uint8_t classify_sample(const TestSample *sample,
                                 uint32_t         spike_totals[TD_NUM_CLASSES]) {
     static int8_t output_spikes[TD_NUM_CLASSES];
+    // To test fairly between base, CSR and CMSIS-NN. The samples are moved from flash to RAM.
+    static __attribute__((aligned(32))) q7_t sample_in[200];  
 
     /* Zero the accumulator */
     memset(spike_totals, 0, TD_NUM_CLASSES * sizeof(uint32_t));
@@ -132,7 +134,10 @@ uint8_t classify_sample(const TestSample *sample,
         // snprintf(bufferotso, sizeof(bufferotso), "timestep = %d, \t\n", t);
         // usart1_print(bufferotso);
 
-        SNN_Run_Timestep(sample->spikes[t], output_spikes);
+        //The samples are moved from flash to RAM.
+        memcpy(sample_in, sample->spikes[t], 200);  
+
+        SNN_Run_Timestep(sample_in, output_spikes);
 
         /* Accumulate spikes – output_spikes[c] is 0 or 1 */
         for (uint8_t c = 0; c < TD_NUM_CLASSES; c++) {
@@ -267,6 +272,9 @@ int main(void)
   /* USER CODE BEGIN 1 */
   // MPU_Config();
   // CPU_CACHE_Enable();
+
+  SCB_EnableICache();
+  SCB_EnableDCache();
 
   /* USER CODE END 1 */
 

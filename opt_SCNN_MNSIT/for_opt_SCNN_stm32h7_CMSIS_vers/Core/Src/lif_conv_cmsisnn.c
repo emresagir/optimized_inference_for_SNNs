@@ -194,6 +194,10 @@ void LIFNeuron_Conv2d_Update_Subtract_CMSISNN(CMSISNN_ConvLayer *L,
     const uint16_t IC = L->in_ch,  IH = L->in_h,  IW = L->in_w;
     const uint16_t OC = L->out_ch, OH = L->out_h, OW = L->out_w;
 
+    // FOR OVERHEAD MEASUREMENT
+    // __DSB(); __ISB();
+    // const uint32_t t0 = DWT->CYCCNT;
+
     /* 1. Layout conversion CHW q7 -> NHWC int16 (NOT timed). The spike value is
      *    kept as-is, so non-binary inputs (ST-MNIST) still work. */
     for (uint16_t c = 0; c < IC; c++) {
@@ -205,9 +209,13 @@ void LIFNeuron_Conv2d_Update_Subtract_CMSISNN(CMSISNN_ConvLayer *L,
         }
     }
 
-    /* 2. CMSIS-NN convolution: the ONLY region whose cycles are counted. */
-    __DSB(); __ISB();
-    const uint32_t t0 = DWT->CYCCNT;
+    // FOR OVERHEAD MEASUREMENT
+    // const uint32_t t1 = DWT->CYCCNT;
+    // __DSB(); __ISB();
+    // CMSISNN_Cycles_Record(&L->cycles, t1 - t0);   /* unsigned subtraction handles wrap */
+    // CMSISNN_Cycles_Print(L, "L1-CMSIS-NN overhead for layout conversion");
+
+    /* 2. CMSIS-NN convolution */
 
 #ifdef CMSISNN_BIAS_AS_STRUCT
     /* Built here (not stored in the layer) because the members are const. */
@@ -222,11 +230,6 @@ void LIFNeuron_Conv2d_Update_Subtract_CMSISNN(CMSISNN_ConvLayer *L,
                                        &L->bias_dims,   CMSISNN_BIAS_ARG,
                                        &L->output_dims, L->out_buf);
     #undef CMSISNN_BIAS_ARG
-
-    const uint32_t t1 = DWT->CYCCNT;
-    __DSB(); __ISB();
-
-    CMSISNN_Cycles_Record(&L->cycles, t1 - t0);   /* unsigned subtraction handles wrap */
 
     if (status != 0) {          /* ARM_CMSIS_NN_SUCCESS == 0 */
         usart1_print("arm_convolve_s16 failed\r\n");

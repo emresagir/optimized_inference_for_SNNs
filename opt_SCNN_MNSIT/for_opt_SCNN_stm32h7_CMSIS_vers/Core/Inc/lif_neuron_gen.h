@@ -5,7 +5,31 @@
 #include "arm_math.h"
 
 #ifndef USE_CMSIS_NN
-#define USE_CMSIS_NN 1
+#define USE_CMSIS_NN 0
+#endif
+
+#define SNN_CONV_IMPL_CMSISNN 0
+#define SNN_CONV_IMPL_CSR     1
+#define SNN_CONV_IMPL_BASE    2
+
+//If use base uncomment this part.
+// #define SNN_LAYER1_METHOD 2
+// #define SNN_LAYER2_METHOD 2
+
+#ifndef SNN_LAYER1_METHOD
+#if USE_CMSIS_NN
+#define SNN_LAYER1_METHOD SNN_CONV_IMPL_CMSISNN
+#else
+#define SNN_LAYER1_METHOD SNN_CONV_IMPL_CSR
+#endif
+#endif
+
+#ifndef SNN_LAYER2_METHOD
+#if USE_CMSIS_NN
+#define SNN_LAYER2_METHOD SNN_CONV_IMPL_CMSISNN
+#else
+#define SNN_LAYER2_METHOD SNN_CONV_IMPL_CSR
+#endif
 #endif
 
 typedef struct {

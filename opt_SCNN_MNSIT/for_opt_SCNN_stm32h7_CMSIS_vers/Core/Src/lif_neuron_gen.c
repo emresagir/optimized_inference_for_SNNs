@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../Inc/snn_cycles.h"
+#include "../Inc/snn_placement.h"
 #include <string.h>
 
 
@@ -3361,6 +3362,105 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
         }
     }
 
+
+
+// Put here for testing purposes, will be moved to the generator when its fully working.
+    void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array of neurons for this layer
+    const q7_t* input_spikes,  // Input feature map [In_CH * In_H * In_W]
+    const q15_t* weights,       // Weights [Out_CH * In_CH * KH * KW]
+    q7_t* output_spikes,        // Output spikes [Out_CH * Out_H * Out_W]
+    uint16_t in_h, uint16_t in_w,
+    uint16_t in_ch,
+    uint16_t out_h, uint16_t out_w,
+    uint16_t out_ch,
+    uint16_t kh, uint16_t kw,
+    uint16_t stride,
+    uint16_t padding
+) {
+    // 1. Iterate over every output "pixel" (which is one LIF neuron)
+    for (uint16_t oc = 0; oc < out_ch; oc++) {
+        for (uint16_t oh = 0; oh < out_h; oh++) {
+            for (uint16_t ow = 0; ow < out_w; ow++) {
+                
+                // Accumulator for the current (this is the weighted input)
+                q31_t acc = 0; 
+
+                // 2. Perform the Convolution (Sliding Window)
+                for (uint16_t ic = 0; ic < in_ch; ic++) {
+                    for (uint16_t fy = 0; fy < kh; fy++) {
+                        for (uint16_t fx = 0; fx < kw; fx++) {
+                            
+                            // Calculate input coordinates
+                            int16_t ih = oh * stride + fy - padding;
+                            int16_t iw = ow * stride + fx - padding;
+
+                            // Check boundaries (Padding logic)
+                            if (ih >= 0 && ih < in_h && iw >= 0 && iw < in_w) {
+                                // Indexing for [CH][H][W] format
+                                uint32_t input_idx = (ic * in_h * in_w) + (ih * in_w) + iw;
+                                // Indexing for [OutCH][InCH][KH][KW] format
+                                uint32_t weight_idx = (oc * in_ch * kh * kw) + (ic * kh * kw) + (fy * kw) + fx;
+
+                                acc += (q31_t)input_spikes[input_idx] * weights[weight_idx];
+                            }
+                        }
+                    }
+                }
+
+                // 3. LIF Neuron Update Logic
+                // Index of the specific neuron in the flat array
+                uint32_t n_idx = (oc * out_h * out_w) + (oh * out_w) + ow;
+
+                // Pull parameters into q31 to avoid premature saturation
+                q31_t v_prev    = (q31_t)neurons[n_idx].membrane_potential;
+                q31_t reset     = (q31_t)neurons[n_idx].reset_value; // I will use this reset to achieve soft-reset subtraction in the next timestep.
+                q31_t decay     = (q31_t)neurons[n_idx].decay_factor;
+                q31_t threshold = (q31_t)neurons[n_idx].threshold;
+
+                // All arithmetic stays in q31 — acc is already in Q15 scale (spike * Q15_weight)
+                q31_t v_shifted = (v_prev * decay) >> 15;
+                q31_t v_new     = v_shifted + acc - reset;  // acc added here before any saturation
+                // Reset value consist the threshold from the last timestep if there was any spike, otherwise its zero. (Uth*S(t)).
+                // v_new = ((v_prev)*decay) + acc - reset
+                // U(t+1) = (U(t)*Beta) + W*X(t+1) - Uth*S(t)
+                // This is the equation from the snntorch tutorial 3. 
+
+                // Only saturate when writing back to the q15_t struct field
+                neurons[n_idx].membrane_potential = (q15_t)__SSAT(v_new, 16);
+
+
+                // SOFT RESET
+                if (neurons[n_idx].membrane_potential > neurons[n_idx].threshold) {
+                    output_spikes[n_idx] = 1;
+                    neurons[n_idx].reset_value    = (q15_t)threshold;  // will subtract next step
+                } else {
+                    output_spikes[n_idx] = 0;
+                    neurons[n_idx].reset_value    = 0;                 // clear if there is no spike
+                }
+
+                // TODO: DELETE THIS DEBUG PRINT FROM GENERATOR WHEN ITS FULLY WORKING
+                // WILL FOLLOW WITH DEBUG TO SEE THE MEMBRANE POTENTIAL FOR THAT SPECIFIC NEURON.
+                // oc == 10 oh == 0 ow == 0, makes index 490 for the first layer. 90 for the second layer.
+                // I will watch the membrane potential of the firts layer's this neuron.
+                //if (n_idx == 490 && oc == 10 && oh == 0 && ow == 0 ) {
+                
+                // For Layer 2 most spiking one is C14, H1, W2 which makes the n_idx = (14×3×3)+(1×3)+2 = 131
+                // if (n_idx == 131 && oc == 14 && oh == 1 && ow == 2 ) {
+                //     char buf[200];
+                //     // Use %ld for q31_t (long int) to avoid format warnings
+                //     // We print the raw integer. 60 = 1.0 in float terms.
+                //     snprintf(buf, sizeof(buf), "V:%ld = Reset:%ld + v_shifted:%ld + acc: %ld| threshold: %d S:%d | nindex = %ld | v_prev = %ld | decay = %ld \\r\\n", 
+                //             (long)neurons[n_idx].membrane_potential, reset, v_shifted, acc, neurons[n_idx].threshold, 
+                //              output_spikes[n_idx], n_idx, v_prev, decay);
+                //     usart1_print(buf);
+                // }
+
+
+            }
+        }
+    }
+}
+
 void Load_NIR_Weights(void) {
     const float scale = 60.0f;
 
@@ -4189,6 +4289,32 @@ void SNN_Init(void) {
                            L2_STRIDE_H, L2_STRIDE_W, L2_PAD_H, L2_PAD_W, 1, 1);
 #endif
 
+   #ifndef SNN_PRINT_PLACEMENT
+   #define SNN_PRINT_PLACEMENT 1
+   #endif
+   #if SNN_PRINT_PLACEMENT
+       PLC(layer1); PLC(layer2); PLC(layer3);
+       PLC(l1_spikes); PLC(l2_spikes);
+       PLC(weights1); PLC(weights2); PLC(weights3);
+       PLC(row_ptr1_r); PLC(out_idx1_r); PLC(weight_idx1_r);
+       PLC(row_ptr2_r); PLC(out_idx2_r); PLC(weight_idx2_r);
+   #if USE_CMSIS_NN
+       PLC(cnn1_w); PLC(cnn1_mult); PLC(cnn1_in); PLC(cnn1_out);
+       PLC(cnn2_w); PLC(cnn2_mult); PLC(cnn2_in); PLC(cnn2_out);
+       PLC_FUNC(arm_convolve_s16);
+       PLC_FUNC(LIFNeuron_Conv2d_Update_Subtract_CMSISNN);
+   #endif
+       PLC_FUNC(LIFNeuron_Conv2d_Update_Subtract_CSR);
+       PLC_FUNC(LIFNeuron_Conv2d_Update_Subtract_Base);
+   #endif
+
+
+   // Checking cache status and system clock frequency
+    char cb[80];
+    snprintf(cb, sizeof(cb), "ICACHE=%d DCACHE=%d CLK=%lu\r\n",
+            !!(SCB->CCR & SCB_CCR_IC_Msk), !!(SCB->CCR & SCB_CCR_DC_Msk),
+            (unsigned long)SystemCoreClock);
+    usart1_print(cb);
 }
 
 // void SNN_Run_Timestep(const q7_t* input_spikes, q7_t* output_spikes) {
@@ -4306,40 +4432,69 @@ void SNN_Init(void) {
 
 
 void SNN_Run_Timestep(const q7_t* input_spikes, q7_t* output_spikes) {
-    
-#if USE_CMSIS_NN
-    CYC_START(t_l1);
-    // Layer 1 (convolutional, CMSIS)
-    LIFNeuron_Conv2d_Update_Subtract_CMSISNN(&cnn1, layer1, input_spikes, l1_spikes);
-    CYC_STOP(cyc_l1, t_l1);
-    CYC_LOG(cyc_l1, "L1", cyc_count_nz(input_spikes, NUM_INPUTS));
 
-    CYC_START(t_l2);
-    // Layer 2 (convolutional, CMSIS)
-    LIFNeuron_Conv2d_Update_Subtract_CMSISNN(&cnn2, layer2, l1_spikes, l2_spikes);
-    CYC_STOP(cyc_l2, t_l2);
-    CYC_LOG(cyc_l2, "L2", cyc_count_nz(l1_spikes, NUM_NEURONS_LAYER1));
-#else
-    CYC_START(t_l1);
-    // Layer 1 (convolutional, CSR fallback)
-    LIFNeuron_Conv2d_Update_Subtract_CSR(layer1, input_spikes, weights1, row_ptr1_r, out_idx1_r, weight_idx1_r, NUM_INPUTS, NUM_NEURONS_LAYER1, l1_spikes);
-    CYC_STOP(cyc_l1, t_l1);
-    CYC_LOG(cyc_l1, "L1", cyc_count_nz(input_spikes, NUM_INPUTS));
 
-    CYC_START(t_l2);
-    // Layer 2 (convolutional, CSR fallback)
-    LIFNeuron_Conv2d_Update_Subtract_CSR(layer2, l1_spikes, weights2, row_ptr2_r, out_idx2_r, weight_idx2_r, NUM_NEURONS_LAYER1, NUM_NEURONS_LAYER2, l2_spikes);
-    CYC_STOP(cyc_l2, t_l2);
-    CYC_LOG(cyc_l2, "L2", cyc_count_nz(l1_spikes, NUM_NEURONS_LAYER1));
-#endif
+    #if SNN_PRINT_PLACEMENT
+        static uint8_t plc_done = 0;
+        if (!plc_done) { PLC_PTR("input_spikes", input_spikes, NUM_INPUTS); plc_done = 1; }
+    #endif
 
-    // Layer 3 (no recurrent, fully connected)
-    LIFNeuron_Layer_Update_Subtract_NoRecurrent(layer3, l2_spikes, weights3, NUM_NEURONS_LAYER2, NUM_NEURONS_LAYER3, l3_spikes, 0);
 
-    // Copy output spikes
-    for (int i = 0; i < NUM_NEURONS_LAYER3; i++) {
-        output_spikes[i] = l3_spikes[i];
-    }  
+    #if SNN_LAYER1_METHOD == SNN_CONV_IMPL_CMSISNN && !USE_CMSIS_NN
+    #error "SNN_LAYER1_METHOD selects CMSISNN but USE_CMSIS_NN is disabled."
+    #endif
+
+    #if SNN_LAYER2_METHOD == SNN_CONV_IMPL_CMSISNN && !USE_CMSIS_NN
+    #error "SNN_LAYER2_METHOD selects CMSISNN but USE_CMSIS_NN is disabled."
+    #endif
+
+        CYC_START(t_l1);
+    #if SNN_LAYER1_METHOD == SNN_CONV_IMPL_CMSISNN
+        // Layer 1 (convolutional, CMSISNN)
+        LIFNeuron_Conv2d_Update_Subtract_CMSISNN(&cnn1, layer1, input_spikes, l1_spikes);
+    #elif SNN_LAYER1_METHOD == SNN_CONV_IMPL_CSR
+        // Layer 1 (convolutional, CSR fallback)
+        LIFNeuron_Conv2d_Update_Subtract_CSR(layer1, input_spikes, weights1, row_ptr1_r, out_idx1_r, weight_idx1_r, NUM_INPUTS, NUM_NEURONS_LAYER1, l1_spikes);
+    #elif SNN_LAYER1_METHOD == SNN_CONV_IMPL_BASE
+        // Layer 1 (convolutional, direct base implementation)
+        LIFNeuron_Conv2d_Update_Subtract_Base(layer1, input_spikes, weights1, l1_spikes,
+                                            10, 10, L1_IN_CH,
+                                            L1_OUT_H, L1_OUT_W, L1_OUT_CH,
+                                            L1_KERNEL_H, L1_KERNEL_W,
+                                            L1_STRIDE_H, L1_PAD_H);
+    #else
+    #error "Unsupported SNN_LAYER1_METHOD. Use 0 (CMSISNN), 1 (CSR), or 2 (BASE)."
+    #endif
+        CYC_STOP(cyc_l1, t_l1);
+        CYC_LOG(cyc_l1, "L1", cyc_count_nz(input_spikes, NUM_INPUTS));
+
+        CYC_START(t_l2);
+    #if SNN_LAYER2_METHOD == SNN_CONV_IMPL_CMSISNN
+        // Layer 2 (convolutional, CMSISNN)
+        LIFNeuron_Conv2d_Update_Subtract_CMSISNN(&cnn2, layer2, l1_spikes, l2_spikes);
+    #elif SNN_LAYER2_METHOD == SNN_CONV_IMPL_CSR
+        // Layer 2 (convolutional, CSR fallback)
+        LIFNeuron_Conv2d_Update_Subtract_CSR(layer2, l1_spikes, weights2, row_ptr2_r, out_idx2_r, weight_idx2_r, NUM_NEURONS_LAYER1, NUM_NEURONS_LAYER2, l2_spikes);
+    #elif SNN_LAYER2_METHOD == SNN_CONV_IMPL_BASE
+        // Layer 2 (convolutional, direct base implementation)
+        LIFNeuron_Conv2d_Update_Subtract_Base(layer2, l1_spikes, weights2, l2_spikes,
+                                            L1_OUT_H, L1_OUT_W, L1_OUT_CH,
+                                            L2_OUT_H, L2_OUT_W, L2_OUT_CH,
+                                            L2_KERNEL_H, L2_KERNEL_W,
+                                            L2_STRIDE_H, L2_PAD_H);
+    #else
+    #error "Unsupported SNN_LAYER2_METHOD. Use 0 (CMSISNN), 1 (CSR), or 2 (BASE)."
+    #endif
+        CYC_STOP(cyc_l2, t_l2);
+        CYC_LOG(cyc_l2, "L2", cyc_count_nz(l1_spikes, NUM_NEURONS_LAYER1));
+
+        // Layer 3 (no recurrent, fully connected)
+        LIFNeuron_Layer_Update_Subtract_NoRecurrent(layer3, l2_spikes, weights3, NUM_NEURONS_LAYER2, NUM_NEURONS_LAYER3, l3_spikes, 0);
+
+        // Copy output spikes
+        for (int i = 0; i < NUM_NEURONS_LAYER3; i++) {
+            output_spikes[i] = l3_spikes[i];
+        }
 }
 
 void SNN_Reset_State(void) {
