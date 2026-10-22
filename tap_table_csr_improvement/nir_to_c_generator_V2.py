@@ -1457,7 +1457,7 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
     def _generate_sparse_conv_lif_tap_functions(self) -> str:
             """Generates the event-driven, tap-table based convolutional LIF update function."""
             return """
-    void LIFNeuron_Conv2d_Update_Subtract_Tap(
+void LIFNeuron_Conv2d_Update_Subtract_Tap(
         LIFNeuron* neurons,           
         const q7_t* input_spikes,     
         const q15_t* weights,         
@@ -1472,19 +1472,26 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
         q7_t* output_spikes           
     ) {
         const uint32_t num_outputs = (uint32_t)out_ch * out_spatial;
-        const uint32_t w_oc_stride = (uint32_t)in_ch * kernel_size;
+        const uint32_t w_oc_stride = (uint32_t)in_ch * kernel_size;   // distance between output-channel kernels in weights[]
 
+        // Decay: V(t+1) = V(t) * beta   (Q15 fixed point)
         for (uint32_t o = 0; o < num_outputs; o++) {
             q31_t decayed = ((q31_t)neurons[o].membrane_potential *
                             (q31_t)neurons[o].decay_factor) >> 15;
             neurons[o].membrane_potential = (q15_t)__SSAT(decayed, 16);
         }
 
+        // Event-driven accumulation. The tap table only knows the spatial geometry;
+        // channel offsets are added with constant strides, so no per-synapse index
+        // arrays are read from flash:
+        //   neuron = oc * out_spatial + tap_out[t]
+        //   weight = oc * w_oc_stride + ic * kernel_size + tap_w[t]
         for (uint16_t ic = 0; ic < in_ch; ic++) {
             const q7_t*  in_plane = input_spikes + (uint32_t)ic * in_spatial;
             const q15_t* w_ic     = weights      + (uint32_t)ic * kernel_size;
 
             for (uint16_t p = 0; p < in_spatial; p++) {
+                // Not binary for every dataset (e.g. ST-MNIST input), so keep the MAC.
                 const q31_t s = in_plane[p];
                 if (s == 0) {
                     continue;
@@ -1504,14 +1511,13 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
             }
         }
 
+        // Soft reset (subtract threshold if the neuron spiked last step) + spike check 
         for (uint32_t o = 0; o < num_outputs; o++) {
-            q31_t v = (q31_t)neurons[o].membrane_potential - (q31_t)neurons[o].reset_value;
-            v = __SSAT(v, 16);
-            neurons[o].membrane_potential = (q15_t)v;
+            neurons[o].membrane_potential -= neurons[o].reset_value;
 
-            if (v > neurons[o].threshold) {
+            if (neurons[o].membrane_potential > neurons[o].threshold) {
                 output_spikes[o] = 1;
-                neurons[o].reset_value = neurons[o].threshold;
+                neurons[o].reset_value = neurons[o].threshold;  // subtract next step
             } else {
                 output_spikes[o] = 0;
                 neurons[o].reset_value = 0;
