@@ -171,24 +171,30 @@ print(f"Total spikes = {total_spikes[max_idx].item()}")
 
 utils.reset(scnn_net)
 
-timesteps = []
-neuron_mem_history = []
-neuron_spike_history = []
-
-layer = 2
+# Set which layer(s) to debug. Use one value like [1], or all three like [1, 2, 3].
+# This keeps the same if-based layer checks, but allows multiple layer selections.
+layer_debug_list = [1, 2, 3]
+layer_debug_data = {
+    layer: {
+        "timesteps": [],
+        "membrane_potentials": [],
+        "spikes": []
+    }
+    for layer in layer_debug_list
+}
 
 # Layer 1
-# track_ch = 7
-# track_y = 3
-# track_x = 0
+track_ch_1 = 7
+track_y_1 = 3
+track_x_1 = 0
 
 # Layer 2
-track_ch = 11
-track_y = 0
-track_x = 1
+track_ch_2 = 11
+track_y_2 = 0
+track_x_2 = 1
 
 # Output
-# track = 8
+track = 8
 
 
 for t in range(data.size(0)):
@@ -207,81 +213,84 @@ for t in range(data.size(0)):
     cur3 = fc(s2.flatten(1))
     s3, mem3 = lif3(cur3)
 
-    timesteps.append(t)
+    for layer in layer_debug_list:
 
-    if layer == 1:
+        if layer == 1:
 
-        current_input = c1_out[
-            0, track_ch, track_y, track_x
-        ].item()
+            current_input = c1_out[
+                0, track_ch_1, track_y_1, track_x_1
+            ].item()
 
-        current_mem = lif1.mem[
-            0, track_ch, track_y, track_x
-        ].item()
+            current_mem = lif1.mem[
+                0, track_ch_1, track_y_1, track_x_1
+            ].item()
 
-        current_spike = s1[
-            0, track_ch, track_y, track_x
-        ].item()
+            current_spike = s1[
+                0, track_ch_1, track_y_1, track_x_1
+            ].item()
 
-        neuron_mem_history.append(current_mem)
-        neuron_spike_history.append(current_spike)
+            layer_debug_data[1]["timesteps"].append(t)
+            layer_debug_data[1]["membrane_potentials"].append(current_mem)
+            layer_debug_data[1]["spikes"].append(current_spike)
 
-        print(
-            f"T={t} | Input: {current_input:.4f} | "
-            f"Mem: {current_mem:.4f} | "
-            f"Spike: {current_spike}"
-        )
+            print(
+                f"L1 | T={t} | Input: {current_input:.4f} | "
+                f"Mem: {current_mem:.4f} | "
+                f"Spike: {current_spike}"
+            )
 
-    elif layer == 2:
+        if layer == 2:
 
-        current_input = c2_out[
-            0, track_ch, track_y, track_x
-        ].item()
+            current_input = c2_out[
+                0, track_ch_2, track_y_2, track_x_2
+            ].item()
 
-        current_mem = lif2.mem[
-            0, track_ch, track_y, track_x
-        ].item()
+            current_mem = lif2.mem[
+                0, track_ch_2, track_y_2, track_x_2
+            ].item()
 
-        current_spike = s2[
-            0, track_ch, track_y, track_x
-        ].item()
+            current_spike = s2[
+                0, track_ch_2, track_y_2, track_x_2
+            ].item()
 
-        neuron_mem_history.append(current_mem)
-        neuron_spike_history.append(current_spike)
+            layer_debug_data[2]["timesteps"].append(t)
+            layer_debug_data[2]["membrane_potentials"].append(current_mem)
+            layer_debug_data[2]["spikes"].append(current_spike)
 
-        print(
-            f"T={t} | Input: {current_input:.4f} | "
-            f"Mem: {current_mem:.4f} | "
-            f"Spike: {current_spike}"
-        )
+            print(
+                f"L2 | T={t} | Input: {current_input:.4f} | "
+                f"Mem: {current_mem:.4f} | "
+                f"Spike: {current_spike}"
+            )
 
-    elif layer == 3:
+        if layer == 3:
 
-        current_input = cur3[0, track].item()
-        current_mem = mem3[0, track].item()
-        current_spike = s3[0, track].item()
+            current_input = cur3[0, track].item()
+            current_mem = mem3[0, track].item()
+            current_spike = s3[0, track].item()
 
-        neuron_mem_history.append(current_mem)
-        neuron_spike_history.append(current_spike)
+            layer_debug_data[3]["timesteps"].append(t)
+            layer_debug_data[3]["membrane_potentials"].append(current_mem)
+            layer_debug_data[3]["spikes"].append(current_spike)
 
-        print(
-            f"T={t} | Input: {current_input:.4f} | "
-            f"Mem: {current_mem:.4f} | "
-            f"Spike: {current_spike}"
-        )
+            print(
+                f"L3 | T={t} | Input: {current_input:.4f} | "
+                f"Mem: {current_mem:.4f} | "
+                f"Spike: {current_spike}"
+            )
 
 
-np.savez(
-    "./debug_and_plot/membrane_potentials_python.npz",
-    timesteps=np.array(timesteps),
-    membrane_potentials=np.array(neuron_mem_history),
-    spikes=np.array(neuron_spike_history)
-)
-
-print(
-    "\n[INFO] Saved to "
-    "'./debug_and_plot/membrane_potentials_python.npz'"
-)
+for layer, history in layer_debug_data.items():
+    np.savez(
+        f"./debug_and_plot/membrane_potentials_layer{layer}.npz",
+        timesteps=np.array(history["timesteps"]),
+        membrane_potentials=np.array(history["membrane_potentials"]),
+        spikes=np.array(history["spikes"])
+    )
+    print(
+        "\n[INFO] Saved to "
+        f"'./debug_and_plot/membrane_potentials_layer{layer}.npz'"
+    )
 
 print("\n--- Result ---")
 print(f"Accumulated Spikes: {total_spikes.numpy()}")
