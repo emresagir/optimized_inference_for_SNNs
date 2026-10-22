@@ -37,6 +37,9 @@ Weight Formatting:
 
 Limitations:
 - Bias is NOT supported (must be zero in NIR file)
+
+Example Usage:
+    python nir_to_c_generator_V2.py --optimized true --conv_mode tap
 """
 
 import nir
@@ -48,7 +51,7 @@ from typing import Dict, List, Tuple
 DEBUG = True
 
 class NIRToCGenerator:
-    def __init__(self, nir_file_path: str, output_prefix: str = "snn", opt_conv: bool = True):
+    def __init__(self, nir_file_path: str, output_prefix: str = "snn", opt_conv: bool = True, conv_mode: str = "tap"):
         """
         Initialize the NIR to C code generator.
         
@@ -56,12 +59,16 @@ class NIRToCGenerator:
             nir_file_path: Path to the .nir file
             output_prefix: Prefix for output files (default: "snn")
             opt_conv: Whether to use optimized code generation (default: True)
+            conv_mode: Convolution optimization mode: 'tap' or 'csr' (default: 'tap')
         """
         self.nir_graph = nir.read(nir_file_path)
         self.output_prefix = output_prefix
         self.scale_factor = 60.0  # Q15 scaling factor
         self.opt_conv = opt_conv
+        self.conv_mode = conv_mode.lower()
         print(f"Is optimized: {self.opt_conv}")
+        if self.opt_conv:
+            print(f"Convolution mode: {self.conv_mode}")
         
         # Extract network architecture
         self.layers = []
@@ -83,6 +90,78 @@ class NIRToCGenerator:
         return f"{value:.4e}f"
         
         
+
+        
+    @staticmethod
+    def _build_conv_taps(in_h, in_w, out_h, out_w,
+                        kh, kw,
+                        stride_h, stride_w,
+                        padding_h, padding_w,
+                        dil_h=1, dil_w=1):
+        """
+        Build the per-input-pixel "tap table" of one conv layer.
+        Essentially a similar table without taking the channel into consideration. 
+        This enables us to shrink weight index array, and shrinks the overall memory.
+
+        A conv layer is shift-invariant: WHICH output positions / kernel taps an
+        input pixel (ih, iw) touches does not depend on the input channel or on
+        the output channel. The channels only add constant strides:
+
+            output neuron idx = oc * (out_h*out_w) + tap_out
+            weight idx        = oc * (in_c*kh*kw) + ic * (kh*kw) + tap_w
+
+        So the table describes ONE (in channel, out channel) pair and the C
+        kernel rebuilds the full indices from the channel strides. This removes
+        the weight_idx array entirely and shrinks out_idx/weight_idx by a factor
+        of in_c * out_c (num_connections == num_taps * in_c * out_c).
+
+        Returns:
+            tap_ptr:  list[int], len == in_h*in_w + 1  (CSR row offsets per input pixel, equivalent of row_ptr)
+            tap_out:  list[int], len == num_taps       (oh*out_w + ow, equivalent to out_index without the channel info taking into account)
+            tap_w:    list[int], len == num_taps       (fy*kw + fx, equivalent to weight_index without the channel info taking into account)
+            num_taps: int
+        """
+        in_spatial = in_h * in_w
+        out_spatial = out_h * out_w
+
+        # Limits of the C types used by the kernel (much looser than before:
+        # channel counts and total weight count no longer matter).
+        if in_spatial > 0xFFFF or out_spatial > 0xFFFF:
+            raise ValueError(
+                f"Tap table: in_h*in_w={in_spatial} or out_h*out_w={out_spatial} "
+                f"exceeds uint16_t range")
+        
+        #TODO: This probably needs to increased, 255 not enough.
+        if kh * kw > 0x100:
+            raise ValueError(f"Tap table: kh*kw={kh * kw} exceeds uint8_t range")
+
+        rows = [[] for _ in range(in_spatial)]
+        for oh in range(out_h):
+            for ow in range(out_w):
+                sp_out = oh * out_w + ow # Output indexing
+                for fy in range(kh): # fy walks over kernel height. 
+                    ih = oh * stride_h + fy * dil_h - padding_h # input height is decided 
+                    if ih < 0 or ih >= in_h:
+                        continue
+                    for fx in range(kw):
+                        iw = ow * stride_w + fx * dil_w - padding_w #input width is decided, thus the input indexes are found.
+                        if iw < 0 or iw >= in_w:
+                            continue
+                        rows[ih * in_w + iw].append((sp_out, fy * kw + fx)) # rows [input index] append (output index, kernel weight index)
+
+        # Flattens the tuple into vectors.
+        tap_ptr, tap_out, tap_w = [0], [], []
+        for row in rows:
+            for sp_out, tap in row:
+                tap_out.append(sp_out)
+                tap_w.append(tap)
+            tap_ptr.append(len(tap_out))
+
+        num_taps = len(tap_out)
+        if num_taps > 0xFFFF:
+            raise ValueError(f"Tap table: num_taps={num_taps} exceeds uint16_t range")
+        return tap_ptr, tap_out, tap_w, num_taps
+
 
         
     @staticmethod
@@ -175,7 +254,49 @@ class NIRToCGenerator:
                                 cursor[input_index] = c + 1
     
         return row_ptr, out_idx, weight_idx, num_connections
-    
+
+    @staticmethod
+    def _build_conv_taps(in_h, in_w, out_h, out_w,
+                         kh, kw,
+                         stride_h, stride_w,
+                         padding_h, padding_w,
+                         dil_h=1, dil_w=1):
+        """Build the per-input-pixel 'tap table' of one conv layer."""
+        in_spatial = in_h * in_w
+        out_spatial = out_h * out_w
+
+        if in_spatial > 0xFFFF or out_spatial > 0xFFFF:
+            raise ValueError(
+                f"Tap table: in_h*in_w={in_spatial} or out_h*out_w={out_spatial} "
+                f"exceeds uint16_t range")
+        if kh * kw > 0x100:
+            raise ValueError(f"Tap table: kh*kw={kh * kw} exceeds uint8_t range")
+
+        rows = [[] for _ in range(in_spatial)]
+        for oh in range(out_h):
+            for ow in range(out_w):
+                sp_out = oh * out_w + ow
+                for fy in range(kh):
+                    ih = oh * stride_h + fy * dil_h - padding_h
+                    if ih < 0 or ih >= in_h:
+                        continue
+                    for fx in range(kw):
+                        iw = ow * stride_w + fx * dil_w - padding_w
+                        if iw < 0 or iw >= in_w:
+                            continue
+                        rows[ih * in_w + iw].append((sp_out, fy * kw + fx))
+
+        tap_ptr, tap_out, tap_w = [0], [], []
+        for row in rows:
+            for sp_out, tap in row:
+                tap_out.append(sp_out)
+                tap_w.append(tap)
+            tap_ptr.append(len(tap_out))
+
+        num_taps = len(tap_out)
+        if num_taps > 0xFFFF:
+            raise ValueError(f"Tap table: num_taps={num_taps} exceeds uint16_t range")
+        return tap_ptr, tap_out, tap_w, num_taps
     
     @staticmethod
     def _format_int_array(name: str, ctype: str, values, size_expr: str, per_line: int = 16) -> str:
@@ -427,6 +548,12 @@ class NIRToCGenerator:
                 'weight_idx': None,
                 'num_connections': None,
 
+                # Tap fields
+                'tap_ptr': None,
+                'tap_out': None,
+                'tap_w': None,
+                'num_taps': None,
+
                 # Per-neuron parameters
                 'tau': tau,  # Array of tau values (one per neuron)
                 'threshold': threshold,  # Array
@@ -438,22 +565,45 @@ class NIRToCGenerator:
             }
 
             # Filling the necessary info for the optimized convolution execution.
-            if self.opt_conv:
-                row_ptr, out_idx, weight_idx, num_connections = self._build_conv_csr(
-                    in_h, in_w, in_c,
-                    out_h, out_w, out_c,
-                    kh, kw,
-                    stride_h, stride_w,
-                    padding_h, padding_w,
-                )
-                layer_info['row_ptr'] = row_ptr
-                layer_info['out_idx'] = out_idx
-                layer_info['weight_idx'] = weight_idx
-                layer_info['num_connections'] = num_connections
-        
-                if DEBUG:
-                    print(f"CSR: {num_connections} connections "
-                        f"({num_connections / (out_c*out_h*out_w*in_c*kh*kw):.1%} density)")
+            if self.opt_conv and is_conv:
+                if self.conv_mode == 'tap':
+                    if (dil_h, dil_w) != (1, 1):
+                        pass
+                    tap_ptr, tap_out, tap_w, num_taps = self._build_conv_taps(
+                        in_h, in_w, out_h, out_w,
+                        kh, kw,
+                        stride_h, stride_w,
+                        padding_h, padding_w,
+                        dil_h, dil_w,
+                    )
+                    layer_info['tap_ptr'] = tap_ptr
+                    layer_info['tap_out'] = tap_out
+                    layer_info['tap_w'] = tap_w
+                    layer_info['num_taps'] = num_taps
+
+                    if DEBUG:
+                        print(f"Tap table: {num_taps} taps "
+                              f"(= {num_taps * in_c * out_c} full connections the old CSR stored)")
+                else:
+                    if (dil_h, dil_w) != (1, 1):
+                        raise NotImplementedError(
+                            f"Layer {layer_idx} ('{affine_node}'): dilation {(dil_h, dil_w)} is only "
+                            f"supported with the optimized tap table convolution.")
+                    row_ptr, out_idx, weight_idx, num_connections = self._build_conv_csr(
+                        in_h, in_w, in_c,
+                        out_h, out_w, out_c,
+                        kh, kw,
+                        stride_h, stride_w,
+                        padding_h, padding_w,
+                    )
+                    layer_info['row_ptr'] = row_ptr
+                    layer_info['out_idx'] = out_idx
+                    layer_info['weight_idx'] = weight_idx
+                    layer_info['num_connections'] = num_connections
+            
+                    if DEBUG:
+                        print(f"CSR: {num_connections} connections "
+                            f"({num_connections / (out_c*out_h*out_w*in_c*kh*kw):.1%} density)")
 
 
             if DEBUG:
@@ -528,6 +678,45 @@ class NIRToCGenerator:
 
     def generate_header_file(self) -> str:
         """Generate the .h header file content."""
+        conv_func_decl = ""
+        if not self.opt_conv:
+            conv_func_decl = """void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         
+    const q7_t* input_spikes,  // Input feature map [In_CH * In_H * In_W]
+    const q15_t* weights,       // Weights [Out_CH * In_CH * KH * KW]
+    q7_t* output_spikes,        // Output spikes [Out_CH * Out_H * Out_W]
+    uint16_t in_h, uint16_t in_w, uint16_t in_ch,
+    uint16_t out_h, uint16_t out_w, uint16_t out_ch,
+    uint16_t kh, uint16_t kw,
+    uint16_t stride, uint16_t padding
+);"""
+        elif self.conv_mode == 'tap':
+            conv_func_decl = """void LIFNeuron_Conv2d_Update_Subtract_Tap(
+    LIFNeuron* neurons,
+    const q7_t* input_spikes,     // [in_ch][in_h*in_w]
+    const q15_t* weights,         // [out_ch][in_ch][kh*kw]
+    const uint16_t* tap_ptr,      // [in_spatial + 1]
+    const uint16_t* tap_out,      // [num_taps]
+    const uint8_t*  tap_w,        // [num_taps]
+    uint16_t in_ch,
+    uint16_t in_spatial,
+    uint16_t out_ch,
+    uint16_t out_spatial,
+    uint16_t kernel_size,
+    q7_t* output_spikes
+);"""
+        else:
+            conv_func_decl = """void LIFNeuron_Conv2d_Update_Subtract_CSR(
+    LIFNeuron* neurons,
+    const q7_t* input_spikes,
+    const q15_t* weights,
+    const uint16_t* row_ptr,
+    const uint16_t* out_idx,
+    const uint16_t* weight_idx,
+    uint16_t num_inputs,
+    uint16_t num_outputs,
+    q7_t* output_spikes
+);"""
+
         h_content = f"""#ifndef LIF_NEURON_GEN_H
 #define LIF_NEURON_GEN_H
 
@@ -572,28 +761,7 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
                                                   uint16_t num_neurons, q7_t* output_spikes,
                                                   uint8_t is_one_to_one);
 
-void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         
-    const q7_t* input_spikes,  // Input feature map [In_CH * In_H * In_W]
-    const q15_t* weights,       // Weights [Out_CH * In_CH * KH * KW]
-    q7_t* output_spikes,        // Output spikes [Out_CH * Out_H * Out_W]
-    uint16_t in_h, uint16_t in_w, uint16_t in_ch,
-    uint16_t out_h, uint16_t out_w, uint16_t out_ch,
-    uint16_t kh, uint16_t kw,
-    uint16_t stride, uint16_t padding
-);                                                  
-
-void LIFNeuron_Conv2d_Update_Subtract_CSR(
-    LIFNeuron* neurons,
-    const q7_t* input_spikes,
-    const q15_t* weights,
-    const uint16_t* row_ptr,
-    const uint16_t* out_idx,
-    const uint16_t* weight_idx,
-    uint16_t num_inputs,
-    uint16_t num_outputs,
-    q7_t* output_spikes
-);
-
+{conv_func_decl}
 
 // Weight loading function
 void Load_NIR_Weights(void);
@@ -615,23 +783,23 @@ void SNN_Reset_State(void);
         
         # Generate weight array definitions
         weight_defs = self._generate_weight_definitions()
-
-        # Generate csr array definitions
-        csr_defs = self._generate_csr_definitions()
         
-        # Generate utility functions
+        if self.opt_conv:
+            if self.conv_mode == 'tap':
+                table_defs = self._generate_tap_definitions()
+                conv_lif_funcs = self._generate_sparse_conv_lif_tap_functions()
+            else:
+                table_defs = self._generate_csr_definitions()
+                conv_lif_funcs = self._generate_sparse_conv_lif_csr_functions()
+        else:
+            table_defs = ""
+            conv_lif_funcs = self._generate_naive_conv_lif_functions()
+
         utility_funcs = self._generate_utility_functions()
         
         # Generate LIF neuron functions
         lif_funcs = self._generate_lif_functions()
 
-        if self.opt_conv:
-            # Generate Optimized Conv LIF neuron functions.
-            sparse_or_naive_conv_lif_funcs = self._generate_sparse_conv_lif_functions()
-        else:
-            # Generate Naive Conv LIF neuron functions
-            sparse_or_naive_conv_lif_funcs = self._generate_naive_conv_lif_functions()
-        
         # Generate weight loading function
         weight_load_func = self._generate_weight_loading_function()
         
@@ -662,13 +830,13 @@ void SNN_Reset_State(void);
 
 {weight_defs}
 
-{csr_defs}
+{table_defs}
 
 {utility_funcs}
 
 {lif_funcs}
 
-{sparse_or_naive_conv_lif_funcs}
+{conv_lif_funcs}
 
 {weight_load_func}
 
@@ -716,8 +884,14 @@ void SNN_Reset_State(void);
                 lines.append(f"#define L{i+1}_PAD_W       {layer['padding_w']}")
                 lines.append(f"#define L{i+1}_OUT_H       {layer['out_h']}")
                 lines.append(f"#define L{i+1}_OUT_W       {layer['out_w']}")
-                #For optimized
-                lines.append(f"#define L{i+1}_NUM_CONNECTIONS {layer['num_connections']}")
+                
+                if self.opt_conv:
+                    if self.conv_mode == 'tap':
+                        lines.append(f"#define L{i+1}_IN_SPATIAL  {layer['in_h'] * layer['in_w']}")
+                        lines.append(f"#define L{i+1}_OUT_SPATIAL {layer['out_h'] * layer['out_w']}")
+                        lines.append(f"#define L{i+1}_NUM_TAPS    {layer['num_taps']}")
+                    else:
+                        lines.append(f"#define L{i+1}_NUM_CONNECTIONS {layer['num_connections']}")
 
             lines.append(f"#define NUM_NEURONS_LAYER{i+1} {layer['num_neurons']}")
         
@@ -740,7 +914,9 @@ void SNN_Reset_State(void);
 
 
     def _generate_csr_definitions(self) -> str:
-        """Generate static CSR connectivity tables (row_ptr/out_idx/weight_idx) for every conv layer."""
+        """Generate static CSR connectivity tables."""
+        if not self.opt_conv or self.conv_mode != 'csr':
+            return ""
         lines = []
         for i, layer in enumerate(self.layers):
             if not layer['is_conv']:
@@ -761,6 +937,24 @@ void SNN_Reset_State(void);
             lines.append("")
         return '\n'.join(lines)
 
+    def _generate_tap_definitions(self) -> str:
+        """Generate static tap tables for every conv layer."""
+        if not self.opt_conv or self.conv_mode != 'tap':
+            return ""
+        lines = []
+        for i, layer in enumerate(self.layers):
+            if not layer['is_conv']:
+                continue
+            n = i + 1
+            lines.append(f"// Layer {n} conv tap table (precomputed in Python).")
+            lines.append(self._format_int_array(
+                f"tap_ptr{n}", "uint16_t", layer['tap_ptr'], size_expr=f"L{n}_IN_SPATIAL + 1"))
+            lines.append(self._format_int_array(
+                f"tap_out{n}", "uint16_t", layer['tap_out'], size_expr=f"L{n}_NUM_TAPS"))
+            lines.append(self._format_int_array(
+                f"tap_w{n}", "uint8_t", layer['tap_w'], size_expr=f"L{n}_NUM_TAPS"))
+            lines.append("")
+        return '\n'.join(lines)
     
     # Emre: This is okay 
     def _generate_weight_definitions(self) -> str:
@@ -1209,7 +1403,7 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
         """
 
     # TODO Emre: Add Hard-reset version.
-    def _generate_sparse_conv_lif_functions(self) -> str:
+    def _generate_sparse_conv_lif_csr_functions(self) -> str:
         """Generates the CSR/event-driven convolutional LIF update function."""
         return """
     void LIFNeuron_Conv2d_Update_Subtract_CSR(
@@ -1259,6 +1453,72 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
             }
         }
     }"""
+
+    def _generate_sparse_conv_lif_tap_functions(self) -> str:
+            """Generates the event-driven, tap-table based convolutional LIF update function."""
+            return """
+    void LIFNeuron_Conv2d_Update_Subtract_Tap(
+        LIFNeuron* neurons,           
+        const q7_t* input_spikes,     
+        const q15_t* weights,         
+        const uint16_t* tap_ptr,      
+        const uint16_t* tap_out,      
+        const uint8_t*  tap_w,        
+        uint16_t in_ch,
+        uint16_t in_spatial,          
+        uint16_t out_ch,
+        uint16_t out_spatial,         
+        uint16_t kernel_size,         
+        q7_t* output_spikes           
+    ) {
+        const uint32_t num_outputs = (uint32_t)out_ch * out_spatial;
+        const uint32_t w_oc_stride = (uint32_t)in_ch * kernel_size;
+
+        for (uint32_t o = 0; o < num_outputs; o++) {
+            q31_t decayed = ((q31_t)neurons[o].membrane_potential *
+                            (q31_t)neurons[o].decay_factor) >> 15;
+            neurons[o].membrane_potential = (q15_t)__SSAT(decayed, 16);
+        }
+
+        for (uint16_t ic = 0; ic < in_ch; ic++) {
+            const q7_t*  in_plane = input_spikes + (uint32_t)ic * in_spatial;
+            const q15_t* w_ic     = weights      + (uint32_t)ic * kernel_size;
+
+            for (uint16_t p = 0; p < in_spatial; p++) {
+                const q31_t s = in_plane[p];
+                if (s == 0) {
+                    continue;
+                }
+
+                for (uint16_t t = tap_ptr[p]; t < tap_ptr[p + 1]; t++) {
+                    LIFNeuron*   n0 = neurons + tap_out[t];
+                    const q15_t* w0 = w_ic + tap_w[t];
+
+                    for (uint16_t oc = 0; oc < out_ch; oc++) {
+                        LIFNeuron* n = &n0[(uint32_t)oc * out_spatial];
+                        q31_t v = (q31_t)n->membrane_potential +
+                                s * (q31_t)w0[(uint32_t)oc * w_oc_stride];
+                        n->membrane_potential = (q15_t)__SSAT(v, 16);
+                    }
+                }
+            }
+        }
+
+        for (uint32_t o = 0; o < num_outputs; o++) {
+            q31_t v = (q31_t)neurons[o].membrane_potential - (q31_t)neurons[o].reset_value;
+            v = __SSAT(v, 16);
+            neurons[o].membrane_potential = (q15_t)v;
+
+            if (v > neurons[o].threshold) {
+                output_spikes[o] = 1;
+                neurons[o].reset_value = neurons[o].threshold;
+            } else {
+                output_spikes[o] = 0;
+                neurons[o].reset_value = 0;
+            }
+        }
+    }
+    """
 
     
     def _generate_weight_loading_function(self) -> str:
@@ -1539,8 +1799,13 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
                                 f"{layer['out_h']}, {layer['out_w']}, {layer['out_c']}, "
                                 f"{layer['kh']}, {layer['kw']}, "
                                 f"{layer['stride_h']}, {layer['padding_h']});")
-
-                
+                elif self.conv_mode == 'tap':
+                    lines.append(f"    // Layer {i+1} (convolutional, tap-table event-driven)")
+                    lines.append(
+                            f"    LIFNeuron_Conv2d_Update_Subtract_Tap(layer{i+1}, {input_var}, weights{i+1}, "
+                            f"tap_ptr{i+1}, tap_out{i+1}, tap_w{i+1}, "
+                            f"L{i+1}_IN_CH, L{i+1}_IN_SPATIAL, L{i+1}_OUT_CH, L{i+1}_OUT_SPATIAL, "
+                            f"L{i+1}_KERNEL_SIZE, l{i+1}_spikes);")
                 else:
                     lines.append(f"    // Layer {i+1} (convolutional, CSR event-driven)")
                     lines.append(
@@ -1759,10 +2024,19 @@ def main():
         help="Enable or disable optimization (true/false, default: true)"
     )
 
+    parser.add_argument(
+        "--conv_mode",
+        type=str,
+        choices=['csr', 'tap'],
+        default='tap',
+        help="Convolution optimization mode when --optimized is true: 'tap' or 'csr' (default: tap)"
+    )
+
     args = parser.parse_args()
 
     nir_file = args.nir_file
     use_optimization = args.optimized
+    conv_mode = args.conv_mode
 
     if not os.path.exists(nir_file):
         print(f"Error: NIR file '{nir_file}' not found!")
@@ -1770,6 +2044,8 @@ def main():
 
     print(f"\nInput NIR file: {nir_file}")
     print(f"Optimization: {'enabled' if use_optimization else 'disabled'}")
+    if use_optimization:
+        print(f"Convolution mode: {conv_mode}")
 
     try:
         # Create generator
