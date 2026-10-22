@@ -46,3 +46,9 @@
 [submodule "opt_SCNN_MNSIT/for_opt_SCNN_stm32h7_CMSIS_vers/Drivers/CMSIS-NN"]
 	path = opt_SCNN_MNSIT/for_opt_SCNN_stm32h7_CMSIS_vers/Drivers/CMSIS-NN
 	url = https://github.com/ARM-software/CMSIS-NN.git
+[submodule "tap_table_csr_improvement/for_tap_table_SCNN_stm32h7/Drivers/CMSIS-NN"]
+	path = tap_table_csr_improvement/for_tap_table_SCNN_stm32h7/Drivers/CMSIS-NN
+	url = https://github.com/ARM-software/CMSIS-NN.git
+[submodule "tap_table_csr_improvement/for_tap_table_SCNN_stm32h7/Drivers/CMSIS-DSP"]
+	path = tap_table_csr_improvement/for_tap_table_SCNN_stm32h7/Drivers/CMSIS-DSP
+	url = https://github.com/ARM-software/CMSIS-DSP.git
