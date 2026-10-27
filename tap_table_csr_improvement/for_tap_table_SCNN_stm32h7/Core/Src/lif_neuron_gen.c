@@ -17,6 +17,9 @@
 // Layer 1: 392 -> 144 (convolutional, no recurrent, uniform params)
 // Layer 2: 144 -> 10 (fully connected, no recurrent, uniform params)
 
+// Spike counter:
+SparsityAcc g_sp;
+
 // Global variables for the SNN
 #define NUM_INPUTS 200
 #define NUM_INPUT_CHANNEL 2
@@ -522,7 +525,7 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
 
 
 
-    void LIFNeuron_Conv2d_Update_Subtract_Tap(
+void LIFNeuron_Conv2d_Update_Subtract_Tap(
         LIFNeuron* neurons,           
         const q7_t* input_spikes,     
         const q15_t* weights,         
@@ -552,24 +555,25 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
     //   neuron = oc * out_spatial + tap_out[t]
     //   weight = oc * w_oc_stride + ic * kernel_size + tap_w[t]
     for (uint16_t ic = 0; ic < in_ch; ic++) {
-        const q7_t*  in_plane = input_spikes + (uint32_t)ic * in_spatial;
-        const q15_t* w_ic     = weights      + (uint32_t)ic * kernel_size;
+        const q7_t*  in_plane = input_spikes + (uint32_t)ic * in_spatial; // Find the beginning of the input plane for this input channel
+        const q15_t* w_ic     = weights      + (uint32_t)ic * kernel_size; // Find the beginning of the weights. 
 
         for (uint16_t p = 0; p < in_spatial; p++) {
             // Not binary for every dataset (e.g. ST-MNIST input), so keep the MAC.
-            const q31_t s = in_plane[p];
-            if (s == 0) {
+            if (in_plane[p] == 0) {
                 continue;
             }
 
-            for (uint16_t t = tap_ptr[p]; t < tap_ptr[p + 1]; t++) {
-                LIFNeuron*   n0 = neurons + tap_out[t];
-                const q15_t* w0 = w_ic + tap_w[t];
+            for (uint16_t t = tap_ptr[p]; t < tap_ptr[p + 1]; t++) {   // bound re-read in the condition, like row_ptr[i + 1]
+                // This part is the equivalent of the weight and output index find in CSR. But they will be used to load for every out channel with strides.
+                LIFNeuron*   n0 = neurons + tap_out[t]; // Find the specific output neuron that this input neuron touches.
+                const q15_t* w0 = w_ic + tap_w[t]; //Find the specific kernel weight that this input neuron touches. 
 
                 for (uint16_t oc = 0; oc < out_ch; oc++) {
-                    LIFNeuron* n = &n0[(uint32_t)oc * out_spatial];
+                    LIFNeuron* n = &n0[(uint32_t)oc * out_spatial]; // The output neuron specific to current out_channel.
+
                     q31_t v = (q31_t)n->membrane_potential +
-                              s * (q31_t)w0[(uint32_t)oc * w_oc_stride];
+                            (q31_t)in_plane[p] * (q31_t)w0[(uint32_t)oc * w_oc_stride]; //The weight specific to current out_channel.
                     n->membrane_potential = (q15_t)__SSAT(v, 16);
                 }
             }
@@ -1440,6 +1444,12 @@ void SNN_Run_Timestep(const q7_t* input_spikes, q7_t* output_spikes) {
     for (int i = 0; i < NUM_NEURONS_LAYER3; i++) {
         output_spikes[i] = l3_spikes[i];
     }
+
+    uint32_t n;
+    g_sp.sops1 += count_sops(input_spikes, tap_ptr1_r, L1_IN_CH, L1_IN_SPATIAL, L1_OUT_CH, &n);
+    g_sp.nnz1  += n;
+    g_sp.sops2 += count_sops(l1_spikes, tap_ptr2_r, L2_IN_CH, L2_IN_SPATIAL, L2_OUT_CH, &n);
+    g_sp.nnz2  += n;
 }
 
 void SNN_Reset_State(void) {

@@ -38,6 +38,7 @@
 #include "lif_neuron_gen.h"
 #include "stm32h750b_discovery_qspi.h"
 #include "mt25tl01g.h"
+#include "snn_cycles.h"
 
 /* USER CODE END Includes */
 
@@ -207,10 +208,19 @@ void SNN_Run_Tests(void) {
     for (uint16_t s = 0; s < TD_NUM_SAMPLES; s++) {
         const TestSample *smp = &test_samples[s];
 
+        // Test to see spiking ratio
+        memset(&g_sp, 0, sizeof(g_sp));
+
+
         uint8_t predicted = classify_sample(smp, spike_totals);
         uint8_t gt        = smp->label;
         uint8_t pass      = (predicted == gt);
         if (pass) correct++;
+
+        // print of the test sample's sparsity and sops:
+        char buf[200];
+        snprintf(buf, sizeof(buf), "snSP [%02d] T=%d nnz1=%lu sops1=%lu nnz2=%lu sops2=%lu\r\n", (unsigned)s, (unsigned)smp->num_timesteps, (unsigned long)g_sp.nnz1, (unsigned long)g_sp.sops1, (unsigned long)g_sp.nnz2, (unsigned long)g_sp.sops2);
+        usart1_print(buf);
 
         /* ── Per-sample line ─────────────────────────────────────────── */
         char line[160];

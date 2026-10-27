@@ -85,6 +85,25 @@ static void cyc_print(const CycStat *s, const char *name)
     usart1_print(buf);
 }
 
+
+static uint32_t count_sops(const q7_t *in, const uint16_t *tap_ptr,
+                           uint16_t in_ch, uint16_t in_spatial,
+                           uint16_t out_ch, uint32_t *nnz_out)
+{
+    uint32_t nnz = 0, taps = 0;
+    for (uint16_t ic = 0; ic < in_ch; ic++) {
+        const q7_t *plane = in + (uint32_t)ic * in_spatial;
+        for (uint16_t p = 0; p < in_spatial; p++) {
+            if (plane[p]) { nnz++; taps += tap_ptr[p + 1] - tap_ptr[p]; }
+        }
+    }
+    *nnz_out = nnz;
+    return taps * out_ch;
+}
+
+typedef struct { uint32_t nnz1, sops1, nnz2, sops2; } SparsityAcc;
+extern SparsityAcc g_sp;
+
 /* Barriers keep the counter reads from being reordered around the call. */
 #define CYC_START(v)    uint32_t v; __DSB(); __ISB(); v = DWT->CYCCNT
 #define CYC_STOP(s, v)  do { uint32_t _e = DWT->CYCCNT; __DSB(); __ISB(); \
