@@ -3291,7 +3291,7 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
 
 
 
-    void LIFNeuron_Conv2d_Update_Subtract_CSR(
+    __attribute__((noinline)) void LIFNeuron_Conv2d_Update_Subtract_CSR(
         LIFNeuron* neurons,           // Array of neurons for this layer
         const q7_t* input_spikes,     // Input feature map, flattened [in_ch*in_h*in_w]
         const q15_t* weights,         // Shared kernel weights [out_ch*in_ch*kh*kw]
