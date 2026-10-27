@@ -149,7 +149,7 @@ class NIRToCGenerator:
                             continue
                         rows[ih * in_w + iw].append((sp_out, fy * kw + fx)) # rows [input index] append (output index, kernel weight index)
 
-        # Flattens the tuple into vectors.
+        # Flattens the rows list into vectors.
         tap_ptr, tap_out, tap_w = [0], [], []
         for row in rows:
             for sp_out, tap in row:
