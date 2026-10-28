@@ -4208,7 +4208,7 @@ void Load_NIR_Weights(void) {
 
 void SNN_Init(void) {
     // Init for cycle counting. 
-    //cyc_enable();
+    cyc_enable();
     const float scale = 60.0f;
 
     // Layer 1 initialization
