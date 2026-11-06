@@ -30,7 +30,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 METHODS = ["base", "cmsisnn", "csr", "tap"]
-FILE_PATTERN = "{m}_test_60_samples.txt"
+FILE_PATTERN = "{m}_test_694_samples.txt"
 LAYERS = ["L1", "L2"]
 DEFAULT_CLK_HZ = 64_000_000
 

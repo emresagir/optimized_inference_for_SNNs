@@ -303,7 +303,7 @@ print(f"Actual: {target}")
 # ============================================================
 
 moresamples = True
-num_test_samples = 200
+num_test_samples = 694
 
 if moresamples:
 
