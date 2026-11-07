@@ -6,6 +6,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // Network architecture from NIR
 // Input size: 200
@@ -1099,7 +1100,6 @@ static const uint16_t weight_idx1[L1_NUM_CONNECTIONS] = {
 
 // Layer 2 CSR sparse connectivity table (precomputed in Python)
 // PRUNED: zero-weight (Q15) taps removed, 7371 of 10368 dense connections kept
-__attribute__((section(".ext_weights")))
 static const uint16_t row_ptr2[NUM_NEURONS_LAYER1 + 1] = {
     0, 10, 19, 38, 47, 66, 75, 84, 94, 107, 127, 140, 160, 173, 183, 206,
     226, 271, 291, 336, 356, 378, 388, 401, 421, 434, 454, 467, 477, 500, 520, 565,
@@ -1127,7 +1127,6 @@ static const uint16_t row_ptr2[NUM_NEURONS_LAYER1 + 1] = {
     6986, 7008, 7015, 7026, 7046, 7064, 7104, 7122, 7162, 7180, 7200, 7211, 7218, 7240, 7247, 7269,
     7276, 7287, 7295, 7304, 7323, 7332, 7351, 7360, 7371
 };
-__attribute__((section(".ext_weights")))
 static const uint16_t out_idx2[L2_NUM_CONNECTIONS] = {
     0, 9, 18, 45, 63, 72, 81, 99, 108, 135, 0, 27, 45, 63, 72, 81,
     90, 108, 126, 0, 1, 10, 19, 27, 46, 54, 63, 64, 72, 73, 81, 82,
@@ -1591,7 +1590,6 @@ static const uint16_t out_idx2[L2_NUM_CONNECTIONS] = {
     98, 116, 124, 125, 133, 134, 142, 8, 17, 26, 53, 62, 71, 89, 98, 116,
     8, 26, 35, 44, 53, 71, 80, 98, 125, 134, 143
 };
-__attribute__((section(".ext_weights")))
 static const uint16_t weight_idx2[L2_NUM_CONNECTIONS] = {
     0, 72, 144, 360, 504, 576, 648, 792, 864, 1080, 1, 217, 361, 505, 577, 649,
     721, 865, 1009, 2, 0, 72, 144, 218, 360, 434, 506, 504, 578, 576, 650, 648,
@@ -2056,14 +2054,14 @@ static const uint16_t weight_idx2[L2_NUM_CONNECTIONS] = {
     71, 215, 287, 359, 431, 575, 647, 791, 1007, 1079, 1151
 };
 
-// RAM mirrors of the CSR tables (same memory as weights/state)
-static uint16_t row_ptr1_r[NUM_INPUTS + 1];
-static uint16_t out_idx1_r[L1_NUM_CONNECTIONS];
-static uint16_t weight_idx1_r[L1_NUM_CONNECTIONS];
+// RAM buffers of the CSR tables, filled in Load_NIR_Weights()
+static __attribute__((aligned(32))) uint16_t row_ptr1_r[NUM_INPUTS + 1];
+static __attribute__((aligned(32))) uint16_t out_idx1_r[L1_NUM_CONNECTIONS];
+static __attribute__((aligned(32))) uint16_t weight_idx1_r[L1_NUM_CONNECTIONS];
+static __attribute__((aligned(32))) uint16_t row_ptr2_r[NUM_NEURONS_LAYER1 + 1];
+static __attribute__((aligned(32))) uint16_t out_idx2_r[L2_NUM_CONNECTIONS];
+static __attribute__((aligned(32))) uint16_t weight_idx2_r[L2_NUM_CONNECTIONS];
 
-static uint16_t row_ptr2_r[NUM_NEURONS_LAYER1 + 1];
-static uint16_t out_idx2_r[L2_NUM_CONNECTIONS];
-static uint16_t weight_idx2_r[L2_NUM_CONNECTIONS];
 
 // Utility functions for USART printing
 void usart1_print(const char* str) {
@@ -3191,6 +3189,14 @@ void Load_NIR_Weights(void) {
         arm_float_to_q15(&scaled, &weights3[i], 1);
     }
 
+    // Load the CSR tables to RAM
+    memcpy(row_ptr1_r, row_ptr1, sizeof(row_ptr1));
+    memcpy(out_idx1_r, out_idx1, sizeof(out_idx1));
+    memcpy(weight_idx1_r, weight_idx1, sizeof(weight_idx1));
+    memcpy(row_ptr2_r, row_ptr2, sizeof(row_ptr2));
+    memcpy(out_idx2_r, out_idx2, sizeof(out_idx2));
+    memcpy(weight_idx2_r, weight_idx2, sizeof(weight_idx2));
+
 }
 
 void SNN_Init(void) {
@@ -3247,23 +3253,14 @@ void SNN_Init(void) {
     // Load weights from NIR
     Load_NIR_Weights();
 
-    // Load the csr table to ram. 
-    memcpy(row_ptr1_r,    row_ptr1,    sizeof(row_ptr1));
-    memcpy(out_idx1_r,    out_idx1,    sizeof(out_idx1));
-    memcpy(weight_idx1_r, weight_idx1, sizeof(weight_idx1));
-    memcpy(row_ptr2_r,    row_ptr2,    sizeof(row_ptr2));
-    memcpy(out_idx2_r,    out_idx2,    sizeof(out_idx2));
-    memcpy(weight_idx2_r, weight_idx2, sizeof(weight_idx2));
-
-
 }
 
 void SNN_Run_Timestep(const q7_t* input_spikes, q7_t* output_spikes) {
     // Layer 1 (convolutional, CSR event-driven)
-    LIFNeuron_Conv2d_Update_Subtract_CSR(layer1, input_spikes, weights1, row_ptr1, out_idx1, weight_idx1, NUM_INPUTS, NUM_NEURONS_LAYER1, l1_spikes);
+    LIFNeuron_Conv2d_Update_Subtract_CSR(layer1, input_spikes, weights1, row_ptr1_r, out_idx1_r, weight_idx1_r, NUM_INPUTS, NUM_NEURONS_LAYER1, l1_spikes);
 
     // Layer 2 (convolutional, CSR event-driven)
-    LIFNeuron_Conv2d_Update_Subtract_CSR(layer2, l1_spikes, weights2, row_ptr2, out_idx2, weight_idx2, NUM_NEURONS_LAYER1, NUM_NEURONS_LAYER2, l2_spikes);
+    LIFNeuron_Conv2d_Update_Subtract_CSR(layer2, l1_spikes, weights2, row_ptr2_r, out_idx2_r, weight_idx2_r, NUM_NEURONS_LAYER1, NUM_NEURONS_LAYER2, l2_spikes);
 
     // Layer 3 (no recurrent, fully connected)
     LIFNeuron_Layer_Update_Subtract_NoRecurrent(layer3, l2_spikes, weights3, NUM_NEURONS_LAYER2, NUM_NEURONS_LAYER3, l3_spikes, 0);

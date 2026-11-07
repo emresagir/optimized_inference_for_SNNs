@@ -799,6 +799,7 @@ void SNN_Reset_State(void);
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // Network architecture from NIR
 // Input size: {self.num_inputs}
@@ -911,6 +912,17 @@ void SNN_Reset_State(void);
                 f"weight_idx{i+1}", "uint16_t", layer['weight_idx'],
                 size_expr=f"L{i+1}_NUM_CONNECTIONS"))
             lines.append("")
+
+        # RAM buffers of the CSR tables, filled in Load_NIR_Weights()
+        lines.append("// RAM buffers of the CSR tables, filled in Load_NIR_Weights()")
+        for i, layer in enumerate(self.layers):
+            if not layer['is_conv']:
+                continue
+            input_size_str = "NUM_INPUTS" if i == 0 else f"NUM_NEURONS_LAYER{i}"
+            lines.append(f"static __attribute__((aligned(32))) uint16_t row_ptr{i+1}_r[{input_size_str} + 1];")
+            lines.append(f"static __attribute__((aligned(32))) uint16_t out_idx{i+1}_r[L{i+1}_NUM_CONNECTIONS];")
+            lines.append(f"static __attribute__((aligned(32))) uint16_t weight_idx{i+1}_r[L{i+1}_NUM_CONNECTIONS];")
+        lines.append("")
         return '\n'.join(lines)
 
     
@@ -1579,7 +1591,18 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
                 lines.append(f"        arm_float_to_q15(&scaled, &recurrent_weights{i+1}[i], 1);")
                 lines.append("    }")
                 lines.append("")
-        
+
+        # Load the CSR tables to RAM
+        if self.opt_conv:
+            lines.append("    // Load the CSR tables to RAM")
+            for i, layer in enumerate(self.layers):
+                if not layer['is_conv']:
+                    continue
+                lines.append(f"    memcpy(row_ptr{i+1}_r, row_ptr{i+1}, sizeof(row_ptr{i+1}));")
+                lines.append(f"    memcpy(out_idx{i+1}_r, out_idx{i+1}, sizeof(out_idx{i+1}));")
+                lines.append(f"    memcpy(weight_idx{i+1}_r, weight_idx{i+1}, sizeof(weight_idx{i+1}));")
+            lines.append("")
+
         lines.append("}")
         return '\n'.join(lines)
     
@@ -1719,7 +1742,7 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
                     lines.append(f"    // Layer {i+1} (convolutional, CSR event-driven)")
                     lines.append(
                             f"    LIFNeuron_Conv2d_Update_Subtract_CSR(layer{i+1}, {input_var}, weights{i+1}, "
-                            f"row_ptr{i+1}, out_idx{i+1}, weight_idx{i+1}, "
+                            f"row_ptr{i+1}_r, out_idx{i+1}_r, weight_idx{i+1}_r, "
                             f"{input_size}, NUM_NEURONS_LAYER{i+1}, l{i+1}_spikes);")
 
             else:

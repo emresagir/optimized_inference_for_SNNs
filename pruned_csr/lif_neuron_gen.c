@@ -6,6 +6,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // Network architecture from NIR
 // Input size: 200
@@ -2050,6 +2051,14 @@ static const uint16_t weight_idx2[L2_NUM_CONNECTIONS] = {
     71, 215, 287, 359, 431, 575, 647, 791, 1007, 1079, 1151
 };
 
+// RAM buffers of the CSR tables, filled in Load_NIR_Weights()
+static __attribute__((aligned(32))) uint16_t row_ptr1_r[NUM_INPUTS + 1];
+static __attribute__((aligned(32))) uint16_t out_idx1_r[L1_NUM_CONNECTIONS];
+static __attribute__((aligned(32))) uint16_t weight_idx1_r[L1_NUM_CONNECTIONS];
+static __attribute__((aligned(32))) uint16_t row_ptr2_r[NUM_NEURONS_LAYER1 + 1];
+static __attribute__((aligned(32))) uint16_t out_idx2_r[L2_NUM_CONNECTIONS];
+static __attribute__((aligned(32))) uint16_t weight_idx2_r[L2_NUM_CONNECTIONS];
+
 
 // Utility functions for USART printing
 void usart1_print(const char* str) {
@@ -3177,6 +3186,14 @@ void Load_NIR_Weights(void) {
         arm_float_to_q15(&scaled, &weights3[i], 1);
     }
 
+    // Load the CSR tables to RAM
+    memcpy(row_ptr1_r, row_ptr1, sizeof(row_ptr1));
+    memcpy(out_idx1_r, out_idx1, sizeof(out_idx1));
+    memcpy(weight_idx1_r, weight_idx1, sizeof(weight_idx1));
+    memcpy(row_ptr2_r, row_ptr2, sizeof(row_ptr2));
+    memcpy(out_idx2_r, out_idx2, sizeof(out_idx2));
+    memcpy(weight_idx2_r, weight_idx2, sizeof(weight_idx2));
+
 }
 
 void SNN_Init(void) {
@@ -3237,10 +3254,10 @@ void SNN_Init(void) {
 
 void SNN_Run_Timestep(const q7_t* input_spikes, q7_t* output_spikes) {
     // Layer 1 (convolutional, CSR event-driven)
-    LIFNeuron_Conv2d_Update_Subtract_CSR(layer1, input_spikes, weights1, row_ptr1, out_idx1, weight_idx1, NUM_INPUTS, NUM_NEURONS_LAYER1, l1_spikes);
+    LIFNeuron_Conv2d_Update_Subtract_CSR(layer1, input_spikes, weights1, row_ptr1_r, out_idx1_r, weight_idx1_r, NUM_INPUTS, NUM_NEURONS_LAYER1, l1_spikes);
 
     // Layer 2 (convolutional, CSR event-driven)
-    LIFNeuron_Conv2d_Update_Subtract_CSR(layer2, l1_spikes, weights2, row_ptr2, out_idx2, weight_idx2, NUM_NEURONS_LAYER1, NUM_NEURONS_LAYER2, l2_spikes);
+    LIFNeuron_Conv2d_Update_Subtract_CSR(layer2, l1_spikes, weights2, row_ptr2_r, out_idx2_r, weight_idx2_r, NUM_NEURONS_LAYER1, NUM_NEURONS_LAYER2, l2_spikes);
 
     // Layer 3 (no recurrent, fully connected)
     LIFNeuron_Layer_Update_Subtract_NoRecurrent(layer3, l2_spikes, weights3, NUM_NEURONS_LAYER2, NUM_NEURONS_LAYER3, l3_spikes, 0);
