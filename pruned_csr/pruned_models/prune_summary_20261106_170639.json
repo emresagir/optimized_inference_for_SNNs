@@ -1,0 +1,134 @@
+{
+  "source_model": "best_scnn_net_20260817_171949_acc83.4.pth",
+  "layers": [
+    "conv1",
+    "conv2",
+    "fc"
+  ],
+  "finetune_epochs": 5,
+  "lr": 0.001,
+  "seed": 42,
+  "baseline": {
+    "val_acc": 0.8333333333333334,
+    "test_acc": 0.8532374100719424
+  },
+  "levels": [
+    {
+      "target_sparsity": 0.2,
+      "file": "pruned_scnn_s20_val86.1_test86.6.pth",
+      "val_acc_after_prune": 0.8204022988505747,
+      "val_acc": 0.860632183908046,
+      "test_acc": 0.8661870503597122,
+      "sparsity": {
+        "conv1": {
+          "zeros": 48,
+          "numel": 256,
+          "sparsity": 0.1875
+        },
+        "conv2": {
+          "zeros": 149,
+          "numel": 1152,
+          "sparsity": 0.1293402777777778
+        },
+        "fc": {
+          "zeros": 373,
+          "numel": 1440,
+          "sparsity": 0.2590277777777778
+        },
+        "global": {
+          "zeros": 570,
+          "numel": 2848,
+          "sparsity": 0.20014044943820225
+        }
+      }
+    },
+    {
+      "target_sparsity": 0.4,
+      "file": "pruned_scnn_s40_val78.4_test79.9.pth",
+      "val_acc_after_prune": 0.6206896551724138,
+      "val_acc": 0.7844827586206896,
+      "test_acc": 0.7985611510791367,
+      "sparsity": {
+        "conv1": {
+          "zeros": 92,
+          "numel": 256,
+          "sparsity": 0.359375
+        },
+        "conv2": {
+          "zeros": 361,
+          "numel": 1152,
+          "sparsity": 0.3133680555555556
+        },
+        "fc": {
+          "zeros": 687,
+          "numel": 1440,
+          "sparsity": 0.47708333333333336
+        },
+        "global": {
+          "zeros": 1140,
+          "numel": 2848,
+          "sparsity": 0.4002808988764045
+        }
+      }
+    },
+    {
+      "target_sparsity": 0.5,
+      "file": "pruned_scnn_s50_val75.9_test76.3.pth",
+      "val_acc_after_prune": 0.7040229885057471,
+      "val_acc": 0.7586206896551724,
+      "test_acc": 0.762589928057554,
+      "sparsity": {
+        "conv1": {
+          "zeros": 106,
+          "numel": 256,
+          "sparsity": 0.4140625
+        },
+        "conv2": {
+          "zeros": 480,
+          "numel": 1152,
+          "sparsity": 0.4166666666666667
+        },
+        "fc": {
+          "zeros": 839,
+          "numel": 1440,
+          "sparsity": 0.5826388888888889
+        },
+        "global": {
+          "zeros": 1425,
+          "numel": 2848,
+          "sparsity": 0.5003511235955056
+        }
+      }
+    },
+    {
+      "target_sparsity": 0.7,
+      "file": "pruned_scnn_s70_val49.0_test54.5.pth",
+      "val_acc_after_prune": 0.27155172413793105,
+      "val_acc": 0.4899425287356322,
+      "test_acc": 0.5453237410071943,
+      "sparsity": {
+        "conv1": {
+          "zeros": 145,
+          "numel": 256,
+          "sparsity": 0.56640625
+        },
+        "conv2": {
+          "zeros": 711,
+          "numel": 1152,
+          "sparsity": 0.6171875
+        },
+        "fc": {
+          "zeros": 1138,
+          "numel": 1440,
+          "sparsity": 0.7902777777777777
+        },
+        "global": {
+          "zeros": 1994,
+          "numel": 2848,
+          "sparsity": 0.7001404494382022
+        }
+      }
+    }
+  ],
+  "elapsed_s": 810.4096593856812
+}

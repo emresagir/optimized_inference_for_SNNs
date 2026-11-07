@@ -1,0 +1,137 @@
+{
+  "source_model": "best_scnn_net_20260817_171949_acc83.4.pth",
+  "layers": [
+    "conv1",
+    "conv2"
+  ],
+  "finetune_epochs": 10,
+  "lr": 0.001,
+  "seed": 42,
+  "baseline": {
+    "val_acc": 0.8333333333333334,
+    "test_acc": 0.8532374100719424
+  },
+  "levels": [
+    {
+      "target_sparsity": 0.2,
+      "file": "pruned_scnn_s20_val85.2_test87.8.pth",
+      "val_acc_after_prune": 0.8074712643678161,
+      "val_acc": 0.8520114942528736,
+      "test_acc": 0.8776978417266187,
+      "sparsity": {
+        "conv1": {
+          "zeros": 62,
+          "numel": 256,
+          "sparsity": 0.2421875
+        },
+        "conv2": {
+          "zeros": 220,
+          "numel": 1152,
+          "sparsity": 0.1909722222222222
+        },
+        "global": {
+          "zeros": 282,
+          "numel": 1408,
+          "sparsity": 0.2002840909090909
+        }
+      }
+    },
+    {
+      "target_sparsity": 0.3,
+      "file": "pruned_scnn_s30_val85.8_test84.7.pth",
+      "val_acc_after_prune": 0.7341954022988506,
+      "val_acc": 0.8577586206896551,
+      "test_acc": 0.8474820143884892,
+      "sparsity": {
+        "conv1": {
+          "zeros": 90,
+          "numel": 256,
+          "sparsity": 0.3515625
+        },
+        "conv2": {
+          "zeros": 333,
+          "numel": 1152,
+          "sparsity": 0.2890625
+        },
+        "global": {
+          "zeros": 423,
+          "numel": 1408,
+          "sparsity": 0.30042613636363635
+        }
+      }
+    },
+    {
+      "target_sparsity": 0.4,
+      "file": "pruned_scnn_s40_val81.5_test81.2.pth",
+      "val_acc_after_prune": 0.6551724137931034,
+      "val_acc": 0.8146551724137931,
+      "test_acc": 0.8115107913669065,
+      "sparsity": {
+        "conv1": {
+          "zeros": 116,
+          "numel": 256,
+          "sparsity": 0.453125
+        },
+        "conv2": {
+          "zeros": 448,
+          "numel": 1152,
+          "sparsity": 0.3888888888888889
+        },
+        "global": {
+          "zeros": 564,
+          "numel": 1408,
+          "sparsity": 0.4005681818181818
+        }
+      }
+    },
+    {
+      "target_sparsity": 0.5,
+      "file": "pruned_scnn_s50_val73.4_test75.1.pth",
+      "val_acc_after_prune": 0.4367816091954023,
+      "val_acc": 0.7341954022988506,
+      "test_acc": 0.7510791366906475,
+      "sparsity": {
+        "conv1": {
+          "zeros": 136,
+          "numel": 256,
+          "sparsity": 0.53125
+        },
+        "conv2": {
+          "zeros": 569,
+          "numel": 1152,
+          "sparsity": 0.4939236111111111
+        },
+        "global": {
+          "zeros": 705,
+          "numel": 1408,
+          "sparsity": 0.5007102272727273
+        }
+      }
+    },
+    {
+      "target_sparsity": 0.6,
+      "file": "pruned_scnn_s60_val72.1_test74.7.pth",
+      "val_acc_after_prune": 0.4956896551724138,
+      "val_acc": 0.7212643678160919,
+      "test_acc": 0.7467625899280576,
+      "sparsity": {
+        "conv1": {
+          "zeros": 150,
+          "numel": 256,
+          "sparsity": 0.5859375
+        },
+        "conv2": {
+          "zeros": 696,
+          "numel": 1152,
+          "sparsity": 0.6041666666666666
+        },
+        "global": {
+          "zeros": 846,
+          "numel": 1408,
+          "sparsity": 0.6008522727272727
+        }
+      }
+    }
+  ],
+  "elapsed_s": 1937.3938357830048
+}

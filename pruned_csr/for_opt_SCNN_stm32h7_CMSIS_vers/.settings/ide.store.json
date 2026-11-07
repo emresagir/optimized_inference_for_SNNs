@@ -1,0 +1,10 @@
+{
+  "source": {
+    "sourceType": "STM32CubeMX"
+  },
+  "board": "STM32H750B-DK",
+  "device": "STM32H750XBH6",
+  "core": "Cortex-M7",
+  "order": 0,
+  "toolchain": "GCC"
+}
