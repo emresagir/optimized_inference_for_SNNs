@@ -38,7 +38,7 @@ class NIRToCGenerator:
         """
         self.nir_graph = nir.read(nir_file_path)
         self.output_prefix = output_prefix
-        self.scale_factor = 60.0  # Q15 scaling factor
+        self.scale_factor = 300.0  # Q15 scaling factor
         self.opt_conv = opt_conv
         self.conv_mode = conv_mode.lower()
         print(f"Is optimized: {self.opt_conv}")

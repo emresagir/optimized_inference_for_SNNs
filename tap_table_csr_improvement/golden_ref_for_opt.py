@@ -57,10 +57,9 @@ scnn_net.load_state_dict(
 scnn_net.eval()
 
 
-# Same quantization as your original golden reference
-with torch.no_grad():
-    for param in scnn_net.parameters():
-        param.data = torch.round(param.data * 60) / 60
+# No weight rounding: the golden reference runs the trained model in float.
+# (Previously the weights were rounded to multiples of 1/60 here, which is not
+#  the MCU's Q15 quantization and gave 67.58% instead of the float 67.44%.)
 
 
 # Access layers

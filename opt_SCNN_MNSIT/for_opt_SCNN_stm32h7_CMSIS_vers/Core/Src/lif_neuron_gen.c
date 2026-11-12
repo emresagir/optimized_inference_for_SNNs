@@ -63,6 +63,62 @@ static __attribute__((aligned(32))) q15_t weights1[L1_OUT_CH * L1_IN_CH * L1_KER
 static __attribute__((aligned(32))) q15_t weights2[L2_OUT_CH * L2_IN_CH * L2_KERNEL_H * L2_KERNEL_W]; // Conv connected
 static __attribute__((aligned(32))) q15_t weights3[NUM_NEURONS_LAYER2*NUM_NEURONS_LAYER3]; // Fully connected
 
+/* ---------------------------------------------------------------------------
+ * Membrane-potential debug print, for the comparison with the golden reference
+ * (golden_ref_for_opt.py -> debug_and_plot/membrane_potentials_layer{1,2,3}.npz).
+ *
+ *   SNN_MEMBRANE_DEBUG 0     : off. Use this for all accuracy and timing runs;
+ *                              the UART print inside the layer update would
+ *                              distort the cycle counts.
+ *   SNN_MEMBRANE_DEBUG 1/2/3 : print the tracked neuron of layer 1/2/3 at every
+ *                              timestep. One layer per run, because the parser
+ *                              takes every "V:" line as one timestep.
+ *
+ * The tracked neurons are the ones in golden_ref_for_opt.py
+ * (neuron index o = ch * out_h * out_w + y * out_w + x):
+ *   Layer 1: C7  Y3 X0 -> 7*7*7 + 3*7 + 0 = 364
+ *   Layer 2: C11 Y0 X1 -> 11*3*3 + 0*3 + 1 = 100
+ *   Layer 3: output neuron 8
+ * V is the raw Q15 value after the soft reset, the same point as mem in
+ * snnTorch (float V = V_q15 * scale / 32768, with scale = 300).
+ * Hooked into the CSR, Base and fully connected (layer 3) updates. The
+ * CMSIS-NN layer update (lif_conv_cmsisnn.c) has no hook.
+ * ------------------------------------------------------------------------- */
+#ifndef SNN_MEMBRANE_DEBUG
+#define SNN_MEMBRANE_DEBUG 0
+#endif
+
+#if SNN_MEMBRANE_DEBUG == 1
+#define SNN_DBG_NUM_NEURONS NUM_NEURONS_LAYER1
+#define SNN_DBG_NEURON      364
+#elif SNN_MEMBRANE_DEBUG == 2
+#define SNN_DBG_NUM_NEURONS NUM_NEURONS_LAYER2
+#define SNN_DBG_NEURON      100
+#elif SNN_MEMBRANE_DEBUG == 3
+#define SNN_DBG_NUM_NEURONS NUM_NEURONS_LAYER3
+#define SNN_DBG_NEURON      8
+#endif
+
+#if SNN_MEMBRANE_DEBUG
+/* One line per timestep for the tracked neuron, called after the soft reset and
+ * spike check. The layer is identified by its neuron count (392, 144 or 10). */
+static void snn_membrane_debug(uint32_t num_neurons, uint32_t idx,
+                               const LIFNeuron* n, q7_t spike) {
+    if (num_neurons != SNN_DBG_NUM_NEURONS || idx != SNN_DBG_NEURON) {
+        return;
+    }
+    char buf[96];
+    snprintf(buf, sizeof(buf), "L%d V:%d | threshold: %d S:%d | nindex = %lu | reset_next = %d\r\n",
+             SNN_MEMBRANE_DEBUG, (int)n->membrane_potential, (int)n->threshold,
+             (int)spike, (unsigned long)idx, (int)n->reset_value);
+    usart1_print(buf);
+}
+#define SNN_MEMBRANE_DEBUG_HOOK(num, idx, neuron_ptr, spike) \
+    snn_membrane_debug((num), (idx), (neuron_ptr), (spike))
+#else
+#define SNN_MEMBRANE_DEBUG_HOOK(num, idx, neuron_ptr, spike) do { } while (0)
+#endif
+
 #if USE_CMSIS_NN
 CMSISNN_CONV_DECLARE(cnn1, L1_OUT_CH, L1_IN_CH, L1_KERNEL_H, L1_KERNEL_W, 10, 10, L1_OUT_H, L1_OUT_W);
 CMSISNN_CONV_DECLARE(cnn2, L2_OUT_CH, L2_IN_CH, L2_KERNEL_H, L2_KERNEL_W, L1_OUT_H, L1_OUT_W, L2_OUT_H, L2_OUT_W);
@@ -3299,6 +3355,8 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
         }
         neurons[i].membrane_potential = membrane_potentials[i];
 
+        SNN_MEMBRANE_DEBUG_HOOK(num_neurons, i, &neurons[i], output_spikes[i]);
+
         // TODO : Delete this part when the all tests are done.
         // Debug print for the most spiking output neuron.
         // if(i == 8){
@@ -3360,6 +3418,8 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
                 output_spikes[o] = 0;
                 neurons[o].reset_value = 0;
             }
+
+            SNN_MEMBRANE_DEBUG_HOOK(num_outputs, o, &neurons[o], output_spikes[o]);
         }
     }
 
@@ -3439,6 +3499,9 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
                     neurons[n_idx].reset_value    = 0;                 // clear if there is no spike
                 }
 
+                SNN_MEMBRANE_DEBUG_HOOK((uint32_t)out_ch * out_h * out_w, n_idx,
+                                        &neurons[n_idx], output_spikes[n_idx]);
+
                 // TODO: DELETE THIS DEBUG PRINT FROM GENERATOR WHEN ITS FULLY WORKING
                 // WILL FOLLOW WITH DEBUG TO SEE THE MEMBRANE POTENTIAL FOR THAT SPECIFIC NEURON.
                 // oc == 10 oh == 0 ow == 0, makes index 490 for the first layer. 90 for the second layer.
@@ -3463,7 +3526,7 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
 }
 
 void Load_NIR_Weights(void) {
-    const float scale = 60.0f;
+    const float scale = 300.0f;
 
     // Layer 1 conv weights - Conv2d (8x2x4x4)
     // Stored in OUT_CH-MAJOR order: [oc][ic][kh][kw]
@@ -4210,7 +4273,7 @@ void Load_NIR_Weights(void) {
 void SNN_Init(void) {
     // Init for cycle counting. 
     cyc_enable();
-    const float scale = 60.0f;
+    const float scale = 300.0f;
 
     // Layer 1 initialization
     // Uniform parameters for all neurons
