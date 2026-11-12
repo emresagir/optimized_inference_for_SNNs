@@ -582,7 +582,8 @@ void LIFNeuron_Conv2d_Update_Subtract_Tap(
 
     // Soft reset (subtract threshold if the neuron spiked last step) + spike check 
     for (uint32_t o = 0; o < num_outputs; o++) {
-        neurons[o].membrane_potential -= neurons[o].reset_value;
+        neurons[o].membrane_potential = (q15_t)__SSAT((q31_t)neurons[o].membrane_potential -
+                                                      (q31_t)neurons[o].reset_value, 16);
 
         if (neurons[o].membrane_potential > neurons[o].threshold) {
             output_spikes[o] = 1;
@@ -1416,11 +1417,13 @@ void SNN_Init(void) {
     PLC(tap_ptr2_r); PLC(tap_out2_r); PLC(tap_w2_r);
     #endif
 
-    // Checking cache status and system clock frequency
-    char cb[80];
-    snprintf(cb, sizeof(cb), "ICACHE=%d DCACHE=%d CLK=%lu\r\n",
+    // Checking cache status and system clock frequency, plus a build tag so that
+    // every log records which convolution method and compiler produced it.
+    char cb[160];
+    snprintf(cb, sizeof(cb), "ICACHE=%d DCACHE=%d CLK=%lu METHOD=L1:TAP,L2:TAP GCC=%s\r\n",
             !!(SCB->CCR & SCB_CCR_IC_Msk), !!(SCB->CCR & SCB_CCR_DC_Msk),
-            (unsigned long)SystemCoreClock);
+            (unsigned long)SystemCoreClock,
+            __VERSION__);
     usart1_print(cb);
 }
 

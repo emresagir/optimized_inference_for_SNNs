@@ -1246,7 +1246,8 @@ void LIFNeuron_Conv2d_Update_Subtract_Base(LIFNeuron* neurons,         // Array 
         // Soft reset (subtract previous threshold if it spiked last step) + spike check
         for (uint16_t o = 0; o < num_outputs; o++) {
 
-            neurons[o].membrane_potential -= neurons[o].reset_value;
+            neurons[o].membrane_potential = (q15_t)__SSAT((q31_t)neurons[o].membrane_potential -
+                                                          (q31_t)neurons[o].reset_value, 16);
     
             if (neurons[o].membrane_potential > neurons[o].threshold) {
                 output_spikes[o] = 1;

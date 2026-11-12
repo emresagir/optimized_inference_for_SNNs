@@ -3350,7 +3350,8 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
         // Soft reset (subtract previous threshold if it spiked last step) + spike check
         for (uint16_t o = 0; o < num_outputs; o++) {
 
-            neurons[o].membrane_potential -= neurons[o].reset_value;
+            neurons[o].membrane_potential = (q15_t)__SSAT((q31_t)neurons[o].membrane_potential -
+                                                          (q31_t)neurons[o].reset_value, 16);
     
             if (neurons[o].membrane_potential > neurons[o].threshold) {
                 output_spikes[o] = 1;
@@ -4309,11 +4310,16 @@ void SNN_Init(void) {
    #endif
 
 
-   // Checking cache status and system clock frequency
-    char cb[80];
-    snprintf(cb, sizeof(cb), "ICACHE=%d DCACHE=%d CLK=%lu\r\n",
+   // Checking cache status and system clock frequency, plus a build tag so that
+   // every log records which convolution method and compiler produced it.
+   #define SNN_METHOD_NAME(m) ((m) == SNN_CONV_IMPL_CMSISNN ? "CMSISNN" : \
+                               (m) == SNN_CONV_IMPL_CSR     ? "CSR"     : "BASE")
+    char cb[160];
+    snprintf(cb, sizeof(cb), "ICACHE=%d DCACHE=%d CLK=%lu METHOD=L1:%s,L2:%s GCC=%s\r\n",
             !!(SCB->CCR & SCB_CCR_IC_Msk), !!(SCB->CCR & SCB_CCR_DC_Msk),
-            (unsigned long)SystemCoreClock);
+            (unsigned long)SystemCoreClock,
+            SNN_METHOD_NAME(SNN_LAYER1_METHOD), SNN_METHOD_NAME(SNN_LAYER2_METHOD),
+            __VERSION__);
     usart1_print(cb);
 }
 
