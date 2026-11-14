@@ -1,9 +1,15 @@
 import re
+import argparse
 import numpy as np
 
-# Configuration - Update these paths as needed
-input_log_file = "neuron_log_OUT8.txt"
-output_npz_file = "membrane_potentials_MCU.npz"
+# Configuration - defaults, can be overridden from the command line:
+#   python parser_for_plotter.py <input_log.txt> <output.npz>
+cli = argparse.ArgumentParser(description="Parse MCU UART neuron log into an .npz")
+cli.add_argument("input_log_file", nargs="?", default="neuron_log_OUT8.txt")
+cli.add_argument("output_npz_file", nargs="?", default="membrane_potentials_MCU.npz")
+args = cli.parse_args()
+input_log_file = args.input_log_file
+output_npz_file = args.output_npz_file
 
 # Conversion factor: scales the fixed-point integer back to normalized float
 SCALING_FACTOR = 300.0 / 32768.0   # scale s = 300 (Load_NIR_Weights), Q15 full scale = 2^15
@@ -20,8 +26,11 @@ s_pattern = re.compile(r"S:(\d+)")
 
 print(f"--- Starting Parser ---")
 
+skipped_lines = 0
+t = 0  # timestep counter: only advances on V:/S: data lines, so header/footer lines don't shift timesteps
+
 with open(input_log_file, "r") as f:
-    for t, line in enumerate(f):
+    for line_no, line in enumerate(f, start=1):
         line = line.strip()
         if not line:
             continue  # Skip empty lines
@@ -46,8 +55,10 @@ with open(input_log_file, "r") as f:
             #debug
             #print(v_normalized)
             spikes.append(spike_val)
+            t += 1
         else:
-            print(f"[WARNING] Line {t} did not match expected pattern: {line}")
+            # UART header/footer (memory map, build info, cycle counters, result line)
+            skipped_lines += 1
 
 # Convert lists to NumPy arrays
 timesteps_arr = np.array(timesteps)
@@ -62,7 +73,8 @@ np.savez(
     spikes=spikes_arr
 )
 
-print(f"\n[SUCCESS] Successfully parsed {len(timesteps)} steps.")
+print(f"\n[SUCCESS] Successfully parsed {len(timesteps)} steps from '{input_log_file}'.")
+print(f"  - Skipped {skipped_lines} non-data lines (header/footer)")
 print(f"  - Quantized V range: {int(mem_arr.min()/SCALING_FACTOR)} to {int(mem_arr.max()/SCALING_FACTOR)}")
 print(f"  - Normalized V range: {mem_arr.min():.4f} to {mem_arr.max():.4f}")
 print(f"  - Total Spikes detected: {spikes_arr.sum()}")

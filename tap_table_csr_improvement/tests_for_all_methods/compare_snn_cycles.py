@@ -19,6 +19,9 @@ Usage:
   python compare_snn_cycles.py                       # files in current dir
   python compare_snn_cycles.py /path/to/tests_dir    # files in another dir
   python compare_snn_cycles.py --with-total --out cmp.png --no-show
+  python compare_snn_cycles.py test_14_11_for_tap_CSR_base --thesis   # thesis figure + LaTeX table
+
+Log files: <method>_test_694_samples.txt or the short names base_694.txt, cmsis_694.txt, csr_694.txt, tap_694.txt
 """
 
 import argparse
@@ -31,6 +34,7 @@ import matplotlib.pyplot as plt
 
 METHODS = ["base", "cmsisnn", "csr", "tap"]
 FILE_PATTERN = "{m}_test_694_samples.txt"
+SHORT_NAMES = {"cmsisnn": "cmsis"}
 LAYERS = ["L1", "L2"]
 DEFAULT_CLK_HZ = 64_000_000
 
@@ -115,7 +119,9 @@ def load_all(folder: Path):
     data = {}
     clk = DEFAULT_CLK_HZ
     for m in METHODS:
-        p = folder / FILE_PATTERN.format(m=m)
+        # long name (e.g. csr_test_694_samples.txt) or short name (e.g. csr_694.txt, cmsis_694.txt)
+        candidates = [folder / FILE_PATTERN.format(m=m), folder / f"{SHORT_NAMES.get(m, m)}_694.txt"]
+        p = next((c for c in candidates if c.exists()), candidates[0])
         if not p.exists():
             print(f"[warn] missing file, skipping: {p}", file=sys.stderr)
             continue
@@ -252,6 +258,113 @@ def plot_total(data, clk, out_path):
     return fig
 
 
+THESIS_NAMES = {"base": "Basic", "cmsisnn": "CMSIS-NN", "csr": "CSR table", "tap": "Tap table"}
+SPIKES_RE = re.compile(r"^\[(\d+)\]\s+T=\s*\d+\s+GT=(\d+)\s+Pred=(\d+)\s+(?:PASS|FAIL)\s+spikes:\s*([\d ]+)")
+ACC_RE = re.compile(r"Accuracy:\s*(\d+)/(\d+)")
+
+
+def parse_outputs(path: Path):
+    """All [k] lines (incl. the last sample, which has no cycle stats) + the Accuracy line."""
+    out, acc = {}, None
+    for line in path.read_text(errors="replace").splitlines():
+        m = SPIKES_RE.match(line.strip())
+        if m:
+            out[int(m.group(1))] = (int(m.group(3)), np.array(m.group(4).split(), dtype=int))
+        m = ACC_RE.search(line)
+        if m and acc is None:
+            acc = (int(m.group(1)), int(m.group(2)))
+    return out, acc
+
+
+def plot_thesis(data, clk, folder: Path):
+    """Thesis figure (serif, no title, PDF) + LaTeX table, written into `folder`."""
+    methods = [m for m in METHODS if m in data]
+    rc = {"font.family": "serif", "mathtext.fontset": "cm", "font.size": 9, "axes.labelsize": 9,
+          "legend.fontsize": 8, "xtick.labelsize": 8.5, "ytick.labelsize": 8, "axes.linewidth": 0.6,
+          "savefig.bbox": "tight", "savefig.pad_inches": 0.02}
+    colors = {"L1": "#1f4e9c", "L2": "#e07b00"}
+    labels = {"L1": "Conv 1", "L2": "Conv 2"}
+    base = data.get("base")
+
+    # ---- figure: mean cycles per timestep per layer, label = speed-up vs basic ----
+    with plt.rc_context(rc):
+        fig, ax = plt.subplots(figsize=(5.0, 2.9))
+        x = np.arange(len(methods)); w = 0.36
+        top = max(data[m][L]["mean"] + data[m][L]["std"] for m in methods for L in LAYERS) / 1e3
+        for j, L in enumerate(LAYERS):
+            v = np.array([data[m][L]["mean"] for m in methods])
+            s = np.array([data[m][L]["std"] for m in methods])
+            pos = x + (j - 0.5) * w
+            ax.bar(pos, v / 1e3, w, yerr=s / 1e3, color=colors[L], label=labels[L], lw=0,
+                   error_kw=dict(elinewidth=0.6, capsize=1.5, ecolor="0.25"))
+            for p, m, vi, si in zip(pos, methods, v, s):
+                txt = f"{vi / 1e3:.1f}k"
+                if base and m != "base":
+                    txt += f"\n{base[L]['mean'] / vi:.2f}$\\times$"
+                ax.text(p, (vi + si) / 1e3 + 0.015 * top, txt, ha="center", va="bottom", fontsize=7)
+        ax.set_xticks(x, [THESIS_NAMES[m] for m in methods])
+        ax.set_ylabel("Cycles per timestep [$\\times 10^3$]")
+        ax.set_ylim(0, top * 1.17)
+        ax.grid(True, axis="y", ls=":", lw=0.4, color="0.8"); ax.set_axisbelow(True)
+        ax.spines[["top", "right"]].set_visible(False)
+        sec = ax.secondary_yaxis("right", functions=(lambda k: k * 1e6 / clk, lambda ms: ms * clk / 1e6))
+        sec.set_ylabel(f"Time per timestep [ms] at {clk / 1e6:.0f} MHz")
+        ax.legend(loc="upper right", frameon=False)
+        for ext in ("pdf", "png"):
+            fig.savefig(folder / f"thesis_cycles.{ext}", dpi=200)
+        plt.close(fig)
+    print(f"saved: {folder / 'thesis_cycles.pdf'} (+ .png preview)")
+
+    # ---- LaTeX table ----
+    outs = {}
+    for m in methods:
+        p = next(c for c in (folder / FILE_PATTERN.format(m=m), folder / f"{SHORT_NAMES.get(m, m)}_694.txt")
+                 if c.exists())
+        outs[m] = parse_outputs(p)
+    ref = "tap" if "tap" in outs else methods[-1]
+    num = lambda v: f"{v:,.0f}".replace(",", r"\,")
+
+    def row(name, f):
+        return f"{name} & " + " & ".join(f(m) for m in methods) + r" \\"
+
+    def per_sample_ms(m):
+        tot = np.array([s["L1"]["total"] + s["L2"]["total"] for s in data[m]["samples"]], dtype=float)
+        return tot.mean() / clk * 1e3
+
+    def same(m, spikes):
+        r, o = outs[ref][0], outs[m][0]
+        k = [i for i in r if i in o]
+        n = sum(np.array_equal(r[i][1], o[i][1]) if spikes else r[i][0] == o[i][0] for i in k)
+        return f"{n}/{len(k)}"
+
+    mean_T = np.mean([s["T"] for s in data[methods[0]]["samples"]])
+    lines = [
+        r"\begin{table}[htbp]",
+        r"\centering",
+        rf"\caption{{Layer update cost of the four methods (694 test samples, {clk / 1e6:.0f}\,MHz). Cycles are",
+        rf"the mean per timestep; the time per sample is for Conv~1 + Conv~2 (mean sample length {mean_T:.0f} timesteps).}}",
+        r"\label{tab:method_comparison}",
+        r"\begin{tabular}{l" + "r" * len(methods) + "}",
+        r"\toprule",
+        " & " + " & ".join(THESIS_NAMES[m] for m in methods) + r" \\",
+        r"\midrule",
+        row("Conv 1 cycles / timestep", lambda m: num(data[m]["L1"]["mean"])),
+        row("Conv 2 cycles / timestep", lambda m: num(data[m]["L2"]["mean"])),
+        row("Speed-up Conv 1", lambda m: "--" if m == "base" else f"{base['L1']['mean'] / data[m]['L1']['mean']:.2f}$\\times$"),
+        row("Speed-up Conv 2", lambda m: "--" if m == "base" else f"{base['L2']['mean'] / data[m]['L2']['mean']:.2f}$\\times$"),
+        row("Time / timestep [ms]", lambda m: f"{(data[m]['L1']['mean'] + data[m]['L2']['mean']) / clk * 1e3:.2f}"),
+        row("Time / sample [ms]", lambda m: f"{per_sample_ms(m):.1f}"),
+        r"\midrule",
+        row(f"Same output spikes as {THESIS_NAMES[ref].lower()}", lambda m: "--" if m == ref else same(m, True)),
+        row(f"Same prediction as {THESIS_NAMES[ref].lower()}", lambda m: "--" if m == ref else same(m, False)),
+        r"\bottomrule",
+        r"\end{tabular}",
+        r"\end{table}",
+    ]
+    (folder / "thesis_methods_table.tex").write_text("\n".join(lines) + "\n")
+    print(f"saved: {folder / 'thesis_methods_table.tex'} (needs \\usepackage{{booktabs}})")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -263,6 +376,8 @@ def main():
                     help="also create the total-cycles-per-sample figure")
     ap.add_argument("--no-show", action="store_true",
                     help="save figures without opening a window")
+    ap.add_argument("--thesis", action="store_true",
+                    help="write thesis_cycles.pdf/.png and thesis_methods_table.tex into the folder and exit")
     args = ap.parse_args()
 
     data, clk = load_all(Path(args.folder))
@@ -270,6 +385,9 @@ def main():
         sys.exit("No data loaded. Check the folder and file names.")
 
     print_summary(data)
+    if args.thesis:
+        plot_thesis(data, clk, Path(args.folder))
+        return
     plot_per_call(data, clk, args.out)
 
     if args.with_total:

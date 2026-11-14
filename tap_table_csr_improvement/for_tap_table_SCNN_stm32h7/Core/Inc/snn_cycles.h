@@ -104,7 +104,7 @@ static uint32_t count_sops(const q7_t *in, const uint16_t *tap_ptr,
 typedef struct { uint32_t nnz1, sops1, nnz2, sops2; } SparsityAcc;
 extern SparsityAcc g_sp;
 
-/* Barriers keep the counter reads from being reordered around the call. */
+/* Barriers (DSB, ISB) keep the counter reads from being reordered around the call. */
 #define CYC_START(v)    uint32_t v; __DSB(); __ISB(); v = DWT->CYCCNT
 #define CYC_STOP(s, v)  do { uint32_t _e = DWT->CYCCNT; __DSB(); __ISB(); \
                              cyc_record(&(s), _e - (v)); } while (0)

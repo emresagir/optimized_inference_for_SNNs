@@ -84,7 +84,7 @@ static __attribute__((aligned(32))) q15_t weights3[NUM_NEURONS_LAYER2*NUM_NEURON
  * snnTorch (float V = V_q15 * scale / 32768, with scale = 300).
  * ------------------------------------------------------------------------- */
 #ifndef SNN_MEMBRANE_DEBUG
-#define SNN_MEMBRANE_DEBUG 1
+#define SNN_MEMBRANE_DEBUG 0
 #endif
 
 #if SNN_MEMBRANE_DEBUG == 1
