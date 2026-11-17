@@ -13,8 +13,8 @@
 #define SNN_CONV_IMPL_BASE    2
 
 //If use base uncomment this part.
-// #define SNN_LAYER1_METHOD 2
-// #define SNN_LAYER2_METHOD 2
+#define SNN_LAYER1_METHOD 2
+#define SNN_LAYER2_METHOD 2
 
 #ifndef SNN_LAYER1_METHOD
 #if USE_CMSIS_NN

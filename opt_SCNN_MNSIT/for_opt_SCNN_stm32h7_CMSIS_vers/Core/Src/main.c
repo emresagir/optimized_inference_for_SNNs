@@ -53,6 +53,14 @@
 #define HSEM_ID_0 (0U) /* HW semaphore 0*/
 #endif
 
+/* Evaluation window (timesteps per sample):
+ *   0   = run only the real timesteps of each sample (default, all speed tests)
+ *   N>0 = run N timesteps per sample; after the end of the recording the input is all zeros.
+ *         100 x 20 ms = the full 2 s ST-MNIST recording (accuracy test only). */
+#ifndef SNN_WINDOW
+#define SNN_WINDOW 0
+#endif
+
 #define TEST_OUTPUT 20
 #define NUM_STEPS 256 //number of timesteps to simulate
 #define INPUTS 12
@@ -126,16 +134,21 @@ uint8_t classify_sample(const TestSample *sample,
     /* Reset neuron membrane potentials before the new gesture */
     SNN_Reset_State();
 
-    /* Feed every timestep */
-    for (uint16_t t = 0; t < sample->num_timesteps; t++) {
+    /* Feed every timestep (padded with empty input up to SNN_WINDOW if it is set) */
+    const uint16_t n_steps = (SNN_WINDOW > sample->num_timesteps) ? SNN_WINDOW : sample->num_timesteps;
+    for (uint16_t t = 0; t < n_steps; t++) {
 
-      //TEST 
+      //TEST
         // char bufferotso [50];
         // snprintf(bufferotso, sizeof(bufferotso), "timestep = %d, \t\n", t);
         // usart1_print(bufferotso);
 
         //The samples are moved from flash to RAM.
-        memcpy(sample_in, sample->spikes[t], 200);  
+        if (t < sample->num_timesteps) {
+            memcpy(sample_in, sample->spikes[t], 200);
+        } else if (t == sample->num_timesteps) {
+            memset(sample_in, 0, 200);          /* after the recording: no input spikes */
+        }
 
         SNN_Run_Timestep(sample_in, output_spikes);
 
@@ -194,6 +207,9 @@ void SNN_Run_Tests(void) {
         usart1_print(buf);
         n  = 0;
         n += snprintf(buf + n, sizeof(buf) - n, "  Classes : %u\r\n", (unsigned)TD_NUM_CLASSES);
+        usart1_print(buf);
+        n  = 0;
+        n += snprintf(buf + n, sizeof(buf) - n, "  WINDOW=%u (0 = real length)\r\n", (unsigned)SNN_WINDOW);
         usart1_print(buf);
     }
     usart1_print("\r\n");

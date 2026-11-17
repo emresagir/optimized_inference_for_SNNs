@@ -20,7 +20,8 @@ extern "C" {
 /* Size of the shared CMSIS-NN scratch buffer defined in lif_conv_cmsisnn.c.
  * Override with a compiler flag if a layer needs more. */
 #ifndef CMSISNN_SCRATCH_BYTES
-#define CMSISNN_SCRATCH_BYTES 16384
+//#define CMSISNN_SCRATCH_BYTES 288 //For the smaller network
+#define CMSISNN_SCRATCH_BYTES 1152 //For the bigger network
 #endif
 
 /* ------------------------------------------------------------------------ */
