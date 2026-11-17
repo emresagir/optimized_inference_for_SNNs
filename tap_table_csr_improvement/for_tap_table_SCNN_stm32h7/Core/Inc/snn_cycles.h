@@ -13,20 +13,12 @@
  *   CYC_START(t_l1);
  *   <layer 1 update call>
  *   CYC_STOP(cyc_l1, t_l1);
- *   CYC_LOG(cyc_l1, "L1", cyc_count_nz(input_spikes, NUM_INPUTS));
  */
 
 #include <stdint.h>
 #include <stdio.h>
 #include "stm32h7xx_hal.h"
-#include "arm_math.h"
 #include "lif_neuron_gen.h"     /* usart1_print */
-
-/* 1 = also print one CSV line per timestep: CYC,<layer>,<step>,<nonzero_inputs>,<cycles>
- * (printed OUTSIDE the timed region, but it slows the run down a lot). */
-#ifndef CYC_LOG_PER_STEP
-#define CYC_LOG_PER_STEP 0
-#endif
 
 typedef struct {
     uint32_t last, min, max, calls;
@@ -65,13 +57,6 @@ static void cyc_record(CycStat *s, uint32_t c)
     s->calls++;
 }
 
-static uint32_t cyc_count_nz(const q7_t *a, uint32_t n)
-{
-    uint32_t k = 0;
-    for (uint32_t i = 0; i < n; i++) k += (a[i] != 0);
-    return k;
-}
-
 static void cyc_print(const CycStat *s, const char *name)
 {
     char buf[160];
@@ -85,42 +70,20 @@ static void cyc_print(const CycStat *s, const char *name)
     usart1_print(buf);
 }
 
-
-static uint32_t count_sops(const q7_t *in, const uint16_t *tap_ptr,
-                           uint16_t in_ch, uint16_t in_spatial,
-                           uint16_t out_ch, uint32_t *nnz_out)
-{
-    uint32_t nnz = 0, taps = 0;
-    for (uint16_t ic = 0; ic < in_ch; ic++) {
-        const q7_t *plane = in + (uint32_t)ic * in_spatial;
-        for (uint16_t p = 0; p < in_spatial; p++) {
-            if (plane[p]) { nnz++; taps += tap_ptr[p + 1] - tap_ptr[p]; }
-        }
-    }
-    *nnz_out = nnz;
-    return taps * out_ch;
-}
-
-typedef struct { uint32_t nnz1, sops1, nnz2, sops2; } SparsityAcc;
-extern SparsityAcc g_sp;
-
 /* Barriers (DSB, ISB) keep the counter reads from being reordered around the call. */
-#define CYC_START(v)    uint32_t v; __DSB(); __ISB(); v = DWT->CYCCNT
-#define CYC_STOP(s, v)  do { uint32_t _e = DWT->CYCCNT; __DSB(); __ISB(); \
-                             cyc_record(&(s), _e - (v)); } while (0)
+#define CYC_START(start_var)                                                   \
+    uint32_t start_var;                                                        \
+    __DSB();                                                                   \
+    __ISB();                                                                   \
+    start_var = DWT->CYCCNT
 
-/* Optional per-timestep CSV line. The nz argument is only evaluated when
- * CYC_LOG_PER_STEP is 1. Call it AFTER CYC_STOP. */
-#if CYC_LOG_PER_STEP
-#define CYC_LOG(s, name, nz_expr) do {                                          \
-        char _b[64];                                                            \
-        snprintf(_b, sizeof(_b), "CYC,%s,%lu,%lu,%lu\r\n", (name),              \
-                 (unsigned long)((s).calls - 1), (unsigned long)(nz_expr),      \
-                 (unsigned long)(s).last);                                      \
-        usart1_print(_b);                                                       \
+#define CYC_STOP(stat, start_var)                                              \
+    do {                                                                       \
+        uint32_t end_cycles = DWT->CYCCNT;                                     \
+        __DSB();                                                               \
+        __ISB();                                                               \
+        uint32_t elapsed_cycles = end_cycles - (start_var);                    \
+        cyc_record(&(stat), elapsed_cycles);                                   \
     } while (0)
-#else
-#define CYC_LOG(s, name, nz_expr) do { } while (0)
-#endif
 
 #endif /* SNN_CYCLES_H */

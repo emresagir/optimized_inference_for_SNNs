@@ -17,9 +17,6 @@
 // Layer 1: 392 -> 144 (convolutional, no recurrent, uniform params)
 // Layer 2: 144 -> 10 (fully connected, no recurrent, uniform params)
 
-// Spike counter:
-SparsityAcc g_sp;
-
 // Global variables for the SNN
 #define NUM_INPUTS 200
 #define NUM_INPUT_CHANNEL 2
@@ -54,6 +51,36 @@ SparsityAcc g_sp;
 #define L2_NUM_TAPS    81
 #define NUM_NEURONS_LAYER2 144
 #define NUM_NEURONS_LAYER3 10
+
+#define CYCLE 0
+#define MAC_COUNTER 1
+
+#if MAC_COUNTER
+#define MAC_ONLY(code) code 
+#else
+#define MAC_ONLY(code)
+#endif
+
+#if MAC_COUNTER
+//MAC counter variables, 
+uint32_t mac_counter_layer1 = 0;
+uint16_t timestep_counter_layer1 = 0;
+uint32_t mac_counter_layer2 = 0;
+uint16_t timestep_counter_layer2 = 0;
+#endif
+
+#if MAC_COUNTER
+void print_mac_avg_reset(uint32_t* mac_ctr, uint16_t* timestep_ctr, uint8_t layer){
+    if(*timestep_ctr == 0) return;
+    uint32_t avg_mac = *mac_ctr / *timestep_ctr;
+    char buf[200];
+    snprintf(buf,sizeof(buf), " Layer %d average mac count of the sample = %ld \r\n", layer, avg_mac);
+    usart1_print(buf);
+    *mac_ctr = 0;
+    *timestep_ctr = 0;
+}
+#endif
+
 
 static __attribute__((aligned(32))) LIFNeuron layer1[NUM_NEURONS_LAYER1], layer2[NUM_NEURONS_LAYER2], layer3[NUM_NEURONS_LAYER3];
 static __attribute__((aligned(32))) q7_t l1_spikes[NUM_NEURONS_LAYER1];
@@ -631,6 +658,16 @@ void LIFNeuron_Conv2d_Update_Subtract_Tap(
                     q31_t v = (q31_t)n->membrane_potential +
                             (q31_t)in_plane[p] * (q31_t)w0[(uint32_t)oc * w_oc_stride]; //The weight specific to current out_channel.
                     n->membrane_potential = (q15_t)__SSAT(v, 16);
+
+			            #if MAC_COUNTER
+                        if (out_ch == 16) {
+                            mac_counter_layer2++;
+                        }
+                        else if (out_ch == 8) {
+                            mac_counter_layer1++;
+                        }
+                        #endif
+                    
                 }
             }
         }
@@ -1490,13 +1527,13 @@ void SNN_Run_Timestep(const q7_t* input_spikes, q7_t* output_spikes) {
     // Layer 1 (convolutional, tap-table event-driven)
     LIFNeuron_Conv2d_Update_Subtract_Tap(layer1, input_spikes, weights1, tap_ptr1_r, tap_out1_r, tap_w1_r, L1_IN_CH, L1_IN_SPATIAL, L1_OUT_CH, L1_OUT_SPATIAL, L1_KERNEL_SIZE, l1_spikes);
     CYC_STOP(cyc_l1, t_l1);
-    CYC_LOG(cyc_l1, "L1", cyc_count_nz(input_spikes, NUM_INPUTS));
+    MAC_ONLY(timestep_counter_layer1++;)
 
     CYC_START(t_l2);
     // Layer 2 (convolutional, tap-table event-driven)
     LIFNeuron_Conv2d_Update_Subtract_Tap(layer2, l1_spikes, weights2, tap_ptr2_r, tap_out2_r, tap_w2_r, L2_IN_CH, L2_IN_SPATIAL, L2_OUT_CH, L2_OUT_SPATIAL, L2_KERNEL_SIZE, l2_spikes);
     CYC_STOP(cyc_l2, t_l2);
-    CYC_LOG(cyc_l2, "L2", cyc_count_nz(l1_spikes, NUM_NEURONS_LAYER1));
+    MAC_ONLY(timestep_counter_layer2++;)
 
     // Layer 3 (no recurrent, fully connected)
     LIFNeuron_Layer_Update_Subtract_NoRecurrent(layer3, l2_spikes, weights3, NUM_NEURONS_LAYER2, NUM_NEURONS_LAYER3, l3_spikes, 0);
@@ -1505,15 +1542,13 @@ void SNN_Run_Timestep(const q7_t* input_spikes, q7_t* output_spikes) {
     for (int i = 0; i < NUM_NEURONS_LAYER3; i++) {
         output_spikes[i] = l3_spikes[i];
     }
-
-    uint32_t n;
-    g_sp.sops1 += count_sops(input_spikes, tap_ptr1_r, L1_IN_CH, L1_IN_SPATIAL, L1_OUT_CH, &n);
-    g_sp.nnz1  += n;
-    g_sp.sops2 += count_sops(l1_spikes, tap_ptr2_r, L2_IN_CH, L2_IN_SPATIAL, L2_OUT_CH, &n);
-    g_sp.nnz2  += n;
 }
 
 void SNN_Reset_State(void) {
+
+    MAC_ONLY(print_mac_avg_reset(&mac_counter_layer1, &timestep_counter_layer1, 1);)
+    MAC_ONLY(print_mac_avg_reset(&mac_counter_layer2, &timestep_counter_layer2, 2);)
+
     cyc_print(&cyc_l1, "L1");  
     // Reset layer 1
     for (int i = 0; i < NUM_NEURONS_LAYER1; i++) {
