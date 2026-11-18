@@ -1,0 +1,77 @@
+# Tap, Conv 1 (out_ch = 8): 8 MAC(s) per iteration
+ 800ccf6:	f991 0000 	ldrsb.w	r0, [r1]
+ 800ccfa:	f835 3b02 	ldrh.w	r3, [r5], #2
+ 800ccfe:	f814 2b01 	ldrb.w	r2, [r4], #1
+ 800cd02:	eb0e 0ac3 	add.w	sl, lr, r3, lsl #3
+ 800cd06:	4432      	add	r2, r6
+ 800cd08:	00db      	lsls	r3, r3, #3
+ 800cd0a:	f9ba b004 	ldrsh.w	fp, [sl, #4]
+ 800cd0e:	f83c 8012 	ldrh.w	r8, [ip, r2, lsl #1]
+ 800cd12:	fb18 b800 	smlabb	r8, r8, r0, fp
+ 800cd16:	f308 080f 	ssat	r8, #16, r8
+ 800cd1a:	f8aa 8004 	strh.w	r8, [sl, #4]
+ 800cd1e:	f503 78c4 	add.w	r8, r3, #392	@ 0x188
+ 800cd22:	487b      	ldr	r0, [pc, #492]	@ (800cf10 <SNN_Run_Timestep+0x2c0>)
+ 800cd24:	44f0      	add	r8, lr
+ 800cd26:	f991 b000 	ldrsb.w	fp, [r1]
+ 800cd2a:	f830 0012 	ldrh.w	r0, [r0, r2, lsl #1]
+ 800cd2e:	f9b8 a004 	ldrsh.w	sl, [r8, #4]
+ 800cd32:	fb10 a00b 	smlabb	r0, r0, fp, sl
+ 800cd36:	f300 000f 	ssat	r0, #16, r0
+ 800cd3a:	f8a8 0004 	strh.w	r0, [r8, #4]
+ 800cd3e:	f503 7844 	add.w	r8, r3, #784	@ 0x310
+ 800cd42:	6b78      	ldr	r0, [r7, #52]	@ 0x34
+ 800cd44:	44f0      	add	r8, lr
+ 800cd46:	f991 b000 	ldrsb.w	fp, [r1]
+ 800cd4a:	f830 0012 	ldrh.w	r0, [r0, r2, lsl #1]
+ 800cd4e:	f9b8 a004 	ldrsh.w	sl, [r8, #4]
+ 800cd52:	fb10 a00b 	smlabb	r0, r0, fp, sl
+ 800cd56:	f300 000f 	ssat	r0, #16, r0
+ 800cd5a:	f8a8 0004 	strh.w	r0, [r8, #4]
+ 800cd5e:	f503 6893 	add.w	r8, r3, #1176	@ 0x498
+ 800cd62:	6b38      	ldr	r0, [r7, #48]	@ 0x30
+ 800cd64:	44f0      	add	r8, lr
+ 800cd66:	f991 b000 	ldrsb.w	fp, [r1]
+ 800cd6a:	f830 0012 	ldrh.w	r0, [r0, r2, lsl #1]
+ 800cd6e:	f9b8 a004 	ldrsh.w	sl, [r8, #4]
+ 800cd72:	fb10 a00b 	smlabb	r0, r0, fp, sl
+ 800cd76:	f300 000f 	ssat	r0, #16, r0
+ 800cd7a:	f8a8 0004 	strh.w	r0, [r8, #4]
+ 800cd7e:	f503 68c4 	add.w	r8, r3, #1568	@ 0x620
+ 800cd82:	6bf8      	ldr	r0, [r7, #60]	@ 0x3c
+ 800cd84:	44f0      	add	r8, lr
+ 800cd86:	f991 b000 	ldrsb.w	fp, [r1]
+ 800cd8a:	f830 0012 	ldrh.w	r0, [r0, r2, lsl #1]
+ 800cd8e:	f9b8 a004 	ldrsh.w	sl, [r8, #4]
+ 800cd92:	fb10 a00b 	smlabb	r0, r0, fp, sl
+ 800cd96:	f300 000f 	ssat	r0, #16, r0
+ 800cd9a:	f8a8 0004 	strh.w	r0, [r8, #4]
+ 800cd9e:	f503 68f5 	add.w	r8, r3, #1960	@ 0x7a8
+ 800cda2:	f991 b000 	ldrsb.w	fp, [r1]
+ 800cda6:	44f0      	add	r8, lr
+ 800cda8:	f839 0012 	ldrh.w	r0, [r9, r2, lsl #1]
+ 800cdac:	f9b8 a004 	ldrsh.w	sl, [r8, #4]
+ 800cdb0:	fb10 a00b 	smlabb	r0, r0, fp, sl
+ 800cdb4:	f300 000f 	ssat	r0, #16, r0
+ 800cdb8:	f8a8 0004 	strh.w	r0, [r8, #4]
+ 800cdbc:	f503 6813 	add.w	r8, r3, #2352	@ 0x930
+ 800cdc0:	4854      	ldr	r0, [pc, #336]	@ (800cf14 <SNN_Run_Timestep+0x2c4>)
+ 800cdc2:	44f0      	add	r8, lr
+ 800cdc4:	f991 b000 	ldrsb.w	fp, [r1]
+ 800cdc8:	f830 0012 	ldrh.w	r0, [r0, r2, lsl #1]
+ 800cdcc:	f9b8 a004 	ldrsh.w	sl, [r8, #4]
+ 800cdd0:	fb10 a00b 	smlabb	r0, r0, fp, sl
+ 800cdd4:	f300 000f 	ssat	r0, #16, r0
+ 800cdd8:	f603 23b8 	addw	r3, r3, #2744	@ 0xab8
+ 800cddc:	f8a8 0004 	strh.w	r0, [r8, #4]
+ 800cde0:	484d      	ldr	r0, [pc, #308]	@ (800cf18 <SNN_Run_Timestep+0x2c8>)
+ 800cde2:	4473      	add	r3, lr
+ 800cde4:	f991 8000 	ldrsb.w	r8, [r1]
+ 800cde8:	f830 2012 	ldrh.w	r2, [r0, r2, lsl #1]
+ 800cdec:	f9b3 0004 	ldrsh.w	r0, [r3, #4]
+ 800cdf0:	fb12 0208 	smlabb	r2, r2, r8, r0
+ 800cdf4:	f302 020f 	ssat	r2, #16, r2
+ 800cdf8:	809a      	strh	r2, [r3, #4]
+ 800cdfa:	6bbb      	ldr	r3, [r7, #56]	@ 0x38
+ 800cdfc:	42ab      	cmp	r3, r5
+ 800cdfe:	f47f af7a 	bne.w	800ccf6 <SNN_Run_Timestep+0xa6>

@@ -1,0 +1,4 @@
+loop                         MACs  insn insn/MAC loads/MAC stores/MAC  load mnemonics
+CSR (Conv 1 and Conv 2)         1    14    14.00      6.00       1.00  {'ldrh.w': 3, 'ldrsb.w': 1, 'ldrsh.w': 1, 'ldrh': 1}
+Tap, Conv 1 (out_ch = 8)        8    76     9.50      4.12       1.00  {'ldrsb.w': 8, 'ldrh.w': 9, 'ldrb.w': 1, 'ldrsh.w': 8, 'ldr': 7}
+Tap, Conv 2 (out_ch = 16)      16   132     8.25      3.00       1.06  {'ldr': 14, 'ldrh.w': 17, 'ldrb.w': 1, 'ldrsh.w': 16}
