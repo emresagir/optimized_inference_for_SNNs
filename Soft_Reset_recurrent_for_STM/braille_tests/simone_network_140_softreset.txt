@@ -1,0 +1,421 @@
+Sample   1/140: Pred=1, Exp=1  [✓ Match]
+Handshake done 
+
+Sample   2/140: Pred=4, Exp=3  [✗ Miss]
+Handshake done 
+
+Sample   3/140: Pred=3, Exp=2  [✗ Miss]
+Handshake done 
+
+Sample   4/140: Pred=2, Exp=2  [✓ Match]
+Handshake done 
+
+Sample   5/140: Pred=5, Exp=6  [✗ Miss]
+Handshake done 
+
+Sample   6/140: Pred=1, Exp=1  [✓ Match]
+Handshake done 
+
+Sample   7/140: Pred=1, Exp=1  [✓ Match]
+Handshake done 
+
+Sample   8/140: Pred=3, Exp=3  [✓ Match]
+Handshake done 
+
+Sample   9/140: Pred=2, Exp=4  [✗ Miss]
+Handshake done 
+
+Sample  10/140: Pred=5, Exp=5  [✓ Match]
+Handshake done 
+
+Sample  11/140: Pred=4, Exp=4  [✓ Match]
+Handshake done 
+
+Sample  12/140: Pred=5, Exp=0  [✗ Miss]
+Handshake done 
+
+Sample  13/140: Pred=5, Exp=5  [✓ Match]
+Handshake done 
+
+Sample  14/140: Pred=4, Exp=5  [✗ Miss]
+Handshake done 
+
+Sample  15/140: Pred=0, Exp=0  [✓ Match]
+Handshake done 
+
+Sample  16/140: Pred=3, Exp=2  [✗ Miss]
+Handshake done 
+
+Sample  17/140: Pred=4, Exp=4  [✓ Match]
+Handshake done 
+
+Sample  18/140: Pred=3, Exp=3  [✓ Match]
+Handshake done 
+
+Sample  19/140: Pred=1, Exp=1  [✓ Match]
+Handshake done 
+
+Sample  20/140: Pred=2, Exp=2  [✓ Match]
+Handshake done 
+
+Sample  21/140: Pred=5, Exp=5  [✓ Match]
+Handshake done 
+
+Sample  22/140: Pred=2, Exp=2  [✓ Match]
+Handshake done 
+
+Sample  23/140: Pred=4, Exp=4  [✓ Match]
+Handshake done 
+
+Sample  24/140: Pred=6, Exp=6  [✓ Match]
+Handshake done 
+
+Sample  25/140: Pred=2, Exp=2  [✓ Match]
+Handshake done 
+
+Sample  26/140: Pred=2, Exp=2  [✓ Match]
+Handshake done 
+
+Sample  27/140: Pred=4, Exp=4  [✓ Match]
+Handshake done 
+
+Sample  28/140: Pred=1, Exp=1  [✓ Match]
+Handshake done 
+
+Sample  29/140: Pred=4, Exp=4  [✓ Match]
+Handshake done 
+
+Sample  30/140: Pred=2, Exp=4  [✗ Miss]
+Handshake done 
+
+Sample  31/140: Pred=1, Exp=1  [✓ Match]
+Handshake done 
+
+Sample  32/140: Pred=3, Exp=3  [✓ Match]
+Handshake done 
+
+Sample  33/140: Pred=2, Exp=2  [✓ Match]
+Handshake done 
+
+Sample  34/140: Pred=0, Exp=0  [✓ Match]
+Handshake done 
+
+Sample  35/140: Pred=4, Exp=4  [✓ Match]
+Handshake done 
+
+Sample  36/140: Pred=6, Exp=5  [✗ Miss]
+Handshake done 
+
+Sample  37/140: Pred=1, Exp=1  [✓ Match]
+Handshake done 
+
+Sample  38/140: Pred=0, Exp=0  [✓ Match]
+Handshake done 
+
+Sample  39/140: Pred=3, Exp=3  [✓ Match]
+Handshake done 
+
+Sample  40/140: Pred=5, Exp=5  [✓ Match]
+Handshake done 
+
+Sample  41/140: Pred=1, Exp=1  [✓ Match]
+Handshake done 
+
+Sample  42/140: Pred=2, Exp=2  [✓ Match]
+Handshake done 
+
+Sample  43/140: Pred=0, Exp=0  [✓ Match]
+Handshake done 
+
+Sample  44/140: Pred=4, Exp=4  [✓ Match]
+Handshake done 
+
+Sample  45/140: Pred=5, Exp=5  [✓ Match]
+Handshake done 
+
+Sample  46/140: Pred=2, Exp=4  [✗ Miss]
+Handshake done 
+
+Sample  47/140: Pred=5, Exp=5  [✓ Match]
+Handshake done 
+
+Sample  48/140: Pred=6, Exp=6  [✓ Match]
+Handshake done 
+
+Sample  49/140: Pred=6, Exp=6  [✓ Match]
+Handshake done 
+
+Sample  50/140: Pred=1, Exp=1  [✓ Match]
+Handshake done 
+
+Sample  51/140: Pred=4, Exp=4  [✓ Match]
+Handshake done 
+
+Sample  52/140: Pred=5, Exp=5  [✓ Match]
+Handshake done 
+
+Sample  53/140: Pred=0, Exp=0  [✓ Match]
+Handshake done 
+
+Sample  54/140: Pred=2, Exp=2  [✓ Match]
+Handshake done 
+
+Sample  55/140: Pred=3, Exp=3  [✓ Match]
+Handshake done 
+
+Sample  56/140: Pred=2, Exp=4  [✗ Miss]
+Handshake done 
+
+Sample  57/140: Pred=6, Exp=5  [✗ Miss]
+Handshake done 
+
+Sample  58/140: Pred=0, Exp=0  [✓ Match]
+Handshake done 
+
+Sample  59/140: Pred=2, Exp=2  [✓ Match]
+Handshake done 
+
+Sample  60/140: Pred=5, Exp=5  [✓ Match]
+Handshake done 
+
+Sample  61/140: Pred=6, Exp=5  [✗ Miss]
+Handshake done 
+
+Sample  62/140: Pred=5, Exp=5  [✓ Match]
+Handshake done 
+
+Sample  63/140: Pred=6, Exp=6  [✓ Match]
+Handshake done 
+
+Sample  64/140: Pred=6, Exp=5  [✗ Miss]
+Handshake done 
+
+Sample  65/140: Pred=6, Exp=6  [✓ Match]
+Handshake done 
+
+Sample  66/140: Pred=4, Exp=4  [✓ Match]
+Handshake done 
+
+Sample  67/140: Pred=1, Exp=1  [✓ Match]
+Handshake done 
+
+Sample  68/140: Pred=2, Exp=2  [✓ Match]
+Handshake done 
+
+Sample  69/140: Pred=6, Exp=6  [✓ Match]
+Handshake done 
+
+Sample  70/140: Pred=1, Exp=1  [✓ Match]
+Handshake done 
+
+Sample  71/140: Pred=0, Exp=0  [✓ Match]
+Handshake done 
+
+Sample  72/140: Pred=4, Exp=0  [✗ Miss]
+Handshake done 
+
+Sample  73/140: Pred=6, Exp=6  [✓ Match]
+Handshake done 
+
+Sample  74/140: Pred=4, Exp=4  [✓ Match]
+Handshake done 
+
+Sample  75/140: Pred=0, Exp=0  [✓ Match]
+Handshake done 
+
+Sample  76/140: Pred=4, Exp=3  [✗ Miss]
+Handshake done 
+
+Sample  77/140: Pred=2, Exp=3  [✗ Miss]
+Handshake done 
+
+Sample  78/140: Pred=0, Exp=0  [✓ Match]
+Handshake done 
+
+Sample  79/140: Pred=1, Exp=1  [✓ Match]
+Handshake done 
+
+Sample  80/140: Pred=4, Exp=6  [✗ Miss]
+Handshake done 
+
+Sample  81/140: Pred=2, Exp=2  [✓ Match]
+Handshake done 
+
+Sample  82/140: Pred=0, Exp=0  [✓ Match]
+Handshake done 
+
+Sample  83/140: Pred=3, Exp=3  [✓ Match]
+Handshake done 
+
+Sample  84/140: Pred=1, Exp=1  [✓ Match]
+Handshake done 
+
+Sample  85/140: Pred=0, Exp=0  [✓ Match]
+Handshake done 
+
+Sample  86/140: Pred=1, Exp=1  [✓ Match]
+Handshake done 
+
+Sample  87/140: Pred=2, Exp=2  [✓ Match]
+Handshake done 
+
+Sample  88/140: Pred=4, Exp=0  [✗ Miss]
+Handshake done 
+
+Sample  89/140: Pred=3, Exp=3  [✓ Match]
+Handshake done 
+
+Sample  90/140: Pred=0, Exp=0  [✓ Match]
+Handshake done 
+
+Sample  91/140: Pred=5, Exp=0  [✗ Miss]
+Handshake done 
+
+Sample  92/140: Pred=0, Exp=0  [✓ Match]
+Handshake done 
+
+Sample  93/140: Pred=3, Exp=4  [✗ Miss]
+Handshake done 
+
+Sample  94/140: Pred=6, Exp=6  [✓ Match]
+Handshake done 
+
+Sample  95/140: Pred=2, Exp=1  [✗ Miss]
+Handshake done 
+
+Sample  96/140: Pred=2, Exp=3  [✗ Miss]
+Handshake done 
+
+Sample  97/140: Pred=2, Exp=2  [✓ Match]
+Handshake done 
+
+Sample  98/140: Pred=5, Exp=5  [✓ Match]
+Handshake done 
+
+Sample  99/140: Pred=2, Exp=2  [✓ Match]
+Handshake done 
+
+Sample 100/140: Pred=6, Exp=6  [✓ Match]
+Handshake done 
+
+Sample 101/140: Pred=0, Exp=0  [✓ Match]
+Handshake done 
+
+Sample 102/140: Pred=5, Exp=5  [✓ Match]
+Handshake done 
+
+Sample 103/140: Pred=6, Exp=5  [✗ Miss]
+Handshake done 
+
+Sample 104/140: Pred=0, Exp=0  [✓ Match]
+Handshake done 
+
+Sample 105/140: Pred=3, Exp=3  [✓ Match]
+Handshake done 
+
+Sample 106/140: Pred=1, Exp=1  [✓ Match]
+Handshake done 
+
+Sample 107/140: Pred=6, Exp=6  [✓ Match]
+Handshake done 
+
+Sample 108/140: Pred=6, Exp=6  [✓ Match]
+Handshake done 
+
+Sample 109/140: Pred=2, Exp=3  [✗ Miss]
+Handshake done 
+
+Sample 110/140: Pred=4, Exp=2  [✗ Miss]
+Handshake done 
+
+Sample 111/140: Pred=2, Exp=4  [✗ Miss]
+Handshake done 
+
+Sample 112/140: Pred=4, Exp=4  [✓ Match]
+Handshake done 
+
+Sample 113/140: Pred=6, Exp=6  [✓ Match]
+Handshake done 
+
+Sample 114/140: Pred=2, Exp=3  [✗ Miss]
+Handshake done 
+
+Sample 115/140: Pred=6, Exp=6  [✓ Match]
+Handshake done 
+
+Sample 116/140: Pred=2, Exp=2  [✓ Match]
+Handshake done 
+
+Sample 117/140: Pred=2, Exp=2  [✓ Match]
+Handshake done 
+
+Sample 118/140: Pred=5, Exp=5  [✓ Match]
+Handshake done 
+
+Sample 119/140: Pred=3, Exp=3  [✓ Match]
+Handshake done 
+
+Sample 120/140: Pred=6, Exp=6  [✓ Match]
+Handshake done 
+
+Sample 121/140: Pred=2, Exp=2  [✓ Match]
+Handshake done 
+
+Sample 122/140: Pred=1, Exp=1  [✓ Match]
+Handshake done 
+
+Sample 123/140: Pred=3, Exp=3  [✓ Match]
+Handshake done 
+
+Sample 124/140: Pred=6, Exp=6  [✓ Match]
+Handshake done 
+
+Sample 125/140: Pred=5, Exp=5  [✓ Match]
+Handshake done 
+
+Sample 126/140: Pred=4, Exp=4  [✓ Match]
+Handshake done 
+
+Sample 127/140: Pred=5, Exp=5  [✓ Match]
+Handshake done 
+
+Sample 128/140: Pred=4, Exp=4  [✓ Match]
+Handshake done 
+
+Sample 129/140: Pred=1, Exp=1  [✓ Match]
+Handshake done 
+
+Sample 130/140: Pred=6, Exp=6  [✓ Match]
+Handshake done 
+
+Sample 131/140: Pred=3, Exp=3  [✓ Match]
+Handshake done 
+
+Sample 132/140: Pred=5, Exp=0  [✗ Miss]
+Handshake done 
+
+Sample 133/140: Pred=3, Exp=3  [✓ Match]
+Handshake done 
+
+Sample 134/140: Pred=6, Exp=6  [✓ Match]
+Handshake done 
+
+Sample 135/140: Pred=3, Exp=3  [✓ Match]
+Handshake done 
+
+Sample 136/140: Pred=1, Exp=1  [✓ Match]
+Handshake done 
+
+Sample 137/140: Pred=6, Exp=6  [✓ Match]
+Handshake done 
+
+Sample 138/140: Pred=4, Exp=4  [✓ Match]
+Handshake done 
+
+Sample 139/140: Pred=2, Exp=3  [✗ Miss]
+Handshake done 
+
+Sample 140/140: Pred=1, Exp=1  [✓ Match]
+----------------------------------------
+Accuracy : 78.57%  (110/140)
+Duration : 48.63 seconds

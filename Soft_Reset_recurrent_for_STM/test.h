@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include "arm_math.h"
 
-const q7_t test_input[10][256][12] = // Tensor data in C-like syntax
-// Shape: 140x256x12
+const q7_t test_input[140][256][12] = // Tensor data in C-like syntax
+// Shape: 140x256x12 (ds_test.pt, same order as EXPECTED_CLASSES in test_sender.py)
 {
     {
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -36129,4 +36129,4 @@ const q7_t test_input[10][256][12] = // Tensor data in C-like syntax
     }
 };
 
-#endif
+#endif // TEST_H

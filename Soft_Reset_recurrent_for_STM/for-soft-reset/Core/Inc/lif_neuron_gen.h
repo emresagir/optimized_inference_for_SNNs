@@ -49,5 +49,6 @@ void Load_NIR_Weights(void);
 void SNN_Init(void);
 void SNN_Run_Timestep(const q7_t* input_spikes, q7_t* output_spikes);
 void SNN_Reset_State(void);
+void SNN_Print_Membrane(int t);
 
 #endif // LIF_NEURON_GEN_H
