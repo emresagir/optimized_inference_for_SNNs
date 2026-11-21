@@ -4,6 +4,16 @@
 #include <stdint.h>
 #include "arm_math.h"
 
+#define CYCLE_COUNTER 0
+
+#if CYCLE_COUNTER
+#define CYCLE_ONLY(code) code
+#else
+#define CYCLE_ONLY(code)
+#endif
+
+#define BARE_FOR_ENERGY_MEASUREMENT 1
+
 #ifndef USE_CMSIS_NN
 #define USE_CMSIS_NN 1
 #endif

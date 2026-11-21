@@ -6821,7 +6821,7 @@ void Load_NIR_Weights(void) {
 
 void SNN_Init(void) {
     // Init for cycle counting. 
-    cyc_enable();
+    CYCLE_ONLY(cyc_enable();)
     const float scale = 300.0f;
 
     // Layer 1 initialization
@@ -6896,7 +6896,7 @@ void SNN_Init(void) {
 #endif
 
    #ifndef SNN_PRINT_PLACEMENT
-   #define SNN_PRINT_PLACEMENT 1
+   #define SNN_PRINT_PLACEMENT 0
    #endif
    #if SNN_PRINT_PLACEMENT
        PLC(layer1); PLC(layer2); PLC(layer3);
@@ -6919,6 +6919,7 @@ void SNN_Init(void) {
    // every log records which convolution method and compiler produced it.
    #define SNN_METHOD_NAME(m) ((m) == SNN_CONV_IMPL_CMSISNN ? "CMSISNN" : \
                                (m) == SNN_CONV_IMPL_CSR     ? "CSR"     : "BASE")
+    #if !BARE_FOR_ENERGY_MEASUREMENT
     char cb[160];
     snprintf(cb, sizeof(cb), "ICACHE=%d DCACHE=%d CLK=%lu METHOD=L1:%s,L2:%s GCC=%s\r\n",
             !!(SCB->CCR & SCB_CCR_IC_Msk), !!(SCB->CCR & SCB_CCR_DC_Msk),
@@ -6926,6 +6927,7 @@ void SNN_Init(void) {
             SNN_METHOD_NAME(SNN_LAYER1_METHOD), SNN_METHOD_NAME(SNN_LAYER2_METHOD),
             __VERSION__);
     usart1_print(cb);
+    #endif
 }
 
 
@@ -6947,7 +6949,7 @@ void SNN_Run_Timestep(const q7_t* input_spikes, q7_t* output_spikes) {
     #error "SNN_LAYER2_METHOD selects CMSISNN but USE_CMSIS_NN is disabled."
     #endif
 
-        CYC_START(t_l1);
+        CYCLE_ONLY(CYC_START(t_l1);)
     #if SNN_LAYER1_METHOD == SNN_CONV_IMPL_CMSISNN
         // Layer 1 (convolutional, CMSISNN)
         LIFNeuron_Conv2d_Update_Subtract_CMSISNN(&cnn1, layer1, input_spikes, l1_spikes);
@@ -6962,10 +6964,10 @@ void SNN_Run_Timestep(const q7_t* input_spikes, q7_t* output_spikes) {
     #else
     #error "Unsupported SNN_LAYER1_METHOD. Use 0 (CMSISNN), 1 (CSR), or 2 (BASE)."
     #endif
-        CYC_STOP(cyc_l1, t_l1);
-        CYC_LOG(cyc_l1, "L1", cyc_count_nz(input_spikes, NUM_INPUTS));
+        CYCLE_ONLY(CYC_STOP(cyc_l1, t_l1);)
+        CYCLE_ONLY(CYC_LOG(cyc_l1, "L1", cyc_count_nz(input_spikes, NUM_INPUTS));)
 
-        CYC_START(t_l2);
+        CYCLE_ONLY(CYC_START(t_l2);)
     #if SNN_LAYER2_METHOD == SNN_CONV_IMPL_CMSISNN
         // Layer 2 (convolutional, CMSISNN)
         LIFNeuron_Conv2d_Update_Subtract_CMSISNN(&cnn2, layer2, l1_spikes, l2_spikes);
@@ -6980,8 +6982,8 @@ void SNN_Run_Timestep(const q7_t* input_spikes, q7_t* output_spikes) {
     #else
     #error "Unsupported SNN_LAYER2_METHOD. Use 0 (CMSISNN), 1 (CSR), or 2 (BASE)."
     #endif
-        CYC_STOP(cyc_l2, t_l2);
-        CYC_LOG(cyc_l2, "L2", cyc_count_nz(l1_spikes, NUM_NEURONS_LAYER1));
+        CYCLE_ONLY(CYC_STOP(cyc_l2, t_l2);)
+        CYCLE_ONLY(CYC_LOG(cyc_l2, "L2", cyc_count_nz(l1_spikes, NUM_NEURONS_LAYER1));)
 
         // Layer 3 (no recurrent, fully connected)
         LIFNeuron_Layer_Update_Subtract_NoRecurrent(layer3, l2_spikes, weights3, NUM_NEURONS_LAYER2, NUM_NEURONS_LAYER3, l3_spikes, 0);
@@ -6994,23 +6996,23 @@ void SNN_Run_Timestep(const q7_t* input_spikes, q7_t* output_spikes) {
 
 void SNN_Reset_State(void) {
 
-    cyc_print(&cyc_l1, "L1");  
+    CYCLE_ONLY(cyc_print(&cyc_l1, "L1");)
     // Reset layer 1
     for (int i = 0; i < NUM_NEURONS_LAYER1; i++) {
         layer1[i].membrane_potential = 0;
         layer1[i].reset_value = 0;
         l1_spikes[i] = 0;
     }
-    cyc_reset(&cyc_l1);   
+    CYCLE_ONLY(cyc_reset(&cyc_l1);)
     
-    cyc_print(&cyc_l2, "L2");
+    CYCLE_ONLY(cyc_print(&cyc_l2, "L2");)
     // Reset layer 2
     for (int i = 0; i < NUM_NEURONS_LAYER2; i++) {
         layer2[i].membrane_potential = 0;
         layer2[i].reset_value = 0;
         l2_spikes[i] = 0;
     }
-    cyc_reset(&cyc_l2);   
+    CYCLE_ONLY(cyc_reset(&cyc_l2);)
 
     // Reset layer 3
     for (int i = 0; i < NUM_NEURONS_LAYER3; i++) {
