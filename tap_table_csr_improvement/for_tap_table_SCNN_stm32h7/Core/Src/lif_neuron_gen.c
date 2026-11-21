@@ -52,14 +52,7 @@
 #define NUM_NEURONS_LAYER2 144
 #define NUM_NEURONS_LAYER3 10
 
-#define CYCLE 0
-#define MAC_COUNTER 1
 
-#if MAC_COUNTER
-#define MAC_ONLY(code) code 
-#else
-#define MAC_ONLY(code)
-#endif
 
 #if MAC_COUNTER
 //MAC counter variables, 
@@ -1446,7 +1439,7 @@ void Load_NIR_Weights(void) {
 
 void SNN_Init(void) {
     // Init for cycle counting. 
-    cyc_enable();
+    CYCLE_ONLY(cyc_enable();)
     const float scale = 300.0f;
 
     // Layer 1 initialization
@@ -1501,7 +1494,7 @@ void SNN_Init(void) {
     Load_NIR_Weights();
 
     #ifndef SNN_PRINT_PLACEMENT
-    #define SNN_PRINT_PLACEMENT 1
+    #define SNN_PRINT_PLACEMENT 0
     #endif
 
     #if SNN_PRINT_PLACEMENT
@@ -1510,7 +1503,6 @@ void SNN_Init(void) {
     PLC(weights1); PLC(weights2); PLC(weights3);
     PLC(tap_ptr1_r); PLC(tap_out1_r); PLC(tap_w1_r);
     PLC(tap_ptr2_r); PLC(tap_out2_r); PLC(tap_w2_r);
-    #endif
 
     // Checking cache status and system clock frequency, plus a build tag so that
     // every log records which convolution method and compiler produced it.
@@ -1520,19 +1512,20 @@ void SNN_Init(void) {
             (unsigned long)SystemCoreClock,
             __VERSION__);
     usart1_print(cb);
+    #endif
 }
 
 void SNN_Run_Timestep(const q7_t* input_spikes, q7_t* output_spikes) {
-    CYC_START(t_l1);
+    CYCLE_ONLY(CYC_START(t_l1);)
     // Layer 1 (convolutional, tap-table event-driven)
     LIFNeuron_Conv2d_Update_Subtract_Tap(layer1, input_spikes, weights1, tap_ptr1_r, tap_out1_r, tap_w1_r, L1_IN_CH, L1_IN_SPATIAL, L1_OUT_CH, L1_OUT_SPATIAL, L1_KERNEL_SIZE, l1_spikes);
-    CYC_STOP(cyc_l1, t_l1);
+    CYCLE_ONLY(CYC_STOP(cyc_l1, t_l1);)
     MAC_ONLY(timestep_counter_layer1++;)
 
-    CYC_START(t_l2);
+    CYCLE_ONLY(CYC_START(t_l2);)
     // Layer 2 (convolutional, tap-table event-driven)
     LIFNeuron_Conv2d_Update_Subtract_Tap(layer2, l1_spikes, weights2, tap_ptr2_r, tap_out2_r, tap_w2_r, L2_IN_CH, L2_IN_SPATIAL, L2_OUT_CH, L2_OUT_SPATIAL, L2_KERNEL_SIZE, l2_spikes);
-    CYC_STOP(cyc_l2, t_l2);
+    CYCLE_ONLY(CYC_STOP(cyc_l2, t_l2);)
     MAC_ONLY(timestep_counter_layer2++;)
 
     // Layer 3 (no recurrent, fully connected)
@@ -1549,23 +1542,23 @@ void SNN_Reset_State(void) {
     MAC_ONLY(print_mac_avg_reset(&mac_counter_layer1, &timestep_counter_layer1, 1);)
     MAC_ONLY(print_mac_avg_reset(&mac_counter_layer2, &timestep_counter_layer2, 2);)
 
-    cyc_print(&cyc_l1, "L1");  
+    CYCLE_ONLY(cyc_print(&cyc_l1, "L1");)
     // Reset layer 1
     for (int i = 0; i < NUM_NEURONS_LAYER1; i++) {
         layer1[i].membrane_potential = 0;
         layer1[i].reset_value = 0;
         l1_spikes[i] = 0;
     }
-    cyc_reset(&cyc_l1);   
+    CYCLE_ONLY(cyc_reset(&cyc_l1);)
     
-    cyc_print(&cyc_l2, "L2");
+    CYCLE_ONLY(cyc_print(&cyc_l2, "L2");)
     // Reset layer 2
     for (int i = 0; i < NUM_NEURONS_LAYER2; i++) {
         layer2[i].membrane_potential = 0;
         layer2[i].reset_value = 0;
         l2_spikes[i] = 0;
     }
-    cyc_reset(&cyc_l2);   
+    CYCLE_ONLY(cyc_reset(&cyc_l2);)   
 
     // Reset layer 3
     for (int i = 0; i < NUM_NEURONS_LAYER3; i++) {

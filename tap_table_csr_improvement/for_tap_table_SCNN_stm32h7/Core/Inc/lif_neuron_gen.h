@@ -4,6 +4,25 @@
 #include <stdint.h>
 #include "arm_math.h"
 
+#define CYCLE_COUNTER 0
+
+#if CYCLE_COUNTER
+#define CYCLE_ONLY(code) code
+#else
+#define CYCLE_ONLY(code)
+#endif
+
+
+#define MAC_COUNTER 0
+
+#if MAC_COUNTER
+#define MAC_ONLY(code) code 
+#else
+#define MAC_ONLY(code)
+#endif
+
+#define BARE_FOR_ENERGY_MEASUREMENT 1
+
 typedef struct {
     q15_t threshold;     // Firing threshold in Q15
     q15_t reset_value;   // Reset potential in Q15
