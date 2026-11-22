@@ -52,3 +52,9 @@
 [submodule "tap_table_csr_improvement/for_tap_table_SCNN_stm32h7/Drivers/CMSIS-DSP"]
 	path = tap_table_csr_improvement/for_tap_table_SCNN_stm32h7/Drivers/CMSIS-DSP
 	url = https://github.com/ARM-software/CMSIS-DSP.git
+[submodule "FC_pruning/for_FC_pruning_SCNN_stm32h7/Drivers/CMSIS-DSP"]
+	path = FC_pruning/for_FC_pruning_SCNN_stm32h7/Drivers/CMSIS-DSP
+	url = https://github.com/ARM-software/CMSIS-DSP.git
+[submodule "FC_pruning/for_FC_pruning_SCNN_stm32h7/Drivers/CMSIS-NN"]
+	path = FC_pruning/for_FC_pruning_SCNN_stm32h7/Drivers/CMSIS-NN
+	url = https://github.com/ARM-software/CMSIS-NN.git
