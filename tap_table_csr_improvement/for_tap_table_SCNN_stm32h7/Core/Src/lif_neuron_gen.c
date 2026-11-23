@@ -17,9 +17,6 @@
 // Layer 1: 392 -> 144 (convolutional, no recurrent, uniform params)
 // Layer 2: 144 -> 10 (fully connected, no recurrent, uniform params)
 
-// Spike counter:
-SparsityAcc g_sp;
-
 // Global variables for the SNN
 #define NUM_INPUTS 200
 #define NUM_INPUT_CHANNEL 2
@@ -55,6 +52,29 @@ SparsityAcc g_sp;
 #define NUM_NEURONS_LAYER2 144
 #define NUM_NEURONS_LAYER3 10
 
+
+
+#if MAC_COUNTER
+//MAC counter variables, 
+uint32_t mac_counter_layer1 = 0;
+uint16_t timestep_counter_layer1 = 0;
+uint32_t mac_counter_layer2 = 0;
+uint16_t timestep_counter_layer2 = 0;
+#endif
+
+#if MAC_COUNTER
+void print_mac_avg_reset(uint32_t* mac_ctr, uint16_t* timestep_ctr, uint8_t layer){
+    if(*timestep_ctr == 0) return;
+    uint32_t avg_mac = *mac_ctr / *timestep_ctr;
+    char buf[200];
+    snprintf(buf,sizeof(buf), " Layer %d average mac count of the sample = %ld \r\n", layer, avg_mac);
+    usart1_print(buf);
+    *mac_ctr = 0;
+    *timestep_ctr = 0;
+}
+#endif
+
+
 static __attribute__((aligned(32))) LIFNeuron layer1[NUM_NEURONS_LAYER1], layer2[NUM_NEURONS_LAYER2], layer3[NUM_NEURONS_LAYER3];
 static __attribute__((aligned(32))) q7_t l1_spikes[NUM_NEURONS_LAYER1];
 static __attribute__((aligned(32))) q7_t l2_spikes[NUM_NEURONS_LAYER2];
@@ -63,6 +83,60 @@ static __attribute__((aligned(32))) q7_t l3_spikes[NUM_NEURONS_LAYER3];
 static __attribute__((aligned(32))) q15_t weights1[L1_OUT_CH * L1_IN_CH * L1_KERNEL_H * L1_KERNEL_W]; // Conv connected
 static __attribute__((aligned(32))) q15_t weights2[L2_OUT_CH * L2_IN_CH * L2_KERNEL_H * L2_KERNEL_W]; // Conv connected
 static __attribute__((aligned(32))) q15_t weights3[NUM_NEURONS_LAYER2*NUM_NEURONS_LAYER3]; // Fully connected
+
+/* ---------------------------------------------------------------------------
+ * Membrane-potential debug print, for the comparison with the golden reference
+ * (golden_ref_for_opt.py -> debug_and_plot/membrane_potentials_layer{1,2,3}.npz).
+ *
+ *   SNN_MEMBRANE_DEBUG 0     : off. Use this for all accuracy and timing runs;
+ *                              the UART print inside the layer update would
+ *                              distort the cycle counts.
+ *   SNN_MEMBRANE_DEBUG 1/2/3 : print the tracked neuron of layer 1/2/3 at every
+ *                              timestep. One layer per run, because the parser
+ *                              takes every "V:" line as one timestep.
+ *
+ * The tracked neurons are the ones in golden_ref_for_opt.py
+ * (neuron index o = ch * out_h * out_w + y * out_w + x):
+ *   Layer 1: C7  Y3 X0 -> 7*7*7 + 3*7 + 0 = 364
+ *   Layer 2: C11 Y0 X1 -> 11*3*3 + 0*3 + 1 = 100
+ *   Layer 3: output neuron 8
+ * V is the raw Q15 value after the soft reset, the same point as mem in
+ * snnTorch (float V = V_q15 * scale / 32768, with scale = 300).
+ * ------------------------------------------------------------------------- */
+#ifndef SNN_MEMBRANE_DEBUG
+#define SNN_MEMBRANE_DEBUG 0
+#endif
+
+#if SNN_MEMBRANE_DEBUG == 1
+#define SNN_DBG_NUM_NEURONS NUM_NEURONS_LAYER1
+#define SNN_DBG_NEURON      364
+#elif SNN_MEMBRANE_DEBUG == 2
+#define SNN_DBG_NUM_NEURONS NUM_NEURONS_LAYER2
+#define SNN_DBG_NEURON      100
+#elif SNN_MEMBRANE_DEBUG == 3
+#define SNN_DBG_NUM_NEURONS NUM_NEURONS_LAYER3
+#define SNN_DBG_NEURON      8
+#endif
+
+#if SNN_MEMBRANE_DEBUG
+/* One line per timestep for the tracked neuron, called after the soft reset and
+ * spike check. The layer is identified by its neuron count (392, 144 or 10). */
+static void snn_membrane_debug(uint32_t num_neurons, uint32_t idx,
+                               const LIFNeuron* n, q7_t spike) {
+    if (num_neurons != SNN_DBG_NUM_NEURONS || idx != SNN_DBG_NEURON) {
+        return;
+    }
+    char buf[96];
+    snprintf(buf, sizeof(buf), "L%d V:%d | threshold: %d S:%d | nindex = %lu | reset_next = %d\r\n",
+             SNN_MEMBRANE_DEBUG, (int)n->membrane_potential, (int)n->threshold,
+             (int)spike, (unsigned long)idx, (int)n->reset_value);
+    usart1_print(buf);
+}
+#define SNN_MEMBRANE_DEBUG_HOOK(num, idx, neuron_ptr, spike) \
+    snn_membrane_debug((num), (idx), (neuron_ptr), (spike))
+#else
+#define SNN_MEMBRANE_DEBUG_HOOK(num, idx, neuron_ptr, spike) do { } while (0)
+#endif
 
 // Layer 1 conv tap table (precomputed in Python).
 static const uint16_t tap_ptr1[L1_IN_SPATIAL + 1] = {
@@ -510,6 +584,8 @@ void LIFNeuron_Layer_Update_Subtract_NoRecurrent(LIFNeuron* neurons, const q7_t*
         }
         neurons[i].membrane_potential = membrane_potentials[i];
 
+        SNN_MEMBRANE_DEBUG_HOOK(num_neurons, i, &neurons[i], output_spikes[i]);
+
         // TODO : Delete this part when the all tests are done.
         // Debug print for the most spiking output neuron.
         // if(i == 8){
@@ -575,6 +651,16 @@ void LIFNeuron_Conv2d_Update_Subtract_Tap(
                     q31_t v = (q31_t)n->membrane_potential +
                             (q31_t)in_plane[p] * (q31_t)w0[(uint32_t)oc * w_oc_stride]; //The weight specific to current out_channel.
                     n->membrane_potential = (q15_t)__SSAT(v, 16);
+
+			            #if MAC_COUNTER
+                        if (out_ch == 16) {
+                            mac_counter_layer2++;
+                        }
+                        else if (out_ch == 8) {
+                            mac_counter_layer1++;
+                        }
+                        #endif
+                    
                 }
             }
         }
@@ -582,7 +668,8 @@ void LIFNeuron_Conv2d_Update_Subtract_Tap(
 
     // Soft reset (subtract threshold if the neuron spiked last step) + spike check 
     for (uint32_t o = 0; o < num_outputs; o++) {
-        neurons[o].membrane_potential -= neurons[o].reset_value;
+        neurons[o].membrane_potential = (q15_t)__SSAT((q31_t)neurons[o].membrane_potential -
+                                                      (q31_t)neurons[o].reset_value, 16);
 
         if (neurons[o].membrane_potential > neurons[o].threshold) {
             output_spikes[o] = 1;
@@ -591,12 +678,14 @@ void LIFNeuron_Conv2d_Update_Subtract_Tap(
             output_spikes[o] = 0;
             neurons[o].reset_value = 0;
         }
+
+        SNN_MEMBRANE_DEBUG_HOOK(num_outputs, o, &neurons[o], output_spikes[o]);
     }
 }
     
 
 void Load_NIR_Weights(void) {
-    const float scale = 60.0f;
+    const float scale = 300.0f;
 
     // Layer 1 conv weights - Conv2d (8x2x4x4)
     // Stored in OUT_CH-MAJOR order: [oc][ic][kh][kw]
@@ -1350,8 +1439,8 @@ void Load_NIR_Weights(void) {
 
 void SNN_Init(void) {
     // Init for cycle counting. 
-    cyc_enable();
-    const float scale = 60.0f;
+    CYCLE_ONLY(cyc_enable();)
+    const float scale = 300.0f;
 
     // Layer 1 initialization
     // Uniform parameters for all neurons
@@ -1405,7 +1494,7 @@ void SNN_Init(void) {
     Load_NIR_Weights();
 
     #ifndef SNN_PRINT_PLACEMENT
-    #define SNN_PRINT_PLACEMENT 1
+    #define SNN_PRINT_PLACEMENT 0
     #endif
 
     #if SNN_PRINT_PLACEMENT
@@ -1414,28 +1503,30 @@ void SNN_Init(void) {
     PLC(weights1); PLC(weights2); PLC(weights3);
     PLC(tap_ptr1_r); PLC(tap_out1_r); PLC(tap_w1_r);
     PLC(tap_ptr2_r); PLC(tap_out2_r); PLC(tap_w2_r);
-    #endif
 
-    // Checking cache status and system clock frequency
-    char cb[80];
-    snprintf(cb, sizeof(cb), "ICACHE=%d DCACHE=%d CLK=%lu\r\n",
+    // Checking cache status and system clock frequency, plus a build tag so that
+    // every log records which convolution method and compiler produced it.
+    char cb[160];
+    snprintf(cb, sizeof(cb), "ICACHE=%d DCACHE=%d CLK=%lu METHOD=L1:TAP,L2:TAP GCC=%s\r\n",
             !!(SCB->CCR & SCB_CCR_IC_Msk), !!(SCB->CCR & SCB_CCR_DC_Msk),
-            (unsigned long)SystemCoreClock);
+            (unsigned long)SystemCoreClock,
+            __VERSION__);
     usart1_print(cb);
+    #endif
 }
 
 void SNN_Run_Timestep(const q7_t* input_spikes, q7_t* output_spikes) {
-    CYC_START(t_l1);
+    CYCLE_ONLY(CYC_START(t_l1);)
     // Layer 1 (convolutional, tap-table event-driven)
     LIFNeuron_Conv2d_Update_Subtract_Tap(layer1, input_spikes, weights1, tap_ptr1_r, tap_out1_r, tap_w1_r, L1_IN_CH, L1_IN_SPATIAL, L1_OUT_CH, L1_OUT_SPATIAL, L1_KERNEL_SIZE, l1_spikes);
-    CYC_STOP(cyc_l1, t_l1);
-    CYC_LOG(cyc_l1, "L1", cyc_count_nz(input_spikes, NUM_INPUTS));
+    CYCLE_ONLY(CYC_STOP(cyc_l1, t_l1);)
+    MAC_ONLY(timestep_counter_layer1++;)
 
-    CYC_START(t_l2);
+    CYCLE_ONLY(CYC_START(t_l2);)
     // Layer 2 (convolutional, tap-table event-driven)
     LIFNeuron_Conv2d_Update_Subtract_Tap(layer2, l1_spikes, weights2, tap_ptr2_r, tap_out2_r, tap_w2_r, L2_IN_CH, L2_IN_SPATIAL, L2_OUT_CH, L2_OUT_SPATIAL, L2_KERNEL_SIZE, l2_spikes);
-    CYC_STOP(cyc_l2, t_l2);
-    CYC_LOG(cyc_l2, "L2", cyc_count_nz(l1_spikes, NUM_NEURONS_LAYER1));
+    CYCLE_ONLY(CYC_STOP(cyc_l2, t_l2);)
+    MAC_ONLY(timestep_counter_layer2++;)
 
     // Layer 3 (no recurrent, fully connected)
     LIFNeuron_Layer_Update_Subtract_NoRecurrent(layer3, l2_spikes, weights3, NUM_NEURONS_LAYER2, NUM_NEURONS_LAYER3, l3_spikes, 0);
@@ -1444,32 +1535,30 @@ void SNN_Run_Timestep(const q7_t* input_spikes, q7_t* output_spikes) {
     for (int i = 0; i < NUM_NEURONS_LAYER3; i++) {
         output_spikes[i] = l3_spikes[i];
     }
-
-    uint32_t n;
-    g_sp.sops1 += count_sops(input_spikes, tap_ptr1_r, L1_IN_CH, L1_IN_SPATIAL, L1_OUT_CH, &n);
-    g_sp.nnz1  += n;
-    g_sp.sops2 += count_sops(l1_spikes, tap_ptr2_r, L2_IN_CH, L2_IN_SPATIAL, L2_OUT_CH, &n);
-    g_sp.nnz2  += n;
 }
 
 void SNN_Reset_State(void) {
-    cyc_print(&cyc_l1, "L1");  
+
+    MAC_ONLY(print_mac_avg_reset(&mac_counter_layer1, &timestep_counter_layer1, 1);)
+    MAC_ONLY(print_mac_avg_reset(&mac_counter_layer2, &timestep_counter_layer2, 2);)
+
+    CYCLE_ONLY(cyc_print(&cyc_l1, "L1");)
     // Reset layer 1
     for (int i = 0; i < NUM_NEURONS_LAYER1; i++) {
         layer1[i].membrane_potential = 0;
         layer1[i].reset_value = 0;
         l1_spikes[i] = 0;
     }
-    cyc_reset(&cyc_l1);   
+    CYCLE_ONLY(cyc_reset(&cyc_l1);)
     
-    cyc_print(&cyc_l2, "L2");
+    CYCLE_ONLY(cyc_print(&cyc_l2, "L2");)
     // Reset layer 2
     for (int i = 0; i < NUM_NEURONS_LAYER2; i++) {
         layer2[i].membrane_potential = 0;
         layer2[i].reset_value = 0;
         l2_spikes[i] = 0;
     }
-    cyc_reset(&cyc_l2);   
+    CYCLE_ONLY(cyc_reset(&cyc_l2);)   
 
     // Reset layer 3
     for (int i = 0; i < NUM_NEURONS_LAYER3; i++) {

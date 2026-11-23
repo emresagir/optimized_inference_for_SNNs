@@ -13,20 +13,21 @@
  * What is different (and why):
  *   - CMSIS-NN s16 = int16 activations + INT8 weights. The Q15 weights are
  *     requantized per output channel to int8 at init.
- *   - CMSIS-NN wants NHWC activations and OHWI weights. Layout conversion is
- *     done outside the timed region.
+ *   - CMSIS-NN wants NHWC activations and OHWI weights. The weights are
+ *     reordered once at init; the input is converted CHW -> NHWC at every
+ *     timestep.
  *   - The conv output is requantized back to Q15 "current" units, so
  *     current = sum(spike * w_q15) approximately, as in the CSR kernel.
  *   - The conv is dense; it does not skip zero spikes.
  *
- * Cycle counting: DWT->CYCCNT is read immediately before and after
- * arm_convolve_s16() only. Layout conversion and the LIF update are NOT
- * included in the count.
+ * Cycle counting: the caller (SNN_Run_Timestep in lif_neuron_gen.c) wraps the
+ * whole LIFNeuron_Conv2d_Update_Subtract_CMSISNN() call with CYC_START/CYC_STOP,
+ * so the reported cycles include the layout conversion, arm_convolve_s16() and
+ * the LIF update, the same scope as the other convolution methods.
  *
- * NOTE: written from memory of the CMSIS-NN API. Struct/field names and the
- * bias argument changed between CMSIS-NN releases. Check against the headers
- * in your project (arm_nnfunctions.h, arm_nn_types.h) and define
- * CMSISNN_BIAS_AS_STRUCT (see lif_conv_cmsisnn.h) if your version takes cmsis_nn_bias_data.
+ * Checked against CMSIS-NN v7.0.0 (arm_nnfunctions.h, arm_nn_types.h), whose
+ * arm_convolve_s16 takes the bias as const cmsis_nn_bias_data *
+ * (CMSISNN_BIAS_AS_STRUCT in lif_conv_cmsisnn.h).
  */
 
 #include "stm32h7xx_hal.h"
@@ -98,11 +99,11 @@ int CMSISNN_Conv_Init(CMSISNN_ConvLayer *L,
      *   w_q15 ~= w_s8 * (maxabs / 127)
      * so the real multiplier that maps int accumulator -> Q15 current is
      *   M = maxabs / 127
-     * M is encoded as a REDUCED (Q15) multiplier and a shift, which is what
-     * arm_convolve_s16 expects (arm_nn_requantize_s64):
-     *   out = acc * multiplier / 2^(15 - shift)
-     * i.e. M = multiplier * 2^(shift - 15). This differs from the s8 kernels,
-     * which use a Q31 multiplier. */
+     * M is split as M = mant * 2^e (mant in [0.5, 1)) and passed as a Q31
+     * multiplier (mant * 2^31) and a shift (e), like the s8 kernels.
+     * Inside arm_convolve_s16, REDUCE_MULTIPLIER() rounds the Q31 multiplier to
+     * Q15 and arm_nn_requantize_s64() applies it with the shift:
+     *   out = round(acc * mult * 2^shift / 2^31) ~= acc * M */
     const uint32_t per_oc = (uint32_t)in_ch * kh * kw;
     for (uint16_t oc = 0; oc < out_ch; oc++) {
         int32_t maxabs = 0;
@@ -198,8 +199,9 @@ void LIFNeuron_Conv2d_Update_Subtract_CMSISNN(CMSISNN_ConvLayer *L,
     // __DSB(); __ISB();
     // const uint32_t t0 = DWT->CYCCNT;
 
-    /* 1. Layout conversion CHW q7 -> NHWC int16 (NOT timed). The spike value is
-     *    kept as-is, so non-binary inputs (ST-MNIST) still work. */
+    /* 1. Layout conversion CHW q7 -> NHWC int16 (included in the layer-update
+     *    cycles). The spike value is kept as-is, so non-binary inputs
+     *    (ST-MNIST) still work. */
     for (uint16_t c = 0; c < IC; c++) {
         for (uint16_t h = 0; h < IH; h++) {
             for (uint16_t w = 0; w < IW; w++) {

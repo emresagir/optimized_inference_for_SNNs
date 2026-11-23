@@ -1,0 +1,2106 @@
+  WINDOW=0 (0 = real length)
+
+PLC layer1             addr=0x20016080 size= 12544  DTCM
+PLC layer2             addr=0x20014E80 size=  4608  DTCM
+PLC layer3             addr=0x20014E20 size=    80  DTCM
+PLC l1_spikes          addr=0x20014800 size=  1568  DTCM
+PLC l2_spikes          addr=0x200145C0 size=   576  DTCM
+PLC weights1           addr=0x20013DA0 size=  2048  DTCM
+PLC weights2           addr=0x2000ADA0 size= 36864  DTCM
+PLC weights3           addr=0x200080A0 size= 11520  DTCM
+PLC cnn1_w             addr=0x20007CA0 size=  1024  DTCM
+PLC cnn1_mult          addr=0x20007C10 size=   128  DTCM
+PLC cnn1_in            addr=0x20007900 size=   400  DTCM
+PLC cnn1_out           addr=0x20006CC0 size=  3136  DTCM
+PLC cnn2_w             addr=0x20002400 size= 18432  DTCM
+PLC cnn2_mult          addr=0x20002300 size=   256  DTCM
+PLC cnn2_in            addr=0x200013C0 size=  3136  DTCM
+PLC cnn2_out           addr=0x20000F40 size=  1152  DTCM
+PLC arm_convolve_s16   addr=0x0800EA8D size=     0  FLASH
+ICACHE=1 DCACHE=1 CLK=64000000 METHOD=L1:CMSISNN,L2:CMSISNN GCC=14.3.1 20250623
+L1 layer update cycles: calls=0 last=0 min=4294967295 max=0 avg=0 total=0
+L2 layer update cycles: calls=0 last=0 min=4294967295 max=0 avg=0 total=0
+PLC input_spikes       addr=0x200001A0 size=   200  DTCM
+[00] T= 62  GT=8  Pred=8  PASS  spikes: 13 0 7 17 0 10 4 14 57 7
+L1 layer update cycles: calls=62 last=203973 min=203915 max=204302 avg=204115 total=12655177
+L2 layer update cycles: calls=62 last=346746 min=346674 max=346839 avg=346719 total=21496593
+[01] T= 37  GT=0  Pred=0  PASS  spikes: 32 2 7 10 0 0 20 13 9 13
+L1 layer update cycles: calls=37 last=204067 min=203988 max=204377 avg=204144 total=7553363
+L2 layer update cycles: calls=37 last=346677 min=346674 max=346825 avg=346729 total=12828976
+[02] T= 37  GT=8  Pred=3  FAIL  spikes: 17 6 0 25 1 6 0 0 6 15
+L1 layer update cycles: calls=37 last=204146 min=204138 max=204521 avg=204292 total=7558819
+L2 layer update cycles: calls=37 last=346720 min=346661 max=346759 avg=346701 total=12827950
+[03] T= 86  GT=7  Pred=7  PASS  spikes: 15 30 36 16 15 39 13 58 36 33
+L1 layer update cycles: calls=86 last=204055 min=204054 max=204623 avg=204254 total=17565894
+L2 layer update cycles: calls=86 last=346677 min=346662 max=346775 avg=346711 total=29817172
+[04] T= 79  GT=4  Pred=4  PASS  spikes: 21 4 12 22 69 13 15 8 12 24
+L1 layer update cycles: calls=79 last=204152 min=204060 max=204423 avg=204206 total=16132331
+L2 layer update cycles: calls=79 last=346659 min=346659 max=346764 avg=346701 total=27389446
+[05] T= 52  GT=7  Pred=7  PASS  spikes: 4 4 9 22 10 13 1 24 7 4
+L1 layer update cycles: calls=52 last=204073 min=203844 max=204278 avg=204107 total=10613605
+L2 layer update cycles: calls=52 last=346696 min=346658 max=346816 avg=346725 total=18029740
+[06] T= 85  GT=0  Pred=0  PASS  spikes: 78 11 15 42 11 15 2 11 6 19
+L1 layer update cycles: calls=85 last=204069 min=204034 max=204303 avg=204147 total=17352513
+L2 layer update cycles: calls=85 last=346715 min=346665 max=346838 avg=346719 total=29471120
+[07] T= 37  GT=6  Pred=0  FAIL  spikes: 18 2 4 13 1 5 11 4 5 7
+L1 layer update cycles: calls=37 last=204150 min=203919 max=204384 avg=204162 total=7553999
+L2 layer update cycles: calls=37 last=346684 min=346659 max=346845 avg=346716 total=12828521
+[08] T= 81  GT=9  Pred=9  PASS  spikes: 28 8 3 17 27 26 26 22 13 31
+L1 layer update cycles: calls=81 last=204221 min=203848 max=204380 avg=204069 total=16529613
+L2 layer update cycles: calls=81 last=346730 min=346657 max=346828 avg=346703 total=28082963
+[09] T= 89  GT=8  Pred=8  PASS  spikes: 2 12 16 38 0 29 38 0 89 8
+L1 layer update cycles: calls=89 last=204168 min=204071 max=204426 avg=204196 total=18173509
+L2 layer update cycles: calls=89 last=346715 min=346662 max=346827 avg=346723 total=30858404
+[10] T= 21  GT=1  Pred=4  FAIL  spikes: 1 12 6 7 18 7 2 3 1 12
+L1 layer update cycles: calls=21 last=203917 min=203917 max=204182 avg=204011 total=4284247
+L2 layer update cycles: calls=21 last=346714 min=346674 max=346879 avg=346751 total=7281774
+[11] T= 21  GT=9  Pred=8  FAIL  spikes: 1 0 0 3 0 0 9 16 20 15
+L1 layer update cycles: calls=21 last=204262 min=203932 max=204262 avg=204038 total=4284809
+L2 layer update cycles: calls=21 last=346768 min=346681 max=346830 avg=346734 total=7281425
+[12] T= 67  GT=7  Pred=7  PASS  spikes: 28 4 16 43 2 6 8 57 1 2
+L1 layer update cycles: calls=67 last=204240 min=203974 max=204448 avg=204140 total=13677416
+L2 layer update cycles: calls=67 last=346661 min=346659 max=346811 avg=346710 total=23229583
+[13] T= 82  GT=2  Pred=2  PASS  spikes: 23 8 33 24 7 21 13 12 15 8
+L1 layer update cycles: calls=82 last=204075 min=203857 max=204406 avg=204130 total=16738681
+L2 layer update cycles: calls=82 last=346672 min=346660 max=346833 avg=346714 total=28430606
+[14] T= 39  GT=4  Pred=4  PASS  spikes: 18 0 0 6 33 0 3 3 6 0
+L1 layer update cycles: calls=39 last=204181 min=203987 max=204310 avg=204125 total=7960893
+L2 layer update cycles: calls=39 last=346674 min=346674 max=346844 avg=346722 total=13522192
+[15] T= 67  GT=9  Pred=9  PASS  spikes: 7 8 3 0 1 6 9 4 10 33
+L1 layer update cycles: calls=67 last=204071 min=204047 max=204381 avg=204135 total=13677061
+L2 layer update cycles: calls=67 last=346670 min=346658 max=346767 avg=346708 total=23229474
+[16] T= 67  GT=5  Pred=5  PASS  spikes: 14 6 1 3 9 61 11 17 0 3
+L1 layer update cycles: calls=67 last=204102 min=203978 max=204412 avg=204178 total=13679988
+L2 layer update cycles: calls=67 last=346728 min=346663 max=346780 avg=346713 total=23229796
+[17] T= 34  GT=8  Pred=8  PASS  spikes: 1 0 7 15 0 2 0 0 24 5
+L1 layer update cycles: calls=34 last=204134 min=204054 max=204389 avg=204167 total=6941680
+L2 layer update cycles: calls=34 last=346676 min=346668 max=346774 avg=346718 total=11788441
+[18] T= 85  GT=8  Pred=8  PASS  spikes: 11 12 2 48 0 14 19 13 65 8
+L1 layer update cycles: calls=85 last=203962 min=203962 max=204489 avg=204174 total=17354800
+L2 layer update cycles: calls=85 last=346682 min=346664 max=346814 avg=346711 total=29470436
+[19] T= 22  GT=1  Pred=1  PASS  spikes: 0 20 0 2 2 6 4 9 11 0
+L1 layer update cycles: calls=22 last=204043 min=204008 max=204513 avg=204145 total=4491208
+L2 layer update cycles: calls=22 last=346678 min=346676 max=346898 avg=346730 total=7628074
+[20] T= 55  GT=8  Pred=8  PASS  spikes: 12 2 1 28 3 34 1 7 50 0
+L1 layer update cycles: calls=55 last=204076 min=204056 max=204504 avg=204214 total=11231792
+L2 layer update cycles: calls=55 last=346671 min=346669 max=346920 avg=346734 total=19070377
+[21] T= 70  GT=8  Pred=8  PASS  spikes: 10 7 3 18 0 9 17 18 69 16
+L1 layer update cycles: calls=70 last=204032 min=204020 max=204386 avg=204145 total=14290201
+L2 layer update cycles: calls=70 last=346716 min=346668 max=346842 avg=346719 total=24270336
+[22] T= 61  GT=4  Pred=9  FAIL  spikes: 1 0 11 20 0 12 14 0 3 59
+L1 layer update cycles: calls=61 last=204136 min=204044 max=204458 avg=204244 total=12458884
+L2 layer update cycles: calls=61 last=346724 min=346679 max=346848 avg=346731 total=21150597
+[23] T= 77  GT=6  Pred=6  PASS  spikes: 18 13 19 14 10 17 55 2 19 15
+L1 layer update cycles: calls=77 last=203946 min=203943 max=204461 avg=204148 total=15719416
+L2 layer update cycles: calls=77 last=346725 min=346662 max=346807 avg=346707 total=26696467
+[24] T= 22  GT=0  Pred=0  PASS  spikes: 22 0 6 11 1 2 0 13 0 8
+L1 layer update cycles: calls=22 last=204096 min=204096 max=204383 avg=204215 total=4492735
+L2 layer update cycles: calls=22 last=346730 min=346675 max=346888 avg=346788 total=7629352
+[25] T= 72  GT=3  Pred=3  PASS  spikes: 12 0 22 54 20 10 28 16 23 0
+L1 layer update cycles: calls=72 last=204146 min=203937 max=204364 avg=204163 total=14699798
+L2 layer update cycles: calls=72 last=346697 min=346664 max=346932 avg=346717 total=24963633
+[26] T= 48  GT=8  Pred=3  FAIL  spikes: 6 0 0 27 0 13 0 0 11 4
+L1 layer update cycles: calls=48 last=204077 min=204026 max=204512 avg=204167 total=9800042
+L2 layer update cycles: calls=48 last=346746 min=346661 max=346800 avg=346715 total=16642320
+[27] T= 76  GT=8  Pred=8  PASS  spikes: 11 7 2 25 8 18 21 4 43 19
+L1 layer update cycles: calls=76 last=203958 min=203915 max=204507 avg=204124 total=15513490
+L2 layer update cycles: calls=76 last=346714 min=346669 max=346842 avg=346722 total=26350883
+[28] T= 19  GT=2  Pred=2  PASS  spikes: 5 2 8 8 4 3 4 4 5 0
+L1 layer update cycles: calls=19 last=204116 min=204058 max=204344 avg=204187 total=3879564
+L2 layer update cycles: calls=19 last=346663 min=346663 max=346782 avg=346722 total=6587723
+[29] T= 39  GT=3  Pred=3  PASS  spikes: 25 0 5 36 0 7 0 1 0 15
+L1 layer update cycles: calls=39 last=204162 min=204057 max=204468 avg=204282 total=7967008
+L2 layer update cycles: calls=39 last=346699 min=346698 max=346887 avg=346767 total=13523917
+[30] T= 55  GT=5  Pred=8  FAIL  spikes: 0 21 0 2 0 32 19 0 33 0
+L1 layer update cycles: calls=55 last=204110 min=203995 max=204507 avg=204188 total=11230369
+L2 layer update cycles: calls=55 last=346677 min=346659 max=346908 avg=346745 total=19070978
+[31] T= 54  GT=1  Pred=1  PASS  spikes: 10 48 2 8 4 11 12 13 7 7
+L1 layer update cycles: calls=54 last=203948 min=203878 max=204288 avg=204053 total=11018896
+L2 layer update cycles: calls=54 last=346694 min=346664 max=346738 avg=346698 total=18721701
+[32] T= 34  GT=7  Pred=7  PASS  spikes: 16 0 4 18 0 3 0 30 1 3
+L1 layer update cycles: calls=34 last=204136 min=204027 max=204454 avg=204216 total=6943366
+L2 layer update cycles: calls=34 last=346706 min=346669 max=346914 avg=346738 total=11789109
+[33] T= 61  GT=4  Pred=4  PASS  spikes: 0 1 2 30 37 21 19 3 17 16
+L1 layer update cycles: calls=61 last=204243 min=203995 max=204428 avg=204172 total=12454526
+L2 layer update cycles: calls=61 last=346688 min=346667 max=346835 avg=346723 total=21150118
+[34] T= 46  GT=2  Pred=2  PASS  spikes: 8 3 28 19 1 3 6 2 0 4
+L1 layer update cycles: calls=46 last=204074 min=203992 max=204305 avg=204147 total=9390806
+L2 layer update cycles: calls=46 last=346728 min=346664 max=346783 avg=346710 total=15948667
+[35] T= 69  GT=3  Pred=3  PASS  spikes: 17 0 21 67 0 4 0 31 3 8
+L1 layer update cycles: calls=69 last=204098 min=204096 max=204372 avg=204213 total=14090705
+L2 layer update cycles: calls=69 last=346674 min=346663 max=346785 avg=346725 total=23924075
+[36] T= 73  GT=6  Pred=6  PASS  spikes: 12 11 3 1 7 6 61 9 16 20
+L1 layer update cycles: calls=73 last=204068 min=203951 max=204336 avg=204172 total=14904618
+L2 layer update cycles: calls=73 last=346721 min=346664 max=346817 avg=346709 total=25309797
+[37] T= 90  GT=0  Pred=0  PASS  spikes: 66 8 1 32 1 38 1 36 3 18
+L1 layer update cycles: calls=90 last=204066 min=204066 max=204420 avg=204177 total=18375937
+L2 layer update cycles: calls=90 last=346730 min=346660 max=346882 avg=346751 total=31207593
+[38] T= 91  GT=5  Pred=2  FAIL  spikes: 20 3 51 23 3 41 6 22 16 12
+L1 layer update cycles: calls=91 last=204066 min=203895 max=204463 avg=204121 total=18575039
+L2 layer update cycles: calls=91 last=346696 min=346675 max=346878 avg=346731 total=31552575
+[39] T= 87  GT=6  Pred=6  PASS  spikes: 4 17 28 7 25 4 39 25 23 19
+L1 layer update cycles: calls=87 last=203849 min=203845 max=204478 avg=204017 total=17749564
+L2 layer update cycles: calls=87 last=346661 min=346656 max=346822 avg=346698 total=30162800
+[40] T= 84  GT=7  Pred=7  PASS  spikes: 25 14 20 43 9 20 8 59 14 13
+L1 layer update cycles: calls=84 last=203893 min=203889 max=204426 avg=204100 total=17144425
+L2 layer update cycles: calls=84 last=346670 min=346659 max=346832 avg=346738 total=29126016
+[41] T= 70  GT=8  Pred=8  PASS  spikes: 1 2 4 16 0 30 1 1 31 16
+L1 layer update cycles: calls=70 last=204104 min=204024 max=204504 avg=204156 total=14290966
+L2 layer update cycles: calls=70 last=346694 min=346658 max=346808 avg=346704 total=24269344
+[42] T= 39  GT=7  Pred=7  PASS  spikes: 0 0 11 16 2 13 2 37 12 0
+L1 layer update cycles: calls=39 last=204000 min=203978 max=204390 avg=204078 total=7959050
+L2 layer update cycles: calls=39 last=346756 min=346674 max=346809 avg=346718 total=13522032
+[43] T= 92  GT=4  Pred=4  PASS  spikes: 16 2 2 16 85 7 9 8 24 4
+L1 layer update cycles: calls=92 last=204151 min=204023 max=204583 avg=204246 total=18790702
+L2 layer update cycles: calls=92 last=346737 min=346674 max=346795 avg=346725 total=31898741
+[44] T= 18  GT=3  Pred=3  PASS  spikes: 2 0 3 17 0 0 2 17 3 0
+L1 layer update cycles: calls=18 last=204286 min=204140 max=204370 avg=204264 total=3676765
+L2 layer update cycles: calls=18 last=346686 min=346683 max=346821 avg=346745 total=6241420
+[45] T= 47  GT=6  Pred=6  PASS  spikes: 18 10 5 6 5 11 30 14 2 4
+L1 layer update cycles: calls=47 last=204163 min=203891 max=204377 avg=204095 total=9592477
+L2 layer update cycles: calls=47 last=346702 min=346658 max=346772 avg=346702 total=16294996
+[46] T= 60  GT=9  Pred=9  PASS  spikes: 24 7 4 1 0 0 16 5 3 32
+L1 layer update cycles: calls=60 last=204112 min=203986 max=204498 avg=204182 total=12250924
+L2 layer update cycles: calls=60 last=346713 min=346660 max=346874 avg=346733 total=20803981
+[47] T= 39  GT=7  Pred=7  PASS  spikes: 9 0 0 18 12 16 15 39 13 0
+L1 layer update cycles: calls=39 last=204085 min=203996 max=204280 avg=204104 total=7960076
+L2 layer update cycles: calls=39 last=346677 min=346676 max=346830 avg=346714 total=13521877
+[48] T= 61  GT=4  Pred=4  PASS  spikes: 6 8 1 5 40 13 5 3 6 13
+L1 layer update cycles: calls=61 last=204194 min=203947 max=204393 avg=204154 total=12453400
+L2 layer update cycles: calls=61 last=346708 min=346663 max=346847 avg=346728 total=21150461
+[49] T= 75  GT=4  Pred=4  PASS  spikes: 1 1 10 3 62 14 7 4 17 13
+L1 layer update cycles: calls=75 last=204031 min=203897 max=204290 avg=204107 total=15308097
+L2 layer update cycles: calls=75 last=346674 min=346668 max=346836 avg=346719 total=26003953
+[50] T= 44  GT=3  Pred=3  PASS  spikes: 9 3 11 43 8 22 10 18 11 0
+L1 layer update cycles: calls=44 last=204091 min=204008 max=204364 avg=204166 total=8983332
+L2 layer update cycles: calls=44 last=346698 min=346659 max=346781 avg=346720 total=15255715
+[51] T= 57  GT=8  Pred=0  FAIL  spikes: 39 0 13 4 0 19 0 0 14 0
+L1 layer update cycles: calls=57 last=204053 min=204042 max=204459 avg=204167 total=11637532
+L2 layer update cycles: calls=57 last=346714 min=346659 max=346952 avg=346720 total=19763056
+[52] T= 36  GT=2  Pred=9  FAIL  spikes: 1 4 5 6 0 4 1 9 2 14
+L1 layer update cycles: calls=36 last=204135 min=204104 max=204316 avg=204184 total=7350648
+L2 layer update cycles: calls=36 last=346699 min=346664 max=346789 avg=346712 total=12481660
+[53] T= 38  GT=5  Pred=5  PASS  spikes: 6 0 1 19 4 28 0 21 19 4
+L1 layer update cycles: calls=38 last=204165 min=204008 max=204456 avg=204167 total=7758364
+L2 layer update cycles: calls=38 last=346676 min=346666 max=346849 avg=346735 total=13175930
+[54] T= 17  GT=6  Pred=9  FAIL  spikes: 10 0 2 12 0 3 6 4 2 17
+L1 layer update cycles: calls=17 last=204144 min=204117 max=204483 avg=204219 total=3471730
+L2 layer update cycles: calls=17 last=346688 min=346685 max=346817 avg=346742 total=5894629
+[55] T= 80  GT=6  Pred=6  PASS  spikes: 9 7 13 10 8 6 69 3 12 22
+L1 layer update cycles: calls=80 last=204152 min=204019 max=204404 avg=204182 total=16334594
+L2 layer update cycles: calls=80 last=346707 min=346659 max=346769 avg=346705 total=27736427
+[56] T= 23  GT=6  Pred=6  PASS  spikes: 14 1 0 2 7 0 16 1 5 2
+L1 layer update cycles: calls=23 last=204197 min=203946 max=204363 avg=204191 total=4696408
+L2 layer update cycles: calls=23 last=346678 min=346663 max=346792 avg=346722 total=7974606
+[57] T= 80  GT=1  Pred=1  PASS  spikes: 32 48 23 30 19 33 38 35 16 8
+L1 layer update cycles: calls=80 last=204028 min=203845 max=204340 avg=204005 total=16320468
+L2 layer update cycles: calls=80 last=346744 min=346657 max=346872 avg=346716 total=27737308
+[58] T= 27  GT=9  Pred=3  FAIL  spikes: 3 4 0 23 0 2 9 1 1 15
+L1 layer update cycles: calls=27 last=204080 min=204024 max=204266 avg=204131 total=5511541
+L2 layer update cycles: calls=27 last=346729 min=346707 max=346834 avg=346755 total=9362386
+[59] T= 85  GT=5  Pred=5  PASS  spikes: 0 24 10 22 3 66 21 4 46 6
+L1 layer update cycles: calls=85 last=204039 min=203959 max=204453 avg=204167 total=17354238
+L2 layer update cycles: calls=85 last=346694 min=346659 max=346779 avg=346711 total=29470487
+[60] T= 22  GT=0  Pred=0  PASS  spikes: 21 3 2 1 0 4 19 3 1 0
+L1 layer update cycles: calls=22 last=204064 min=204044 max=204401 avg=204151 total=4491343
+L2 layer update cycles: calls=22 last=346715 min=346674 max=346917 avg=346765 total=7628851
+[61] T= 55  GT=9  Pred=3  FAIL  spikes: 3 2 7 39 0 24 0 0 0 25
+L1 layer update cycles: calls=55 last=204098 min=204098 max=204454 avg=204222 total=11232250
+L2 layer update cycles: calls=55 last=346724 min=346667 max=346828 avg=346725 total=19069884
+[62] T= 37  GT=9  Pred=9  PASS  spikes: 17 2 1 7 0 0 11 0 12 23
+L1 layer update cycles: calls=37 last=204054 min=204027 max=204327 avg=204122 total=7552527
+L2 layer update cycles: calls=37 last=346675 min=346668 max=346904 avg=346733 total=12829144
+[63] T= 47  GT=2  Pred=2  PASS  spikes: 28 0 46 9 0 8 16 14 3 0
+L1 layer update cycles: calls=47 last=204268 min=203980 max=204391 avg=204263 total=9600395
+L2 layer update cycles: calls=47 last=346691 min=346665 max=346799 avg=346717 total=16295719
+[64] T= 17  GT=0  Pred=0  PASS  spikes: 15 0 1 2 1 1 1 0 0 1
+L1 layer update cycles: calls=17 last=204109 min=204086 max=204492 avg=204206 total=3471515
+L2 layer update cycles: calls=17 last=346689 min=346687 max=346813 avg=346750 total=5894755
+[65] T= 59  GT=5  Pred=5  PASS  spikes: 4 4 3 0 5 57 6 29 5 4
+L1 layer update cycles: calls=59 last=204235 min=203885 max=204388 avg=204110 total=12042520
+L2 layer update cycles: calls=59 last=346685 min=346680 max=346896 avg=346761 total=20458939
+[66] T= 89  GT=4  Pred=4  PASS  spikes: 1 33 26 38 60 25 21 30 7 28
+L1 layer update cycles: calls=89 last=204155 min=203857 max=204458 avg=204075 total=18162681
+L2 layer update cycles: calls=89 last=346666 min=346658 max=346840 avg=346704 total=30856736
+[67] T= 61  GT=3  Pred=3  PASS  spikes: 0 0 17 51 1 3 0 28 3 1
+L1 layer update cycles: calls=61 last=204032 min=204032 max=204386 avg=204201 total=12456284
+L2 layer update cycles: calls=61 last=346664 min=346664 max=346880 avg=346742 total=21151265
+[68] T= 42  GT=0  Pred=0  PASS  spikes: 15 7 8 9 11 7 11 11 12 1
+L1 layer update cycles: calls=42 last=204073 min=204032 max=204367 avg=204167 total=8575027
+L2 layer update cycles: calls=42 last=346667 min=346660 max=346938 avg=346747 total=14563414
+[69] T= 39  GT=3  Pred=3  PASS  spikes: 15 0 0 34 0 0 3 16 22 7
+L1 layer update cycles: calls=39 last=204231 min=204011 max=204326 avg=204201 total=7963842
+L2 layer update cycles: calls=39 last=346663 min=346663 max=346848 avg=346748 total=13523187
+[70] T= 45  GT=8  Pred=8  PASS  spikes: 6 1 2 10 1 15 0 7 21 12
+L1 layer update cycles: calls=45 last=203994 min=203994 max=204422 avg=204138 total=9186219
+L2 layer update cycles: calls=45 last=346712 min=346658 max=346821 avg=346706 total=15601789
+[71] T= 29  GT=9  Pred=5  FAIL  spikes: 0 0 4 6 0 24 3 3 0 24
+L1 layer update cycles: calls=29 last=204090 min=203929 max=204374 avg=204149 total=5920331
+L2 layer update cycles: calls=29 last=346714 min=346663 max=346856 avg=346743 total=10055551
+[72] T= 19  GT=0  Pred=9  FAIL  spikes: 3 0 0 2 0 5 5 0 6 10
+L1 layer update cycles: calls=19 last=204089 min=204089 max=204428 avg=204203 total=3879863
+L2 layer update cycles: calls=19 last=346728 min=346664 max=346769 avg=346702 total=6587341
+[73] T= 33  GT=0  Pred=0  PASS  spikes: 12 0 6 9 0 3 6 0 0 4
+L1 layer update cycles: calls=33 last=204226 min=204167 max=204590 avg=204313 total=6742333
+L2 layer update cycles: calls=33 last=346686 min=346663 max=346820 avg=346712 total=11441499
+[74] T= 24  GT=9  Pred=3  FAIL  spikes: 5 0 4 20 0 15 9 7 6 19
+L1 layer update cycles: calls=24 last=204066 min=204061 max=204410 avg=204227 total=4901452
+L2 layer update cycles: calls=24 last=346736 min=346698 max=346865 avg=346748 total=8321959
+[75] T= 86  GT=4  Pred=4  PASS  spikes: 6 7 0 26 84 17 20 21 18 0
+L1 layer update cycles: calls=86 last=204076 min=203994 max=204270 avg=204098 total=17552502
+L2 layer update cycles: calls=86 last=346675 min=346657 max=346862 avg=346708 total=29816906
+[76] T= 58  GT=8  Pred=8  PASS  spikes: 7 2 0 13 0 22 3 9 40 8
+L1 layer update cycles: calls=58 last=204139 min=204067 max=204457 avg=204214 total=11844422
+L2 layer update cycles: calls=58 last=346672 min=346670 max=346849 avg=346714 total=20109423
+[77] T= 92  GT=4  Pred=4  PASS  spikes: 25 10 7 13 42 27 5 5 8 11
+L1 layer update cycles: calls=92 last=203970 min=203871 max=204333 avg=204068 total=18774299
+L2 layer update cycles: calls=92 last=346715 min=346659 max=346772 avg=346704 total=31896832
+[78] T= 40  GT=5  Pred=5  PASS  spikes: 27 0 0 13 0 39 0 17 0 18
+L1 layer update cycles: calls=40 last=204075 min=204075 max=204414 avg=204258 total=8170348
+L2 layer update cycles: calls=40 last=346710 min=346677 max=346891 avg=346759 total=13870365
+[79] T= 34  GT=5  Pred=5  PASS  spikes: 1 5 2 11 7 33 1 6 0 0
+L1 layer update cycles: calls=34 last=203988 min=203975 max=204538 avg=204145 total=6940944
+L2 layer update cycles: calls=34 last=346677 min=346677 max=346980 avg=346769 total=11790170
+[80] T= 19  GT=2  Pred=2  PASS  spikes: 5 2 8 8 4 3 4 4 5 0
+L1 layer update cycles: calls=19 last=204115 min=204060 max=204343 avg=204177 total=3879372
+L2 layer update cycles: calls=19 last=346665 min=346665 max=346779 avg=346724 total=6587764
+[81] T= 55  GT=0  Pred=0  PASS  spikes: 41 14 13 22 0 18 0 8 29 12
+L1 layer update cycles: calls=55 last=204122 min=204101 max=204437 avg=204203 total=11231165
+L2 layer update cycles: calls=55 last=346714 min=346681 max=346861 avg=346731 total=19070249
+[82] T= 58  GT=6  Pred=6  PASS  spikes: 1 5 9 11 0 18 42 0 7 25
+L1 layer update cycles: calls=58 last=204164 min=203935 max=204319 avg=204143 total=11840322
+L2 layer update cycles: calls=58 last=346660 min=346658 max=346819 avg=346718 total=20109685
+[83] T= 18  GT=6  Pred=5  FAIL  spikes: 0 0 2 4 6 15 3 0 1 12
+L1 layer update cycles: calls=18 last=204182 min=203897 max=204408 avg=204189 total=3675410
+L2 layer update cycles: calls=18 last=346711 min=346702 max=346848 avg=346741 total=6241339
+[84] T= 28  GT=9  Pred=2  FAIL  spikes: 7 2 20 0 0 11 2 0 1 10
+L1 layer update cycles: calls=28 last=204130 min=203937 max=204334 avg=204186 total=5717216
+L2 layer update cycles: calls=28 last=346688 min=346671 max=346761 avg=346706 total=9707785
+[85] T= 98  GT=2  Pred=2  PASS  spikes: 19 13 73 5 30 20 10 8 3 4
+L1 layer update cycles: calls=98 last=203848 min=203846 max=204369 avg=204141 total=20005879
+L2 layer update cycles: calls=98 last=346704 min=346664 max=346739 avg=346692 total=33975851
+[86] T= 93  GT=5  Pred=5  PASS  spikes: 18 22 32 28 14 48 12 13 25 16
+L1 layer update cycles: calls=93 last=204055 min=203914 max=204403 avg=204080 total=18979500
+L2 layer update cycles: calls=93 last=346677 min=346661 max=346843 avg=346703 total=32243465
+[87] T= 44  GT=6  Pred=0  FAIL  spikes: 32 0 6 7 0 2 8 12 7 18
+L1 layer update cycles: calls=44 last=204193 min=203925 max=204352 avg=204142 total=8982256
+L2 layer update cycles: calls=44 last=346703 min=346660 max=346922 avg=346720 total=15255702
+[88] T= 34  GT=0  Pred=0  PASS  spikes: 25 2 0 3 4 5 4 0 1 1
+L1 layer update cycles: calls=34 last=204175 min=204072 max=204488 avg=204242 total=6944231
+L2 layer update cycles: calls=34 last=346669 min=346666 max=346756 avg=346710 total=11788168
+[89] T= 49  GT=2  Pred=3  FAIL  spikes: 12 3 29 31 3 15 14 28 0 0
+L1 layer update cycles: calls=49 last=204139 min=204079 max=204337 avg=204184 total=10005046
+L2 layer update cycles: calls=49 last=346688 min=346664 max=346857 avg=346730 total=16989773
+[90] T= 79  GT=9  Pred=9  PASS  spikes: 29 3 13 29 7 8 9 15 13 60
+L1 layer update cycles: calls=79 last=203882 min=203846 max=204385 avg=204050 total=16119975
+L2 layer update cycles: calls=79 last=346659 min=346658 max=346814 avg=346713 total=27390333
+[91] T= 74  GT=4  Pred=4  PASS  spikes: 16 5 3 14 42 23 14 12 4 18
+L1 layer update cycles: calls=74 last=204011 min=203942 max=204416 avg=204130 total=15105637
+L2 layer update cycles: calls=74 last=346714 min=346659 max=346807 avg=346711 total=25656675
+[92] T= 45  GT=7  Pred=7  PASS  spikes: 0 0 0 0 0 10 0 45 8 2
+L1 layer update cycles: calls=45 last=204304 min=203961 max=204371 avg=204164 total=9187393
+L2 layer update cycles: calls=45 last=346674 min=346669 max=346778 avg=346719 total=15602373
+[93] T= 42  GT=6  Pred=1  FAIL  spikes: 3 30 3 3 2 4 14 10 14 7
+L1 layer update cycles: calls=42 last=204179 min=203930 max=204538 avg=204142 total=8573984
+L2 layer update cycles: calls=42 last=346717 min=346668 max=346801 avg=346715 total=14562042
+[94] T= 54  GT=7  Pred=7  PASS  spikes: 2 0 7 16 4 0 0 50 8 0
+L1 layer update cycles: calls=54 last=203974 min=203850 max=204228 avg=203959 total=11013820
+L2 layer update cycles: calls=54 last=346692 min=346668 max=346827 avg=346708 total=18722277
+[95] T= 89  GT=5  Pred=5  PASS  spikes: 12 2 24 21 1 61 24 8 3 8
+L1 layer update cycles: calls=89 last=204021 min=203878 max=204451 avg=204114 total=18166160
+L2 layer update cycles: calls=89 last=346729 min=346664 max=346814 avg=346706 total=30856856
+[96] T= 95  GT=5  Pred=0  FAIL  spikes: 50 7 15 10 17 48 3 18 14 18
+L1 layer update cycles: calls=95 last=203918 min=203888 max=204367 avg=204038 total=19383699
+L2 layer update cycles: calls=95 last=346706 min=346658 max=346766 avg=346698 total=32936378
+[97] T= 56  GT=2  Pred=3  FAIL  spikes: 1 0 38 43 2 18 9 26 16 0
+L1 layer update cycles: calls=56 last=204103 min=203973 max=204334 avg=204138 total=11431783
+L2 layer update cycles: calls=56 last=346686 min=346667 max=346879 avg=346740 total=19417492
+[98] T= 45  GT=3  Pred=3  PASS  spikes: 20 9 2 45 2 13 7 14 3 0
+L1 layer update cycles: calls=45 last=203973 min=203973 max=204335 avg=204170 total=9187691
+L2 layer update cycles: calls=45 last=346659 min=346659 max=346807 avg=346726 total=15602685
+[99] T= 66  GT=8  Pred=8  PASS  spikes: 0 5 9 26 0 7 0 0 65 2
+L1 layer update cycles: calls=66 last=204179 min=204014 max=204426 avg=204176 total=13475653
+L2 layer update cycles: calls=66 last=346679 min=346666 max=346873 avg=346718 total=22883449
+[100] T= 30  GT=7  Pred=7  PASS  spikes: 15 4 18 16 0 13 12 24 5 4
+L1 layer update cycles: calls=30 last=204146 min=203966 max=204339 avg=204172 total=6125175
+L2 layer update cycles: calls=30 last=346726 min=346686 max=346911 avg=346750 total=10402512
+[101] T= 55  GT=5  Pred=5  PASS  spikes: 2 0 22 3 0 50 1 32 28 0
+L1 layer update cycles: calls=55 last=204278 min=204006 max=204383 avg=204167 total=11229212
+L2 layer update cycles: calls=55 last=346703 min=346677 max=346831 avg=346735 total=19070456
+[102] T= 44  GT=0  Pred=0  PASS  spikes: 15 0 0 0 5 8 2 11 1 5
+L1 layer update cycles: calls=44 last=203993 min=203984 max=204479 avg=204166 total=8983346
+L2 layer update cycles: calls=44 last=346705 min=346658 max=346807 avg=346696 total=15254645
+[103] T= 86  GT=7  Pred=7  PASS  spikes: 12 18 14 31 17 18 7 71 19 8
+L1 layer update cycles: calls=86 last=203963 min=203848 max=204243 avg=204010 total=17544945
+L2 layer update cycles: calls=86 last=346669 min=346657 max=346779 avg=346706 total=29816731
+[104] T= 89  GT=9  Pred=6  FAIL  spikes: 20 13 11 24 19 15 36 24 18 23
+L1 layer update cycles: calls=89 last=204098 min=203844 max=204276 avg=204032 total=18158855
+L2 layer update cycles: calls=89 last=346676 min=346657 max=346788 avg=346697 total=30856082
+[105] T= 45  GT=8  Pred=9  FAIL  spikes: 12 0 0 22 0 15 0 0 14 25
+L1 layer update cycles: calls=45 last=204179 min=204022 max=204636 avg=204221 total=9189965
+L2 layer update cycles: calls=45 last=346679 min=346679 max=346964 avg=346757 total=15604089
+[106] T= 22  GT=6  Pred=0  FAIL  spikes: 17 3 0 4 6 2 11 3 3 1
+L1 layer update cycles: calls=22 last=204172 min=203936 max=204277 avg=204173 total=4491809
+L2 layer update cycles: calls=22 last=346681 min=346664 max=346821 avg=346723 total=7627925
+[107] T= 21  GT=9  Pred=3  FAIL  spikes: 14 0 0 18 0 15 3 6 0 16
+L1 layer update cycles: calls=21 last=204193 min=204193 max=204460 avg=204305 total=4290413
+L2 layer update cycles: calls=21 last=346711 min=346697 max=346843 avg=346760 total=7281960
+[108] T= 46  GT=7  Pred=2  FAIL  spikes: 9 3 33 29 0 18 7 29 4 4
+L1 layer update cycles: calls=46 last=204125 min=204004 max=204344 avg=204164 total=9391548
+L2 layer update cycles: calls=46 last=346726 min=346680 max=346822 avg=346736 total=15949858
+[109] T= 76  GT=2  Pred=2  PASS  spikes: 12 15 68 50 1 13 26 7 11 0
+L1 layer update cycles: calls=76 last=204082 min=203963 max=204372 avg=204094 total=15511178
+L2 layer update cycles: calls=76 last=346721 min=346665 max=346842 avg=346726 total=26351193
+[110] T= 47  GT=7  Pred=7  PASS  spikes: 5 0 13 12 3 11 11 47 11 0
+L1 layer update cycles: calls=47 last=204038 min=203968 max=204287 avg=204102 total=9592838
+L2 layer update cycles: calls=47 last=346685 min=346680 max=346781 avg=346715 total=16295638
+[111] T= 52  GT=2  Pred=2  PASS  spikes: 18 2 38 15 0 10 0 22 24 4
+L1 layer update cycles: calls=52 last=204050 min=204013 max=204423 avg=204157 total=10616203
+L2 layer update cycles: calls=52 last=346706 min=346683 max=346907 avg=346732 total=18030094
+[112] T= 69  GT=8  Pred=8  PASS  spikes: 3 1 0 18 11 14 13 24 44 13
+L1 layer update cycles: calls=69 last=204096 min=203991 max=204417 avg=204119 total=14084258
+L2 layer update cycles: calls=69 last=346679 min=346663 max=346829 avg=346721 total=23923786
+[113] T= 52  GT=9  Pred=3  FAIL  spikes: 21 4 0 49 0 4 0 0 4 20
+L1 layer update cycles: calls=52 last=204156 min=204137 max=204575 avg=204221 total=10619536
+L2 layer update cycles: calls=52 last=346686 min=346686 max=346867 avg=346746 total=18030842
+[114] T= 92  GT=5  Pred=5  PASS  spikes: 27 11 18 5 11 33 29 24 28 20
+L1 layer update cycles: calls=92 last=203898 min=203857 max=204415 avg=204055 total=18773062
+L2 layer update cycles: calls=92 last=346661 min=346658 max=346884 avg=346710 total=31897353
+[115] T= 68  GT=8  Pred=8  PASS  spikes: 12 12 1 8 17 14 14 0 43 12
+L1 layer update cycles: calls=68 last=204054 min=203987 max=204333 avg=204114 total=13879783
+L2 layer update cycles: calls=68 last=346743 min=346658 max=346826 avg=346713 total=23576497
+[116] T= 86  GT=0  Pred=0  PASS  spikes: 49 11 17 32 32 24 7 9 34 44
+L1 layer update cycles: calls=86 last=204036 min=204009 max=204557 avg=204232 total=17564021
+L2 layer update cycles: calls=86 last=346676 min=346659 max=346758 avg=346701 total=29816367
+[117] T= 38  GT=7  Pred=7  PASS  spikes: 1 0 25 14 6 18 11 37 0 0
+L1 layer update cycles: calls=38 last=204221 min=204114 max=204378 avg=204205 total=7759815
+L2 layer update cycles: calls=38 last=346700 min=346660 max=346836 avg=346749 total=13176470
+[118] T= 35  GT=1  Pred=6  FAIL  spikes: 5 17 7 7 19 3 26 8 4 3
+L1 layer update cycles: calls=35 last=204140 min=203877 max=204307 avg=204106 total=7143734
+L2 layer update cycles: calls=35 last=346723 min=346669 max=346777 avg=346704 total=12134656
+[119] T= 32  GT=1  Pred=1  PASS  spikes: 6 32 1 25 0 9 10 1 0 2
+L1 layer update cycles: calls=32 last=204057 min=204057 max=204395 avg=204208 total=6534677
+L2 layer update cycles: calls=32 last=346716 min=346667 max=346832 avg=346738 total=11095633
+[120] T= 48  GT=6  Pred=6  PASS  spikes: 21 4 1 7 0 0 32 2 4 1
+L1 layer update cycles: calls=48 last=204395 min=204073 max=204395 avg=204209 total=9802052
+L2 layer update cycles: calls=48 last=346695 min=346657 max=346843 avg=346724 total=16642756
+[121] T= 95  GT=8  Pred=8  PASS  spikes: 25 4 13 42 0 46 5 12 55 36
+L1 layer update cycles: calls=95 last=204228 min=204048 max=204429 avg=204216 total=19400531
+L2 layer update cycles: calls=95 last=346712 min=346661 max=346838 avg=346720 total=32938438
+[122] T= 55  GT=3  Pred=3  PASS  spikes: 8 4 0 52 0 18 0 22 1 11
+L1 layer update cycles: calls=55 last=204184 min=204069 max=204396 avg=204199 total=11230955
+L2 layer update cycles: calls=55 last=346698 min=346662 max=346899 avg=346726 total=19069939
+[123] T= 48  GT=9  Pred=9  PASS  spikes: 9 0 11 41 0 8 2 13 12 42
+L1 layer update cycles: calls=48 last=204107 min=203910 max=204361 avg=204139 total=9798676
+L2 layer update cycles: calls=48 last=346745 min=346674 max=346912 avg=346770 total=16644984
+[124] T= 77  GT=0  Pred=0  PASS  spikes: 52 7 28 25 15 5 18 23 1 3
+L1 layer update cycles: calls=77 last=203921 min=203921 max=204508 avg=204180 total=15721867
+L2 layer update cycles: calls=77 last=346713 min=346659 max=346782 avg=346701 total=26695977
+[125] T= 36  GT=3  Pred=3  PASS  spikes: 0 0 0 31 4 16 0 12 13 11
+L1 layer update cycles: calls=36 last=204092 min=204029 max=204393 avg=204165 total=7349946
+L2 layer update cycles: calls=36 last=346690 min=346688 max=346873 avg=346757 total=12483277
+[126] T= 70  GT=0  Pred=0  PASS  spikes: 41 12 9 1 0 0 21 10 8 7
+L1 layer update cycles: calls=70 last=203926 min=203911 max=204598 avg=204141 total=14289935
+L2 layer update cycles: calls=70 last=346674 min=346657 max=346751 avg=346692 total=24268445
+[127] T= 26  GT=2  Pred=3  FAIL  spikes: 4 0 9 25 1 0 0 14 9 0
+L1 layer update cycles: calls=26 last=204150 min=204044 max=204428 avg=204250 total=5310521
+L2 layer update cycles: calls=26 last=346732 min=346693 max=346804 avg=346737 total=9015175
+[128] T= 52  GT=2  Pred=3  FAIL  spikes: 19 0 17 25 7 25 8 25 0 0
+L1 layer update cycles: calls=52 last=204234 min=204011 max=204429 avg=204249 total=10620954
+L2 layer update cycles: calls=52 last=346696 min=346672 max=346909 avg=346740 total=18030522
+[129] T= 73  GT=2  Pred=2  PASS  spikes: 42 0 54 35 22 9 0 18 0 3
+L1 layer update cycles: calls=73 last=204164 min=204130 max=204379 avg=204228 total=14908654
+L2 layer update cycles: calls=73 last=346686 min=346660 max=346801 avg=346714 total=25310151
+[130] T= 82  GT=1  Pred=1  PASS  spikes: 19 52 36 24 24 30 19 29 11 19
+L1 layer update cycles: calls=82 last=203929 min=203844 max=204393 avg=203993 total=16727506
+L2 layer update cycles: calls=82 last=346675 min=346657 max=346904 avg=346727 total=28431674
+[131] T= 90  GT=3  Pred=3  PASS  spikes: 15 21 24 70 15 11 17 45 28 35
+L1 layer update cycles: calls=90 last=204119 min=203846 max=204557 avg=204157 total=18374164
+L2 layer update cycles: calls=90 last=346731 min=346659 max=346775 avg=346710 total=31203976
+[132] T= 39  GT=7  Pred=7  PASS  spikes: 9 2 4 9 2 1 2 38 1 0
+L1 layer update cycles: calls=39 last=204086 min=203997 max=204337 avg=204109 total=7960257
+L2 layer update cycles: calls=39 last=346663 min=346658 max=346791 avg=346717 total=13521968
+[133] T= 28  GT=1  Pred=1  PASS  spikes: 2 16 4 4 0 9 13 9 8 6
+L1 layer update cycles: calls=28 last=204071 min=203986 max=204272 avg=204126 total=5715530
+L2 layer update cycles: calls=28 last=346667 min=346660 max=346758 avg=346696 total=9707509
+[134] T= 41  GT=3  Pred=3  PASS  spikes: 33 0 10 40 0 15 0 0 7 1
+L1 layer update cycles: calls=41 last=204137 min=204043 max=204460 avg=204222 total=8373102
+L2 layer update cycles: calls=41 last=346670 min=346670 max=346815 avg=346745 total=14216579
+[135] T= 23  GT=7  Pred=7  PASS  spikes: 0 0 0 20 10 17 6 22 8 0
+L1 layer update cycles: calls=23 last=204209 min=204011 max=204275 avg=204186 total=4696299
+L2 layer update cycles: calls=23 last=346709 min=346701 max=346904 avg=346811 total=7976675
+[136] T= 66  GT=4  Pred=4  PASS  spikes: 6 0 20 17 60 0 5 1 0 0
+L1 layer update cycles: calls=66 last=204068 min=203909 max=204381 avg=204115 total=13471615
+L2 layer update cycles: calls=66 last=346670 min=346668 max=346833 avg=346722 total=22883692
+[137] T= 99  GT=4  Pred=5  FAIL  spikes: 19 28 7 12 48 62 23 19 5 42
+L1 layer update cycles: calls=99 last=204021 min=204008 max=204449 avg=204192 total=20215059
+L2 layer update cycles: calls=99 last=346759 min=346661 max=346875 avg=346739 total=34327173
+[138] T= 34  GT=4  Pred=4  PASS  spikes: 5 1 1 10 20 12 0 3 0 0
+L1 layer update cycles: calls=34 last=204071 min=204060 max=204297 avg=204156 total=6941316
+L2 layer update cycles: calls=34 last=346675 min=346666 max=346832 avg=346718 total=11788443
+[139] T= 79  GT=5  Pred=5  PASS  spikes: 2 0 28 25 0 67 14 3 16 6
+L1 layer update cycles: calls=79 last=204012 min=203885 max=204351 avg=204095 total=16123579
+L2 layer update cycles: calls=79 last=346702 min=346664 max=346793 avg=346708 total=27390006
+[140] T= 28  GT=7  Pred=7  PASS  spikes: 8 0 1 18 13 19 0 28 8 0
+L1 layer update cycles: calls=28 last=204142 min=204048 max=204317 avg=204154 total=5716324
+L2 layer update cycles: calls=28 last=346677 min=346677 max=346890 avg=346777 total=9709776
+[141] T= 47  GT=4  Pred=4  PASS  spikes: 3 0 7 4 25 19 7 8 3 12
+L1 layer update cycles: calls=47 last=204006 min=203944 max=204232 avg=204109 total=9593149
+L2 layer update cycles: calls=47 last=346722 min=346662 max=346876 avg=346726 total=16296123
+[142] T= 49  GT=5  Pred=3  FAIL  spikes: 0 7 4 34 0 28 34 11 20 5
+L1 layer update cycles: calls=49 last=204155 min=203963 max=204402 avg=204164 total=10004072
+L2 layer update cycles: calls=49 last=346660 min=346660 max=346879 avg=346743 total=16990411
+[143] T= 22  GT=0  Pred=0  PASS  spikes: 21 0 0 8 0 9 5 6 0 1
+L1 layer update cycles: calls=22 last=204124 min=204082 max=204283 avg=204173 total=4491820
+L2 layer update cycles: calls=22 last=346726 min=346676 max=346832 avg=346748 total=7628473
+[144] T= 66  GT=4  Pred=4  PASS  spikes: 14 0 11 7 61 9 1 0 3 5
+L1 layer update cycles: calls=66 last=203992 min=203957 max=204315 avg=204099 total=13470563
+L2 layer update cycles: calls=66 last=346674 min=346658 max=346769 avg=346703 total=22882443
+[145] T= 36  GT=3  Pred=5  FAIL  spikes: 16 0 18 16 0 31 0 0 0 1
+L1 layer update cycles: calls=36 last=204107 min=204074 max=204619 avg=204290 total=7354450
+L2 layer update cycles: calls=36 last=346672 min=346672 max=346992 avg=346762 total=12483444
+[146] T= 79  GT=8  Pred=8  PASS  spikes: 6 8 7 33 5 13 10 0 57 24
+L1 layer update cycles: calls=79 last=203943 min=203939 max=204462 avg=204138 total=16126968
+L2 layer update cycles: calls=79 last=346731 min=346671 max=346808 avg=346715 total=27390533
+[147] T= 70  GT=4  Pred=4  PASS  spikes: 3 0 6 2 68 24 0 2 9 13
+L1 layer update cycles: calls=70 last=204141 min=204040 max=204450 avg=204192 total=14293457
+L2 layer update cycles: calls=70 last=346685 min=346662 max=346847 avg=346712 total=24269899
+[148] T= 40  GT=9  Pred=3  FAIL  spikes: 6 0 0 26 0 24 0 0 2 12
+L1 layer update cycles: calls=40 last=204106 min=204079 max=204446 avg=204204 total=8168194
+L2 layer update cycles: calls=40 last=346674 min=346674 max=346837 avg=346744 total=13869768
+[149] T= 28  GT=9  Pred=9  PASS  spikes: 9 5 3 11 1 8 14 8 19 21
+L1 layer update cycles: calls=28 last=204191 min=203891 max=204353 avg=204139 total=5715900
+L2 layer update cycles: calls=28 last=346698 min=346676 max=346848 avg=346757 total=9709214
+[150] T= 52  GT=9  Pred=3  FAIL  spikes: 21 4 0 49 0 4 0 0 4 20
+L1 layer update cycles: calls=52 last=204192 min=204137 max=204573 avg=204221 total=10619535
+L2 layer update cycles: calls=52 last=346682 min=346682 max=346858 avg=346744 total=18030690
+[151] T= 18  GT=3  Pred=3  PASS  spikes: 0 0 1 18 0 2 6 8 1 1
+L1 layer update cycles: calls=18 last=204175 min=204091 max=204320 avg=204191 total=3675454
+L2 layer update cycles: calls=18 last=346708 min=346676 max=346817 avg=346747 total=6241458
+[152] T= 47  GT=3  Pred=3  PASS  spikes: 29 0 5 34 1 11 0 17 6 4
+L1 layer update cycles: calls=47 last=204093 min=204072 max=204400 avg=204202 total=9597540
+L2 layer update cycles: calls=47 last=346697 min=346657 max=346862 avg=346751 total=16297339
+[153] T= 50  GT=6  Pred=6  PASS  spikes: 3 0 0 3 3 19 23 6 10 14
+L1 layer update cycles: calls=50 last=204238 min=203999 max=204310 avg=204155 total=10207778
+L2 layer update cycles: calls=50 last=346669 min=346660 max=346863 avg=346721 total=17336076
+[154] T= 51  GT=9  Pred=9  PASS  spikes: 0 0 0 27 0 23 0 0 15 35
+L1 layer update cycles: calls=51 last=204168 min=203971 max=204390 avg=204179 total=10413138
+L2 layer update cycles: calls=51 last=346686 min=346673 max=346839 avg=346743 total=17683914
+[155] T= 57  GT=2  Pred=2  PASS  spikes: 12 0 40 7 0 22 2 17 5 4
+L1 layer update cycles: calls=57 last=204088 min=204053 max=204318 avg=204176 total=11638070
+L2 layer update cycles: calls=57 last=346697 min=346660 max=346860 avg=346715 total=19762785
+[156] T= 20  GT=0  Pred=0  PASS  spikes: 20 1 8 18 0 20 0 0 0 2
+L1 layer update cycles: calls=20 last=204127 min=204127 max=204579 avg=204287 total=4085754
+L2 layer update cycles: calls=20 last=346686 min=346673 max=346825 avg=346740 total=6934808
+[157] T= 47  GT=4  Pred=4  PASS  spikes: 9 2 14 7 29 2 3 14 5 6
+L1 layer update cycles: calls=47 last=204146 min=203959 max=204335 avg=204136 total=9594425
+L2 layer update cycles: calls=47 last=346657 min=346657 max=346871 avg=346725 total=16296100
+[158] T= 57  GT=0  Pred=0  PASS  spikes: 33 11 0 11 2 12 33 0 6 4
+L1 layer update cycles: calls=57 last=204174 min=203994 max=204351 avg=204141 total=11636041
+L2 layer update cycles: calls=57 last=346696 min=346657 max=346832 avg=346706 total=19762265
+[159] T= 88  GT=8  Pred=3  FAIL  spikes: 27 19 8 54 11 13 16 16 49 18
+L1 layer update cycles: calls=88 last=204235 min=203854 max=204324 avg=204055 total=17956901
+L2 layer update cycles: calls=88 last=346680 min=346660 max=346808 avg=346702 total=30509802
+[160] T= 42  GT=2  Pred=2  PASS  spikes: 1 0 36 21 6 1 3 14 7 6
+L1 layer update cycles: calls=42 last=204071 min=203957 max=204386 avg=204154 total=8574505
+L2 layer update cycles: calls=42 last=346661 min=346661 max=346791 avg=346717 total=14562147
+[161] T= 58  GT=9  Pred=9  PASS  spikes: 22 3 33 10 0 25 16 4 10 37
+L1 layer update cycles: calls=58 last=204241 min=203905 max=204264 avg=204112 total=11838512
+L2 layer update cycles: calls=58 last=346746 min=346677 max=346906 avg=346734 total=20110604
+[162] T= 38  GT=7  Pred=7  PASS  spikes: 3 0 14 28 0 1 0 38 13 0
+L1 layer update cycles: calls=38 last=204142 min=204086 max=204453 avg=204218 total=7760304
+L2 layer update cycles: calls=38 last=346730 min=346689 max=346890 avg=346759 total=13176864
+[163] T= 48  GT=5  Pred=3  FAIL  spikes: 30 1 3 46 0 44 0 4 5 20
+L1 layer update cycles: calls=48 last=204197 min=204189 max=204499 avg=204282 total=9805548
+L2 layer update cycles: calls=48 last=346724 min=346676 max=346870 avg=346731 total=16643106
+[164] T= 40  GT=6  Pred=0  FAIL  spikes: 30 1 3 7 0 0 23 3 2 1
+L1 layer update cycles: calls=40 last=204201 min=204028 max=204428 avg=204197 total=8167887
+L2 layer update cycles: calls=40 last=346674 min=346657 max=346788 avg=346699 total=13867971
+[165] T= 38  GT=9  Pred=2  FAIL  spikes: 2 0 25 6 2 22 0 6 0 19
+L1 layer update cycles: calls=38 last=204145 min=203915 max=204320 avg=204155 total=7757905
+L2 layer update cycles: calls=38 last=346685 min=346672 max=346893 avg=346763 total=13177026
+[166] T= 32  GT=2  Pred=2  PASS  spikes: 9 0 31 17 1 2 0 17 1 0
+L1 layer update cycles: calls=32 last=204095 min=204038 max=204301 avg=204163 total=6533231
+L2 layer update cycles: calls=32 last=346687 min=346686 max=346861 avg=346755 total=11096162
+[167] T= 79  GT=4  Pred=4  PASS  spikes: 7 7 10 40 61 8 6 11 6 6
+L1 layer update cycles: calls=79 last=203931 min=203919 max=204310 avg=204061 total=16120840
+L2 layer update cycles: calls=79 last=346682 min=346658 max=346776 avg=346708 total=27389970
+[168] T= 28  GT=9  Pred=5  FAIL  spikes: 8 0 1 18 1 22 1 4 3 5
+L1 layer update cycles: calls=28 last=204109 min=204000 max=204381 avg=204136 total=5715829
+L2 layer update cycles: calls=28 last=346669 min=346658 max=346773 avg=346715 total=9708044
+[169] T= 99  GT=6  Pred=6  PASS  spikes: 18 15 23 2 21 33 55 26 27 16
+L1 layer update cycles: calls=99 last=203942 min=203942 max=204414 avg=204103 total=20206228
+L2 layer update cycles: calls=99 last=346686 min=346656 max=346766 avg=346697 total=34323013
+[170] T= 44  GT=3  Pred=0  FAIL  spikes: 38 7 12 38 8 0 0 7 2 0
+L1 layer update cycles: calls=44 last=204149 min=203975 max=204469 avg=204259 total=8987415
+L2 layer update cycles: calls=44 last=346704 min=346657 max=346798 avg=346724 total=15255864
+[171] T= 37  GT=6  Pred=0  FAIL  spikes: 24 9 4 4 0 6 10 0 0 3
+L1 layer update cycles: calls=37 last=204214 min=203979 max=204395 avg=204189 total=7555008
+L2 layer update cycles: calls=37 last=346663 min=346656 max=346833 avg=346719 total=12828621
+[172] T= 34  GT=7  Pred=7  PASS  spikes: 12 1 9 17 8 12 0 34 13 0
+L1 layer update cycles: calls=34 last=204118 min=204081 max=204375 avg=204224 total=6943639
+L2 layer update cycles: calls=34 last=346736 min=346703 max=346838 avg=346766 total=11790044
+[173] T= 89  GT=0  Pred=0  PASS  spikes: 67 2 13 16 26 16 39 8 15 7
+L1 layer update cycles: calls=89 last=204083 min=203905 max=204389 avg=204157 total=18170017
+L2 layer update cycles: calls=89 last=346664 min=346660 max=346853 avg=346726 total=30858615
+[174] T= 94  GT=1  Pred=1  PASS  spikes: 19 64 18 8 23 20 13 13 18 16
+L1 layer update cycles: calls=94 last=204049 min=203986 max=204390 avg=204144 total=19189582
+L2 layer update cycles: calls=94 last=346674 min=346660 max=346729 avg=346682 total=32588191
+[175] T= 55  GT=2  Pred=7  FAIL  spikes: 15 0 21 31 2 12 9 38 0 1
+L1 layer update cycles: calls=55 last=204045 min=204045 max=204412 avg=204197 total=11230885
+L2 layer update cycles: calls=55 last=346705 min=346661 max=346974 avg=346743 total=19070897
+[176] T= 84  GT=5  Pred=5  PASS  spikes: 8 4 3 15 16 84 24 12 2 7
+L1 layer update cycles: calls=84 last=204075 min=204022 max=204472 avg=204179 total=17151067
+L2 layer update cycles: calls=84 last=346707 min=346666 max=346864 avg=346727 total=29125094
+[177] T= 19  GT=7  Pred=9  FAIL  spikes: 5 8 0 0 0 8 1 0 0 12
+L1 layer update cycles: calls=19 last=204225 min=204146 max=204378 avg=204250 total=3880758
+L2 layer update cycles: calls=19 last=346674 min=346674 max=346784 avg=346724 total=6587759
+[178] T= 19  GT=6  Pred=4  FAIL  spikes: 1 0 2 1 14 4 2 3 2 0
+L1 layer update cycles: calls=19 last=204113 min=203987 max=204246 avg=204144 total=3878743
+L2 layer update cycles: calls=19 last=346760 min=346692 max=346837 avg=346745 total=6588165
+[179] T= 74  GT=1  Pred=1  PASS  spikes: 11 66 18 7 19 18 12 21 18 6
+L1 layer update cycles: calls=74 last=203900 min=203860 max=204380 avg=204016 total=15097225
+L2 layer update cycles: calls=74 last=346672 min=346665 max=346778 avg=346713 total=25656820
+[180] T= 87  GT=8  Pred=8  PASS  spikes: 2 6 11 16 0 52 11 10 79 12
+L1 layer update cycles: calls=87 last=204005 min=203893 max=204402 avg=204145 total=17760678
+L2 layer update cycles: calls=87 last=346681 min=346673 max=346821 avg=346719 total=30164575
+[181] T= 75  GT=4  Pred=4  PASS  spikes: 8 10 21 30 52 26 0 11 0 4
+L1 layer update cycles: calls=75 last=204003 min=203929 max=204308 avg=204104 total=15307852
+L2 layer update cycles: calls=75 last=346668 min=346660 max=346890 avg=346719 total=26003945
+[182] T= 89  GT=3  Pred=3  PASS  spikes: 25 14 10 63 13 18 25 47 16 45
+L1 layer update cycles: calls=89 last=204226 min=203963 max=204596 avg=204239 total=18177279
+L2 layer update cycles: calls=89 last=346657 min=346656 max=346768 avg=346717 total=30857852
+[183] T= 71  GT=6  Pred=6  PASS  spikes: 16 10 5 12 16 21 47 6 11 23
+L1 layer update cycles: calls=71 last=204028 min=204015 max=204569 avg=204166 total=14495798
+L2 layer update cycles: calls=71 last=346719 min=346656 max=346775 avg=346698 total=24615602
+[184] T= 58  GT=4  Pred=5  FAIL  spikes: 3 7 18 31 30 34 12 1 7 0
+L1 layer update cycles: calls=58 last=204137 min=204036 max=204353 avg=204196 total=11843412
+L2 layer update cycles: calls=58 last=346743 min=346665 max=346842 avg=346729 total=20110325
+[185] T= 39  GT=4  Pred=4  PASS  spikes: 10 6 7 1 11 0 10 1 6 1
+L1 layer update cycles: calls=39 last=204239 min=204052 max=204400 avg=204180 total=7963044
+L2 layer update cycles: calls=39 last=346716 min=346679 max=346780 avg=346723 total=13522218
+[186] T= 79  GT=0  Pred=0  PASS  spikes: 47 19 3 44 2 9 1 8 17 13
+L1 layer update cycles: calls=79 last=204110 min=204031 max=204364 avg=204160 total=16128659
+L2 layer update cycles: calls=79 last=346713 min=346655 max=346829 avg=346713 total=27390375
+[187] T= 71  GT=6  Pred=6  PASS  spikes: 9 28 10 28 15 3 48 10 14 0
+L1 layer update cycles: calls=71 last=203995 min=203869 max=204206 avg=204037 total=14486694
+L2 layer update cycles: calls=71 last=346714 min=346653 max=346797 avg=346703 total=24615974
+[188] T= 71  GT=0  Pred=0  PASS  spikes: 52 4 10 18 0 42 13 19 18 10
+L1 layer update cycles: calls=71 last=204041 min=204015 max=204379 avg=204172 total=14496215
+L2 layer update cycles: calls=71 last=346671 min=346657 max=346854 avg=346728 total=24617726
+[189] T= 68  GT=9  Pred=9  PASS  spikes: 18 4 8 0 0 1 5 14 0 63
+L1 layer update cycles: calls=68 last=204087 min=204045 max=204433 avg=204178 total=13884135
+L2 layer update cycles: calls=68 last=346708 min=346689 max=346826 avg=346754 total=23579336
+[190] T= 71  GT=6  Pred=6  PASS  spikes: 30 3 10 21 7 0 51 16 8 17
+L1 layer update cycles: calls=71 last=204060 min=203870 max=204244 avg=204023 total=14485664
+L2 layer update cycles: calls=71 last=346677 min=346660 max=346825 avg=346707 total=24616256
+[191] T= 59  GT=5  Pred=5  PASS  spikes: 5 1 3 4 9 47 2 16 6 5
+L1 layer update cycles: calls=59 last=204130 min=203966 max=204365 avg=204117 total=12042960
+L2 layer update cycles: calls=59 last=346719 min=346671 max=346838 avg=346727 total=20456927
+[192] T= 43  GT=2  Pred=7  FAIL  spikes: 15 0 32 24 4 9 3 40 1 0
+L1 layer update cycles: calls=43 last=204015 min=204015 max=204434 avg=204192 total=8780274
+L2 layer update cycles: calls=43 last=346664 min=346662 max=346846 avg=346734 total=14909591
+[193] T= 89  GT=4  Pred=4  PASS  spikes: 1 33 26 38 60 25 21 30 7 28
+L1 layer update cycles: calls=89 last=204154 min=203845 max=204452 avg=204072 total=18162437
+L2 layer update cycles: calls=89 last=346664 min=346658 max=346838 avg=346703 total=30856603
+[194] T= 33  GT=0  Pred=0  PASS  spikes: 25 1 3 12 0 11 4 8 7 12
+L1 layer update cycles: calls=33 last=204150 min=203925 max=204488 avg=204244 total=6740084
+L2 layer update cycles: calls=33 last=346698 min=346693 max=346850 avg=346758 total=11443015
+[195] T= 48  GT=9  Pred=9  PASS  spikes: 30 0 0 1 5 24 0 4 4 32
+L1 layer update cycles: calls=48 last=204077 min=203844 max=204449 avg=204151 total=9799262
+L2 layer update cycles: calls=48 last=346708 min=346656 max=346933 avg=346772 total=16645067
+[196] T= 45  GT=8  Pred=8  PASS  spikes: 6 1 2 10 1 15 0 7 21 12
+L1 layer update cycles: calls=45 last=203995 min=203995 max=204456 avg=204136 total=9186133
+L2 layer update cycles: calls=45 last=346672 min=346668 max=346799 avg=346705 total=15601727
+[197] T= 34  GT=5  Pred=5  PASS  spikes: 3 3 22 14 0 29 5 4 2 0
+L1 layer update cycles: calls=34 last=203947 min=203947 max=204470 avg=204172 total=6941872
+L2 layer update cycles: calls=34 last=346720 min=346673 max=346881 avg=346737 total=11789077
+[198] T= 47  GT=0  Pred=0  PASS  spikes: 23 1 8 10 0 12 8 8 3 15
+L1 layer update cycles: calls=47 last=204035 min=204006 max=204483 avg=204153 total=9595229
+L2 layer update cycles: calls=47 last=346701 min=346656 max=346820 avg=346698 total=16294823
+[199] T= 60  GT=9  Pred=9  PASS  spikes: 18 7 12 11 1 6 13 7 3 45
+L1 layer update cycles: calls=60 last=203999 min=203936 max=204268 avg=204099 total=12245944
+L2 layer update cycles: calls=60 last=346674 min=346659 max=346775 avg=346696 total=20801817
+[200] T= 88  GT=5  Pred=5  PASS  spikes: 9 3 46 33 6 48 20 27 27 4
+L1 layer update cycles: calls=88 last=204112 min=203891 max=204452 avg=204108 total=17961589
+L2 layer update cycles: calls=88 last=346694 min=346660 max=346922 avg=346720 total=30511420
+[201] T= 37  GT=4  Pred=4  PASS  spikes: 18 0 1 4 29 2 1 3 4 3
+L1 layer update cycles: calls=37 last=204063 min=203985 max=204380 avg=204153 total=7553666
+L2 layer update cycles: calls=37 last=346713 min=346673 max=346834 avg=346725 total=12828830
+[202] T= 45  GT=1  Pred=2  FAIL  spikes: 2 32 37 29 31 20 1 1 0 0
+L1 layer update cycles: calls=45 last=204049 min=203920 max=204122 avg=204036 total=9181625
+L2 layer update cycles: calls=45 last=346758 min=346670 max=346900 avg=346743 total=15603460
+[203] T= 84  GT=7  Pred=7  PASS  spikes: 6 14 6 3 10 17 0 54 6 15
+L1 layer update cycles: calls=84 last=204017 min=203973 max=204371 avg=204112 total=17145432
+L2 layer update cycles: calls=84 last=346685 min=346662 max=346808 avg=346707 total=29123390
+[204] T= 33  GT=9  Pred=3  FAIL  spikes: 11 0 16 19 0 15 9 8 18 12
+L1 layer update cycles: calls=33 last=204151 min=203996 max=204157 avg=204070 total=6734322
+L2 layer update cycles: calls=33 last=346725 min=346673 max=346847 avg=346746 total=11442631
+[205] T= 52  GT=6  Pred=6  PASS  spikes: 29 0 5 13 7 0 44 7 9 13
+L1 layer update cycles: calls=52 last=203989 min=203897 max=204341 avg=204056 total=10610954
+L2 layer update cycles: calls=52 last=346684 min=346662 max=346775 avg=346714 total=18029174
+[206] T= 70  GT=8  Pred=3  FAIL  spikes: 25 13 14 41 18 16 8 8 32 17
+L1 layer update cycles: calls=70 last=204197 min=203856 max=204375 avg=204134 total=14289395
+L2 layer update cycles: calls=70 last=346680 min=346661 max=346816 avg=346720 total=24270414
+[207] T= 95  GT=3  Pred=3  PASS  spikes: 10 0 23 68 6 31 8 41 12 25
+L1 layer update cycles: calls=95 last=204128 min=203852 max=204317 avg=204100 total=19389581
+L2 layer update cycles: calls=95 last=346693 min=346664 max=346820 avg=346726 total=32939026
+[208] T= 89  GT=0  Pred=6  FAIL  spikes: 51 9 13 24 9 19 68 11 12 10
+L1 layer update cycles: calls=89 last=203951 min=203950 max=204313 avg=204132 total=18167758
+L2 layer update cycles: calls=89 last=346664 min=346660 max=346859 avg=346722 total=30858329
+[209] T= 40  GT=6  Pred=3  FAIL  spikes: 14 9 2 20 0 14 10 0 2 0
+L1 layer update cycles: calls=40 last=204272 min=204091 max=204377 avg=204196 total=8167861
+L2 layer update cycles: calls=40 last=346679 min=346656 max=346826 avg=346709 total=13868369
+[210] T= 69  GT=5  Pred=5  PASS  spikes: 22 4 0 34 0 69 4 21 11 26
+L1 layer update cycles: calls=69 last=204157 min=203995 max=204383 avg=204184 total=14088720
+L2 layer update cycles: calls=69 last=346711 min=346666 max=346884 avg=346738 total=23924974
+[211] T= 42  GT=1  Pred=1  PASS  spikes: 15 28 13 13 1 6 21 12 24 23
+L1 layer update cycles: calls=42 last=203996 min=203893 max=204343 avg=204118 total=8572981
+L2 layer update cycles: calls=42 last=346708 min=346684 max=346791 avg=346734 total=14562831
+[212] T= 81  GT=9  Pred=9  PASS  spikes: 5 15 13 19 16 8 27 23 17 57
+L1 layer update cycles: calls=81 last=203892 min=203849 max=204530 avg=204032 total=16526672
+L2 layer update cycles: calls=81 last=346663 min=346657 max=346785 avg=346694 total=28082216
+[213] T= 55  GT=2  Pred=7  FAIL  spikes: 15 0 21 31 2 12 9 38 0 1
+L1 layer update cycles: calls=55 last=204080 min=204063 max=204380 avg=204193 total=11230652
+L2 layer update cycles: calls=55 last=346669 min=346656 max=346936 avg=346743 total=19070900
+[214] T= 40  GT=0  Pred=0  PASS  spikes: 39 12 0 14 14 1 9 9 0 0
+L1 layer update cycles: calls=40 last=204040 min=204016 max=204373 avg=204156 total=8166263
+L2 layer update cycles: calls=40 last=346708 min=346668 max=346848 avg=346754 total=13870171
+[215] T= 55  GT=0  Pred=0  PASS  spikes: 17 1 8 2 17 2 6 15 1 0
+L1 layer update cycles: calls=55 last=203987 min=203987 max=204501 avg=204193 total=11230662
+L2 layer update cycles: calls=55 last=346673 min=346673 max=346772 avg=346711 total=19069159
+[216] T= 70  GT=2  Pred=2  PASS  spikes: 32 3 50 12 0 23 0 30 13 8
+L1 layer update cycles: calls=70 last=204357 min=203871 max=204478 avg=204244 total=14297139
+L2 layer update cycles: calls=70 last=346694 min=346656 max=346861 avg=346727 total=24270908
+[217] T= 37  GT=7  Pred=7  PASS  spikes: 1 0 19 24 2 20 3 37 4 0
+L1 layer update cycles: calls=37 last=204211 min=204032 max=204290 avg=204171 total=7554350
+L2 layer update cycles: calls=37 last=346691 min=346680 max=346933 avg=346781 total=12830917
+[218] T= 35  GT=7  Pred=7  PASS  spikes: 0 0 15 20 3 26 6 31 0 0
+L1 layer update cycles: calls=35 last=204126 min=203990 max=204313 avg=204171 total=7146019
+L2 layer update cycles: calls=35 last=346687 min=346679 max=346848 avg=346768 total=12136883
+[219] T= 74  GT=4  Pred=3  FAIL  spikes: 24 7 2 50 31 25 9 3 19 10
+L1 layer update cycles: calls=74 last=204003 min=203993 max=204515 avg=204160 total=15107904
+L2 layer update cycles: calls=74 last=346683 min=346674 max=346782 avg=346714 total=25656900
+[220] T= 36  GT=4  Pred=4  PASS  spikes: 9 0 1 5 26 15 0 2 0 10
+L1 layer update cycles: calls=36 last=204057 min=204057 max=204427 avg=204201 total=7351259
+L2 layer update cycles: calls=36 last=346702 min=346668 max=346938 avg=346755 total=12483199
+[221] T= 22  GT=2  Pred=0  FAIL  spikes: 15 0 15 2 0 15 0 0 0 11
+L1 layer update cycles: calls=22 last=204169 min=204169 max=204620 avg=204345 total=4495609
+L2 layer update cycles: calls=22 last=346703 min=346703 max=346930 avg=346785 total=7629287
+[222] T= 98  GT=8  Pred=5  FAIL  spikes: 19 25 19 28 9 47 28 2 43 33
+L1 layer update cycles: calls=98 last=204064 min=203846 max=204380 avg=204137 total=20005454
+L2 layer update cycles: calls=98 last=346678 min=346657 max=346806 avg=346710 total=33977620
+[223] T= 34  GT=7  Pred=7  PASS  spikes: 0 0 0 0 0 6 9 32 0 5
+L1 layer update cycles: calls=34 last=204238 min=204034 max=204417 avg=204238 total=6944113
+L2 layer update cycles: calls=34 last=346672 min=346672 max=346768 avg=346708 total=11788096
+[224] T= 46  GT=8  Pred=8  PASS  spikes: 9 3 0 23 2 22 1 9 37 0
+L1 layer update cycles: calls=46 last=204049 min=204043 max=204461 avg=204224 total=9394335
+L2 layer update cycles: calls=46 last=346705 min=346672 max=346804 avg=346718 total=15949072
+[225] T= 46  GT=8  Pred=8  PASS  spikes: 12 12 18 15 1 3 0 4 24 0
+L1 layer update cycles: calls=46 last=204093 min=204035 max=204389 avg=204179 total=9392250
+L2 layer update cycles: calls=46 last=346718 min=346664 max=346764 avg=346713 total=15948823
+[226] T= 51  GT=7  Pred=7  PASS  spikes: 4 0 0 31 12 22 0 38 17 5
+L1 layer update cycles: calls=51 last=203972 min=203972 max=204361 avg=204144 total=10411346
+L2 layer update cycles: calls=51 last=346743 min=346672 max=346840 avg=346752 total=17684397
+[227] T= 35  GT=8  Pred=8  PASS  spikes: 3 6 0 19 24 5 0 0 30 0
+L1 layer update cycles: calls=35 last=204043 min=204027 max=204401 avg=204149 total=7145241
+L2 layer update cycles: calls=35 last=346717 min=346658 max=346796 avg=346721 total=12135249
+[228] T= 42  GT=6  Pred=6  PASS  spikes: 9 13 16 3 20 5 25 6 3 7
+L1 layer update cycles: calls=42 last=203973 min=203905 max=204424 avg=204089 total=8571756
+L2 layer update cycles: calls=42 last=346673 min=346658 max=346745 avg=346696 total=14561243
+[229] T= 74  GT=5  Pred=5  PASS  spikes: 29 0 3 35 7 65 0 18 23 27
+L1 layer update cycles: calls=74 last=204187 min=204037 max=204420 avg=204174 total=15108925
+L2 layer update cycles: calls=74 last=346705 min=346674 max=346891 avg=346739 total=25658748
+[230] T= 58  GT=7  Pred=7  PASS  spikes: 6 0 4 21 0 16 0 48 7 19
+L1 layer update cycles: calls=58 last=204140 min=203948 max=204301 avg=204121 total=11839025
+L2 layer update cycles: calls=58 last=346742 min=346668 max=346889 avg=346735 total=20110665
+[231] T= 37  GT=5  Pred=5  PASS  spikes: 13 2 3 9 1 34 3 6 3 18
+L1 layer update cycles: calls=37 last=204004 min=203893 max=204514 avg=204155 total=7553737
+L2 layer update cycles: calls=37 last=346692 min=346671 max=346809 avg=346742 total=12829468
+[232] T= 31  GT=8  Pred=3  FAIL  spikes: 12 0 4 14 1 1 0 2 0 10
+L1 layer update cycles: calls=31 last=204178 min=204061 max=204587 avg=204237 total=6331357
+L2 layer update cycles: calls=31 last=346704 min=346667 max=346755 avg=346713 total=10748107
+[233] T= 45  GT=1  Pred=1  PASS  spikes: 4 31 7 5 3 9 11 12 5 6
+L1 layer update cycles: calls=45 last=204176 min=203877 max=204609 avg=204119 total=9185382
+L2 layer update cycles: calls=45 last=346673 min=346661 max=346757 avg=346694 total=15601237
+[234] T= 67  GT=6  Pred=6  PASS  spikes: 1 9 2 15 27 1 37 18 29 4
+L1 layer update cycles: calls=67 last=204069 min=204065 max=204485 avg=204224 total=13683048
+L2 layer update cycles: calls=67 last=346710 min=346660 max=346796 avg=346697 total=23228716
+[235] T= 11  GT=3  Pred=5  FAIL  spikes: 4 0 0 6 0 9 0 5 3 0
+L1 layer update cycles: calls=11 last=204159 min=204159 max=204363 avg=204253 total=2246785
+L2 layer update cycles: calls=11 last=346722 min=346675 max=346886 avg=346772 total=3814495
+[236] T= 40  GT=0  Pred=0  PASS  spikes: 40 12 7 20 6 24 0 12 3 6
+L1 layer update cycles: calls=40 last=203983 min=203983 max=204332 avg=204138 total=8165549
+L2 layer update cycles: calls=40 last=346715 min=346667 max=346851 avg=346762 total=13870499
+[237] T= 24  GT=0  Pred=0  PASS  spikes: 21 0 5 10 1 7 4 8 0 0
+L1 layer update cycles: calls=24 last=204092 min=204092 max=204436 avg=204197 total=4900742
+L2 layer update cycles: calls=24 last=346707 min=346681 max=346871 avg=346734 total=8321638
+[238] T= 50  GT=3  Pred=3  PASS  spikes: 9 0 0 42 0 0 1 22 15 12
+L1 layer update cycles: calls=50 last=204150 min=204010 max=204369 avg=204199 total=10209995
+L2 layer update cycles: calls=50 last=346722 min=346672 max=346813 avg=346720 total=17336032
+[239] T= 55  GT=6  Pred=6  PASS  spikes: 3 0 1 2 0 11 35 5 7 12
+L1 layer update cycles: calls=55 last=204232 min=204020 max=204373 avg=204191 total=11230546
+L2 layer update cycles: calls=55 last=346668 min=346658 max=346913 avg=346712 total=19069187
+[240] T= 38  GT=0  Pred=3  FAIL  spikes: 9 2 10 21 1 6 3 0 3 0
+L1 layer update cycles: calls=38 last=204053 min=204053 max=204793 avg=204213 total=7760111
+L2 layer update cycles: calls=38 last=346666 min=346658 max=346811 avg=346721 total=13175421
+[241] T= 90  GT=7  Pred=7  PASS  spikes: 16 25 29 5 12 29 2 49 18 1
+L1 layer update cycles: calls=90 last=203872 min=203872 max=204399 avg=204051 total=18364630
+L2 layer update cycles: calls=90 last=346694 min=346657 max=346823 avg=346711 total=31204079
+[242] T= 89  GT=0  Pred=0  PASS  spikes: 75 4 1 34 0 34 39 14 17 6
+L1 layer update cycles: calls=89 last=204043 min=203929 max=204365 avg=204150 total=18169392
+L2 layer update cycles: calls=89 last=346652 min=346652 max=346842 avg=346722 total=30858340
+[243] T= 84  GT=5  Pred=5  PASS  spikes: 7 2 10 16 0 50 5 15 8 9
+L1 layer update cycles: calls=84 last=204254 min=203934 max=204377 avg=204141 total=17147847
+L2 layer update cycles: calls=84 last=346672 min=346656 max=346892 avg=346708 total=29123481
+[244] T= 44  GT=7  Pred=7  PASS  spikes: 2 0 11 12 0 6 0 25 10 0
+L1 layer update cycles: calls=44 last=204008 min=204008 max=204483 avg=204216 total=8985545
+L2 layer update cycles: calls=44 last=346675 min=346675 max=346833 avg=346725 total=15255918
+[245] T= 89  GT=3  Pred=9  FAIL  spikes: 21 1 27 44 1 25 7 28 9 45
+L1 layer update cycles: calls=89 last=204100 min=203888 max=204548 avg=204249 total=18178248
+L2 layer update cycles: calls=89 last=346674 min=346664 max=346765 avg=346706 total=30856879
+[246] T= 18  GT=7  Pred=7  PASS  spikes: 1 1 2 0 0 1 2 18 7 9
+L1 layer update cycles: calls=18 last=204324 min=203898 max=204356 avg=204202 total=3675642
+L2 layer update cycles: calls=18 last=346696 min=346662 max=346803 avg=346729 total=6241134
+[247] T= 41  GT=7  Pred=7  PASS  spikes: 16 7 16 22 5 16 8 38 1 0
+L1 layer update cycles: calls=41 last=203991 min=203985 max=204395 avg=204123 total=8369060
+L2 layer update cycles: calls=41 last=346694 min=346662 max=346872 avg=346733 total=14216082
+[248] T= 38  GT=9  Pred=2  FAIL  spikes: 2 0 25 6 2 22 0 6 0 19
+L1 layer update cycles: calls=38 last=204143 min=203915 max=204324 avg=204154 total=7757882
+L2 layer update cycles: calls=38 last=346719 min=346685 max=346888 avg=346768 total=13177220
+[249] T= 67  GT=8  Pred=8  PASS  spikes: 7 3 17 17 0 11 17 2 52 0
+L1 layer update cycles: calls=67 last=204216 min=204049 max=204516 avg=204161 total=13678830
+L2 layer update cycles: calls=67 last=346695 min=346661 max=346884 avg=346717 total=23230084
+[250] T= 73  GT=4  Pred=4  PASS  spikes: 0 0 14 3 52 2 37 5 6 0
+L1 layer update cycles: calls=73 last=204015 min=203963 max=204356 avg=204119 total=14900749
+L2 layer update cycles: calls=73 last=346702 min=346659 max=346801 avg=346718 total=25310454
+[251] T= 73  GT=3  Pred=3  PASS  spikes: 5 0 2 71 0 13 0 0 8 38
+L1 layer update cycles: calls=73 last=204101 min=203967 max=204357 avg=204187 total=14905685
+L2 layer update cycles: calls=73 last=346673 min=346658 max=346768 avg=346693 total=25308611
+[252] T= 41  GT=5  Pred=5  PASS  spikes: 5 7 3 9 3 38 8 3 18 0
+L1 layer update cycles: calls=41 last=204191 min=204015 max=204430 avg=204155 total=8370389
+L2 layer update cycles: calls=41 last=346680 min=346672 max=346814 avg=346721 total=14215587
+[253] T= 68  GT=7  Pred=7  PASS  spikes: 11 7 8 8 14 9 20 31 14 9
+L1 layer update cycles: calls=68 last=203964 min=203935 max=204496 avg=204102 total=13878960
+L2 layer update cycles: calls=68 last=346718 min=346663 max=346778 avg=346700 total=23575635
+[254] T= 59  GT=4  Pred=4  PASS  spikes: 1 0 16 12 38 23 17 0 6 2
+L1 layer update cycles: calls=59 last=203997 min=203922 max=204377 avg=204085 total=12041041
+L2 layer update cycles: calls=59 last=346671 min=346656 max=346927 avg=346711 total=20455966
+[255] T= 93  GT=7  Pred=7  PASS  spikes: 31 23 16 40 10 17 13 69 23 6
+L1 layer update cycles: calls=93 last=203882 min=203842 max=204425 avg=204053 total=18976937
+L2 layer update cycles: calls=93 last=346661 min=346656 max=346916 avg=346727 total=32245624
+[256] T= 72  GT=6  Pred=6  PASS  spikes: 5 35 28 12 7 21 36 4 19 17
+L1 layer update cycles: calls=72 last=203965 min=203926 max=204486 avg=204098 total=14695088
+L2 layer update cycles: calls=72 last=346678 min=346657 max=346758 avg=346696 total=24962150
+[257] T= 82  GT=9  Pred=9  PASS  spikes: 7 5 25 27 14 2 26 20 10 67
+L1 layer update cycles: calls=82 last=203911 min=203884 max=204452 avg=204075 total=16734179
+L2 layer update cycles: calls=82 last=346716 min=346667 max=346781 avg=346716 total=28430762
+[258] T= 20  GT=2  Pred=3  FAIL  spikes: 14 0 2 18 0 14 0 0 0 3
+L1 layer update cycles: calls=20 last=204113 min=204113 max=204473 avg=204275 total=4085506
+L2 layer update cycles: calls=20 last=346676 min=346673 max=346820 avg=346737 total=6934741
+[259] T= 60  GT=5  Pred=5  PASS  spikes: 30 5 7 0 2 59 0 0 18 22
+L1 layer update cycles: calls=60 last=204066 min=204044 max=204582 avg=204240 total=12254404
+L2 layer update cycles: calls=60 last=346719 min=346674 max=346754 avg=346705 total=20802357
+[260] T= 53  GT=4  Pred=4  PASS  spikes: 13 0 6 7 24 3 11 9 0 21
+L1 layer update cycles: calls=53 last=204071 min=203976 max=204435 avg=204175 total=10821303
+L2 layer update cycles: calls=53 last=346667 min=346657 max=346832 avg=346715 total=18375930
+[261] T= 59  GT=5  Pred=5  PASS  spikes: 11 0 8 3 0 54 0 26 13 9
+L1 layer update cycles: calls=59 last=204290 min=203928 max=204429 avg=204149 total=12044801
+L2 layer update cycles: calls=59 last=346673 min=346670 max=346833 avg=346728 total=20456953
+[262] T= 63  GT=5  Pred=5  PASS  spikes: 0 19 0 0 0 62 3 46 0 0
+L1 layer update cycles: calls=63 last=204232 min=204182 max=204638 avg=204311 total=12871642
+L2 layer update cycles: calls=63 last=346676 min=346662 max=346821 avg=346738 total=21844507
+[263] T= 88  GT=4  Pred=5  FAIL  spikes: 23 13 16 2 19 38 7 23 21 14
+L1 layer update cycles: calls=88 last=204019 min=203982 max=204357 avg=204115 total=17962133
+L2 layer update cycles: calls=88 last=346700 min=346659 max=346884 avg=346707 total=30510296
+[264] T= 89  GT=3  Pred=3  PASS  spikes: 28 0 2 80 14 11 22 31 10 4
+L1 layer update cycles: calls=89 last=204250 min=203893 max=204319 avg=204153 total=18169679
+L2 layer update cycles: calls=89 last=346662 min=346658 max=346806 avg=346708 total=30857097
+[265] T= 59  GT=0  Pred=0  PASS  spikes: 51 1 9 4 2 26 0 6 9 2
+L1 layer update cycles: calls=59 last=203924 min=203924 max=204590 avg=204108 total=12042396
+L2 layer update cycles: calls=59 last=346708 min=346662 max=346911 avg=346726 total=20456879
+[266] T= 29  GT=3  Pred=3  PASS  spikes: 3 0 4 27 0 6 8 12 0 9
+L1 layer update cycles: calls=29 last=204115 min=203936 max=204310 avg=204144 total=5920197
+L2 layer update cycles: calls=29 last=346694 min=346655 max=346807 avg=346728 total=10055126
+[267] T= 33  GT=1  Pred=1  PASS  spikes: 2 28 0 14 3 4 10 2 6 3
+L1 layer update cycles: calls=33 last=203969 min=203933 max=204457 avg=204135 total=6736459
+L2 layer update cycles: calls=33 last=346743 min=346657 max=346810 avg=346720 total=11441785
+[268] T= 90  GT=0  Pred=0  PASS  spikes: 72 17 23 32 13 18 1 12 20 13
+L1 layer update cycles: calls=90 last=204133 min=204050 max=204310 avg=204155 total=18373974
+L2 layer update cycles: calls=90 last=346666 min=346657 max=346828 avg=346715 total=31204358
+[269] T= 66  GT=1  Pred=1  PASS  spikes: 16 38 14 20 18 16 7 37 28 12
+L1 layer update cycles: calls=66 last=203880 min=203855 max=204297 avg=204007 total=13464505
+L2 layer update cycles: calls=66 last=346658 min=346658 max=346760 avg=346700 total=22882244
+[270] T= 60  GT=7  Pred=7  PASS  spikes: 9 2 0 10 13 10 28 30 1 0
+L1 layer update cycles: calls=60 last=204370 min=203852 max=204476 avg=204031 total=12241870
+L2 layer update cycles: calls=60 last=346682 min=346668 max=346797 avg=346707 total=20802437
+[271] T= 38  GT=7  Pred=7  PASS  spikes: 12 0 1 20 0 11 0 35 15 7
+L1 layer update cycles: calls=38 last=204121 min=204005 max=204457 avg=204191 total=7759293
+L2 layer update cycles: calls=38 last=346659 min=346659 max=346866 avg=346725 total=13175580
+[272] T= 45  GT=9  Pred=9  PASS  spikes: 19 3 6 15 1 9 8 3 6 31
+L1 layer update cycles: calls=45 last=204118 min=203969 max=204393 avg=204144 total=9186493
+L2 layer update cycles: calls=45 last=346714 min=346666 max=346802 avg=346706 total=15601799
+[273] T= 46  GT=4  Pred=4  PASS  spikes: 0 1 5 9 40 2 0 2 8 0
+L1 layer update cycles: calls=46 last=204084 min=203939 max=204271 avg=204094 total=9388331
+L2 layer update cycles: calls=46 last=346696 min=346662 max=346844 avg=346726 total=15949399
+[274] T= 32  GT=0  Pred=0  PASS  spikes: 19 0 0 6 0 5 7 2 1 0
+L1 layer update cycles: calls=32 last=204148 min=204045 max=204371 avg=204179 total=6533729
+L2 layer update cycles: calls=32 last=346658 min=346656 max=346774 avg=346703 total=11094513
+[275] T= 21  GT=3  Pred=3  PASS  spikes: 12 0 4 19 0 4 1 9 2 0
+L1 layer update cycles: calls=21 last=204178 min=204108 max=204354 avg=204205 total=4288309
+L2 layer update cycles: calls=21 last=346684 min=346664 max=346844 avg=346745 total=7281648
+[276] T= 85  GT=5  Pred=1  FAIL  spikes: 13 30 5 17 8 28 2 9 30 13
+L1 layer update cycles: calls=85 last=203973 min=203841 max=204427 avg=204024 total=17342051
+L2 layer update cycles: calls=85 last=346691 min=346657 max=346862 avg=346706 total=29470080
+[277] T= 76  GT=8  Pred=8  PASS  spikes: 13 13 25 16 2 16 20 3 67 22
+L1 layer update cycles: calls=76 last=204086 min=204057 max=204430 avg=204224 total=15521061
+L2 layer update cycles: calls=76 last=346712 min=346665 max=346774 avg=346709 total=26349919
+[278] T= 63  GT=3  Pred=3  PASS  spikes: 19 1 0 50 0 4 0 21 22 27
+L1 layer update cycles: calls=63 last=204079 min=204056 max=204486 avg=204195 total=12864323
+L2 layer update cycles: calls=63 last=346735 min=346663 max=346872 avg=346741 total=21844715
+[279] T= 59  GT=8  Pred=8  PASS  spikes: 0 5 2 28 0 28 13 2 54 11
+L1 layer update cycles: calls=59 last=204053 min=203954 max=204525 avg=204198 total=12047692
+L2 layer update cycles: calls=59 last=346682 min=346668 max=346839 avg=346729 total=20457049
+[280] T= 33  GT=9  Pred=9  PASS  spikes: 1 0 2 6 0 8 6 3 2 10
+L1 layer update cycles: calls=33 last=204125 min=203986 max=204253 avg=204124 total=6736097
+L2 layer update cycles: calls=33 last=346688 min=346662 max=346801 avg=346721 total=11441806
+[281] T= 73  GT=8  Pred=8  PASS  spikes: 0 3 12 27 1 8 0 1 50 0
+L1 layer update cycles: calls=73 last=204199 min=204036 max=204529 avg=204175 total=14904811
+L2 layer update cycles: calls=73 last=346699 min=346666 max=346841 avg=346727 total=25311106
+[282] T= 33  GT=1  Pred=1  PASS  spikes: 3 32 21 21 20 16 10 0 0 0
+L1 layer update cycles: calls=33 last=203914 min=203914 max=204123 avg=204007 total=6732249
+L2 layer update cycles: calls=33 last=346668 min=346668 max=346875 avg=346736 total=11442297
+[283] T= 26  GT=7  Pred=6  FAIL  spikes: 1 1 0 7 0 0 26 26 0 3
+L1 layer update cycles: calls=26 last=204330 min=204029 max=204391 avg=204265 total=5310894
+L2 layer update cycles: calls=26 last=346777 min=346676 max=346827 avg=346745 total=9015370
+[284] T= 19  GT=6  Pred=4  FAIL  spikes: 12 0 4 3 14 3 3 4 3 1
+L1 layer update cycles: calls=19 last=204146 min=203904 max=204396 avg=204178 total=3879385
+L2 layer update cycles: calls=19 last=346696 min=346662 max=346781 avg=346711 total=6587511
+[285] T= 25  GT=1  Pred=0  FAIL  spikes: 21 19 2 21 18 15 2 12 6 0
+L1 layer update cycles: calls=25 last=204118 min=204068 max=204295 avg=204157 total=5103942
+L2 layer update cycles: calls=25 last=346693 min=346693 max=346926 avg=346798 total=8669964
+[286] T= 20  GT=0  Pred=0  PASS  spikes: 20 6 0 9 9 5 7 5 5 0
+L1 layer update cycles: calls=20 last=204055 min=204028 max=204264 avg=204154 total=4083087
+L2 layer update cycles: calls=20 last=346672 min=346672 max=346898 avg=346754 total=6935086
+[287] T= 62  GT=4  Pred=4  PASS  spikes: 30 0 11 17 45 17 0 11 12 0
+L1 layer update cycles: calls=62 last=203977 min=203977 max=204275 avg=204102 total=12654363
+L2 layer update cycles: calls=62 last=346667 min=346663 max=346943 avg=346732 total=21497410
+[288] T= 58  GT=4  Pred=5  FAIL  spikes: 3 7 18 31 30 34 12 1 7 0
+L1 layer update cycles: calls=58 last=204135 min=204016 max=204351 avg=204190 total=11843033
+L2 layer update cycles: calls=58 last=346707 min=346676 max=346841 avg=346737 total=20110768
+[289] T= 66  GT=6  Pred=6  PASS  spikes: 17 0 0 15 12 21 45 9 6 15
+L1 layer update cycles: calls=66 last=204144 min=203903 max=204358 avg=204122 total=13472061
+L2 layer update cycles: calls=66 last=346669 min=346656 max=346851 avg=346717 total=22883374
+[290] T= 34  GT=7  Pred=7  PASS  spikes: 2 2 5 16 12 25 5 34 14 0
+L1 layer update cycles: calls=34 last=204150 min=204102 max=204356 avg=204227 total=6943746
+L2 layer update cycles: calls=34 last=346716 min=346716 max=346840 avg=346792 total=11790959
+[291] T= 69  GT=5  Pred=5  PASS  spikes: 6 11 3 8 8 36 7 6 20 14
+L1 layer update cycles: calls=69 last=204073 min=203906 max=204455 avg=204111 total=14083683
+L2 layer update cycles: calls=69 last=346776 min=346667 max=346806 avg=346716 total=23923467
+[292] T= 66  GT=4  Pred=4  PASS  spikes: 6 0 20 17 60 0 5 1 0 0
+L1 layer update cycles: calls=66 last=204069 min=203915 max=204349 avg=204110 total=13471273
+L2 layer update cycles: calls=66 last=346714 min=346657 max=346821 avg=346722 total=22883659
+[293] T= 41  GT=6  Pred=0  FAIL  spikes: 21 0 0 8 9 2 13 6 7 8
+L1 layer update cycles: calls=41 last=204232 min=203898 max=204530 avg=204151 total=8370206
+L2 layer update cycles: calls=41 last=346687 min=346666 max=346991 avg=346731 total=14216005
+[294] T= 86  GT=0  Pred=0  PASS  spikes: 56 5 16 28 28 26 6 14 11 0
+L1 layer update cycles: calls=86 last=203934 min=203890 max=204628 avg=204135 total=17555625
+L2 layer update cycles: calls=86 last=346757 min=346659 max=346919 avg=346715 total=29817509
+[295] T= 62  GT=5  Pred=5  PASS  spikes: 23 18 12 2 8 60 16 3 1 0
+L1 layer update cycles: calls=62 last=204063 min=204044 max=204476 avg=204202 total=12660584
+L2 layer update cycles: calls=62 last=346665 min=346663 max=346835 avg=346733 total=21497501
+[296] T= 50  GT=2  Pred=2  PASS  spikes: 14 5 41 4 5 1 0 9 12 2
+L1 layer update cycles: calls=50 last=204116 min=204021 max=204446 avg=204138 total=10206927
+L2 layer update cycles: calls=50 last=346708 min=346685 max=346851 avg=346742 total=17337104
+[297] T= 61  GT=5  Pred=5  PASS  spikes: 17 0 12 13 0 46 1 28 11 1
+L1 layer update cycles: calls=61 last=204202 min=203868 max=204493 avg=204041 total=12446507
+L2 layer update cycles: calls=61 last=346688 min=346666 max=346855 avg=346722 total=21150072
+[298] T= 32  GT=9  Pred=9  PASS  spikes: 7 0 0 24 0 23 0 0 1 27
+L1 layer update cycles: calls=32 last=204166 min=204139 max=204402 avg=204252 total=6536092
+L2 layer update cycles: calls=32 last=346722 min=346674 max=346823 avg=346744 total=11095820
+[299] T= 54  GT=2  Pred=2  PASS  spikes: 8 0 38 16 8 13 7 23 0 0
+L1 layer update cycles: calls=54 last=204065 min=204065 max=204496 avg=204191 total=11026365
+L2 layer update cycles: calls=54 last=346723 min=346661 max=346835 avg=346731 total=18723521
+[300] T= 37  GT=9  Pred=9  PASS  spikes: 5 3 0 12 0 1 9 3 4 20
+L1 layer update cycles: calls=37 last=204350 min=204078 max=204350 avg=204217 total=7556054
+L2 layer update cycles: calls=37 last=346657 min=346657 max=346793 avg=346712 total=12828362
+[301] T= 85  GT=4  Pred=4  PASS  spikes: 1 0 8 3 72 0 16 17 7 1
+L1 layer update cycles: calls=85 last=204007 min=203861 max=204335 avg=204067 total=17345761
+L2 layer update cycles: calls=85 last=346664 min=346654 max=346804 avg=346706 total=29470071
+[302] T= 65  GT=2  Pred=0  FAIL  spikes: 30 0 29 19 7 3 7 20 8 2
+L1 layer update cycles: calls=65 last=204001 min=203937 max=204433 avg=204098 total=13266371
+L2 layer update cycles: calls=65 last=346673 min=346665 max=346833 avg=346729 total=22537430
+[303] T= 68  GT=1  Pred=8  FAIL  spikes: 16 11 16 35 3 10 4 25 38 0
+L1 layer update cycles: calls=68 last=203929 min=203929 max=204396 avg=204134 total=13881161
+L2 layer update cycles: calls=68 last=346713 min=346663 max=346791 avg=346716 total=23576748
+[304] T= 48  GT=6  Pred=7  FAIL  spikes: 14 3 0 14 0 3 0 24 13 14
+L1 layer update cycles: calls=48 last=204146 min=204108 max=204631 avg=204223 total=9802712
+L2 layer update cycles: calls=48 last=346706 min=346666 max=346822 avg=346709 total=16642077
+[305] T= 60  GT=6  Pred=8  FAIL  spikes: 13 8 0 6 12 3 10 8 16 9
+L1 layer update cycles: calls=60 last=204227 min=203917 max=204360 avg=204158 total=12249482
+L2 layer update cycles: calls=60 last=346658 min=346658 max=346870 avg=346711 total=20802672
+[306] T= 39  GT=2  Pred=2  PASS  spikes: 19 0 33 22 10 7 2 31 8 0
+L1 layer update cycles: calls=39 last=204067 min=204033 max=204332 avg=204152 total=7961935
+L2 layer update cycles: calls=39 last=346686 min=346683 max=346900 avg=346743 total=13522996
+[307] T= 78  GT=3  Pred=3  PASS  spikes: 2 4 29 60 8 11 0 26 6 0
+L1 layer update cycles: calls=78 last=204043 min=203884 max=204325 avg=204092 total=15919252
+L2 layer update cycles: calls=78 last=346672 min=346662 max=346846 avg=346726 total=27044637
+[308] T= 85  GT=5  Pred=5  PASS  spikes: 0 24 10 22 3 66 21 4 46 6
+L1 layer update cycles: calls=85 last=204037 min=203960 max=204451 avg=204159 total=17353581
+L2 layer update cycles: calls=85 last=346692 min=346658 max=346783 avg=346713 total=29470642
+[309] T= 65  GT=4  Pred=4  PASS  spikes: 9 3 10 16 36 12 12 10 3 3
+L1 layer update cycles: calls=65 last=204055 min=203972 max=204233 avg=204085 total=13265546
+L2 layer update cycles: calls=65 last=346681 min=346664 max=346874 avg=346718 total=22536734
+[310] T= 53  GT=2  Pred=2  PASS  spikes: 14 0 34 25 7 6 2 23 0 0
+L1 layer update cycles: calls=53 last=204238 min=204195 max=204464 avg=204276 total=10826640
+L2 layer update cycles: calls=53 last=346696 min=346661 max=346874 avg=346735 total=18376981
+[311] T= 62  GT=9  Pred=9  PASS  spikes: 21 7 5 20 25 25 17 23 22 31
+L1 layer update cycles: calls=62 last=204170 min=203846 max=204405 avg=204117 total=12655288
+L2 layer update cycles: calls=62 last=346666 min=346655 max=346815 avg=346717 total=21496474
+[312] T= 65  GT=9  Pred=9  PASS  spikes: 6 2 5 23 4 16 5 5 17 52
+L1 layer update cycles: calls=65 last=203987 min=203969 max=204461 avg=204156 total=13270175
+L2 layer update cycles: calls=65 last=346673 min=346656 max=346794 avg=346718 total=22536707
+[313] T= 76  GT=8  Pred=8  PASS  spikes: 13 6 15 25 0 16 13 13 33 17
+L1 layer update cycles: calls=76 last=203992 min=203971 max=204498 avg=204125 total=15513542
+L2 layer update cycles: calls=76 last=346675 min=346656 max=346906 avg=346727 total=26351293
+[314] T= 54  GT=7  Pred=7  PASS  spikes: 12 0 0 16 8 38 0 46 18 0
+L1 layer update cycles: calls=54 last=204169 min=204073 max=204319 avg=204177 total=11025574
+L2 layer update cycles: calls=54 last=346719 min=346683 max=346826 avg=346747 total=18724357
+[315] T= 58  GT=3  Pred=3  PASS  spikes: 18 0 0 43 0 2 9 7 3 7
+L1 layer update cycles: calls=58 last=204052 min=203993 max=204406 avg=204137 total=11839947
+L2 layer update cycles: calls=58 last=346672 min=346655 max=346813 avg=346702 total=20108761
+[316] T= 69  GT=7  Pred=7  PASS  spikes: 29 6 7 13 14 8 15 32 30 14
+L1 layer update cycles: calls=69 last=204053 min=203903 max=204346 avg=204075 total=14081219
+L2 layer update cycles: calls=69 last=346725 min=346666 max=346837 avg=346716 total=23923442
+[317] T= 34  GT=2  Pred=2  PASS  spikes: 15 0 20 12 0 9 0 10 4 17
+L1 layer update cycles: calls=34 last=204313 min=204062 max=204422 avg=204260 total=6944850
+L2 layer update cycles: calls=34 last=346711 min=346677 max=346832 avg=346743 total=11789267
+[318] T= 88  GT=0  Pred=0  PASS  spikes: 35 0 13 15 0 29 17 23 16 17
+L1 layer update cycles: calls=88 last=203988 min=203950 max=204418 avg=204121 total=17962681
+L2 layer update cycles: calls=88 last=346673 min=346655 max=346839 avg=346717 total=30511152
+[319] T= 38  GT=6  Pred=6  PASS  spikes: 1 15 0 8 8 12 35 4 6 5
+L1 layer update cycles: calls=38 last=204159 min=203898 max=204333 avg=204159 total=7758053
+L2 layer update cycles: calls=38 last=346680 min=346663 max=346819 avg=346709 total=13174972
+[320] T= 36  GT=2  Pred=2  PASS  spikes: 6 0 32 6 10 19 0 0 0 12
+L1 layer update cycles: calls=36 last=204056 min=204056 max=204488 avg=204236 total=7352499
+L2 layer update cycles: calls=36 last=346685 min=346674 max=346819 avg=346741 total=12482707
+[321] T= 50  GT=2  Pred=2  PASS  spikes: 12 2 31 21 4 0 7 25 7 6
+L1 layer update cycles: calls=50 last=204002 min=203872 max=204320 avg=204100 total=10205048
+L2 layer update cycles: calls=50 last=346689 min=346657 max=346794 avg=346706 total=17335348
+[322] T= 19  GT=9  Pred=5  FAIL  spikes: 3 2 0 12 0 17 3 0 1 15
+L1 layer update cycles: calls=19 last=204208 min=204116 max=204413 avg=204213 total=3880065
+L2 layer update cycles: calls=19 last=346698 min=346698 max=346854 avg=346757 total=6588396
+[323] T= 47  GT=3  Pred=3  PASS  spikes: 31 0 16 45 4 12 0 14 1 0
+L1 layer update cycles: calls=47 last=204054 min=204054 max=204357 avg=204190 total=9596941
+L2 layer update cycles: calls=47 last=346667 min=346663 max=347005 avg=346753 total=16297405
+[324] T= 56  GT=9  Pred=5  FAIL  spikes: 12 5 1 10 2 31 11 11 29 20
+L1 layer update cycles: calls=56 last=204099 min=203890 max=204431 avg=204124 total=11430961
+L2 layer update cycles: calls=56 last=346672 min=346672 max=346863 avg=346725 total=19416627
+[325] T= 63  GT=4  Pred=4  PASS  spikes: 1 0 12 11 59 5 7 20 10 0
+L1 layer update cycles: calls=63 last=204032 min=203990 max=204342 avg=204082 total=12857208
+L2 layer update cycles: calls=63 last=346664 min=346656 max=346840 avg=346714 total=21842984
+[326] T= 89  GT=1  Pred=1  PASS  spikes: 18 46 18 10 35 5 18 4 21 9
+L1 layer update cycles: calls=89 last=204099 min=203844 max=204544 avg=204081 total=18163261
+L2 layer update cycles: calls=89 last=346688 min=346656 max=346778 avg=346692 total=30855614
+[327] T= 38  GT=1  Pred=1  PASS  spikes: 13 29 12 14 4 12 0 11 1 3
+L1 layer update cycles: calls=38 last=203938 min=203938 max=204487 avg=204137 total=7757242
+L2 layer update cycles: calls=38 last=346718 min=346661 max=346769 avg=346708 total=13174932
+[328] T= 48  GT=6  Pred=3  FAIL  spikes: 3 4 2 18 0 5 6 0 9 6
+L1 layer update cycles: calls=48 last=204132 min=203895 max=204384 avg=204131 total=9798329
+L2 layer update cycles: calls=48 last=346669 min=346657 max=346801 avg=346707 total=16641939
+[329] T= 13  GT=1  Pred=9  FAIL  spikes: 1 0 3 7 0 3 1 0 0 9
+L1 layer update cycles: calls=13 last=204106 min=204037 max=204351 avg=204196 total=2654558
+L2 layer update cycles: calls=13 last=346749 min=346684 max=346792 avg=346732 total=4507521
+[330] T= 43  GT=6  Pred=6  PASS  spikes: 1 7 5 14 11 0 27 9 5 3
+L1 layer update cycles: calls=43 last=204119 min=203935 max=204376 avg=204171 total=8779372
+L2 layer update cycles: calls=43 last=346688 min=346656 max=346756 avg=346689 total=14907655
+[331] T= 66  GT=4  Pred=4  PASS  spikes: 14 0 11 7 61 9 1 0 3 5
+L1 layer update cycles: calls=66 last=203991 min=203957 max=204316 avg=204109 total=13471259
+L2 layer update cycles: calls=66 last=346672 min=346658 max=346750 avg=346694 total=22881824
+[332] T= 45  GT=9  Pred=3  FAIL  spikes: 20 4 0 31 1 30 3 7 6 22
+L1 layer update cycles: calls=45 last=204194 min=204049 max=204352 avg=204165 total=9187441
+L2 layer update cycles: calls=45 last=346711 min=346684 max=346873 avg=346761 total=15604271
+[333] T= 18  GT=3  Pred=3  PASS  spikes: 0 0 1 18 0 2 6 8 1 1
+L1 layer update cycles: calls=18 last=204174 min=204090 max=204319 avg=204196 total=3675531
+L2 layer update cycles: calls=18 last=346717 min=346676 max=346809 avg=346741 total=6241351
+[334] T= 29  GT=6  Pred=6  PASS  spikes: 5 3 12 14 0 12 21 4 1 5
+L1 layer update cycles: calls=29 last=204089 min=204060 max=204381 avg=204217 total=5922294
+L2 layer update cycles: calls=29 last=346702 min=346672 max=346881 avg=346734 total=10055307
+[335] T= 49  GT=7  Pred=7  PASS  spikes: 15 0 9 21 1 22 0 49 3 0
+L1 layer update cycles: calls=49 last=204134 min=204088 max=204352 avg=204213 total=10006467
+L2 layer update cycles: calls=49 last=346690 min=346684 max=346800 avg=346746 total=16990591
+[336] T= 64  GT=8  Pred=8  PASS  spikes: 4 8 2 23 0 19 9 5 32 8
+L1 layer update cycles: calls=64 last=203994 min=203994 max=204458 avg=204150 total=13065634
+L2 layer update cycles: calls=64 last=346708 min=346655 max=346844 avg=346713 total=22189681
+[337] T= 21  GT=1  Pred=5  FAIL  spikes: 0 6 2 0 1 14 2 4 2 6
+L1 layer update cycles: calls=21 last=204074 min=203971 max=204449 avg=204184 total=4287872
+L2 layer update cycles: calls=21 last=346681 min=346677 max=346762 avg=346707 total=7280855
+[338] T= 82  GT=6  Pred=6  PASS  spikes: 11 9 25 17 12 7 69 24 22 13
+L1 layer update cycles: calls=82 last=204022 min=203887 max=204388 avg=204095 total=16735870
+L2 layer update cycles: calls=82 last=346676 min=346657 max=346769 avg=346697 total=28429209
+[339] T= 50  GT=5  Pred=5  PASS  spikes: 2 2 13 0 0 50 11 13 2 15
+L1 layer update cycles: calls=50 last=204182 min=203888 max=204448 avg=204082 total=10204106
+L2 layer update cycles: calls=50 last=346671 min=346671 max=346861 avg=346734 total=17336700
+[340] T= 48  GT=2  Pred=0  FAIL  spikes: 30 3 28 29 27 7 3 17 1 0
+L1 layer update cycles: calls=48 last=204024 min=203975 max=204385 avg=204163 total=9799862
+L2 layer update cycles: calls=48 last=346663 min=346657 max=346845 avg=346716 total=16642380
+[341] T= 41  GT=7  Pred=2  FAIL  spikes: 1 0 31 12 0 15 0 23 7 0
+L1 layer update cycles: calls=41 last=204147 min=204061 max=204330 avg=204182 total=8371494
+L2 layer update cycles: calls=41 last=346678 min=346665 max=346827 avg=346754 total=14216940
+[342] T= 56  GT=6  Pred=8  FAIL  spikes: 3 9 13 4 5 5 21 11 22 5
+L1 layer update cycles: calls=56 last=203951 min=203951 max=204342 avg=204095 total=11429321
+L2 layer update cycles: calls=56 last=346685 min=346666 max=346743 avg=346693 total=19414858
+[343] T= 73  GT=7  Pred=8  FAIL  spikes: 24 15 28 13 18 19 4 19 44 12
+L1 layer update cycles: calls=73 last=203875 min=203875 max=204339 avg=204044 total=14895244
+L2 layer update cycles: calls=73 last=346706 min=346664 max=346868 avg=346718 total=25310463
+[344] T= 77  GT=0  Pred=0  PASS  spikes: 50 6 5 33 0 7 0 9 12 22
+L1 layer update cycles: calls=77 last=204123 min=204056 max=204509 avg=204157 total=15720109
+L2 layer update cycles: calls=77 last=346675 min=346655 max=346842 avg=346714 total=26697049
+[345] T= 75  GT=8  Pred=8  PASS  spikes: 7 9 2 10 0 18 9 3 46 25
+L1 layer update cycles: calls=75 last=204263 min=204067 max=204448 avg=204224 total=15316850
+L2 layer update cycles: calls=75 last=346674 min=346668 max=346828 avg=346719 total=26003972
+[346] T= 85  GT=9  Pred=9  PASS  spikes: 12 4 6 17 4 2 11 8 18 36
+L1 layer update cycles: calls=85 last=204016 min=203844 max=204461 avg=204047 total=17344033
+L2 layer update cycles: calls=85 last=346657 min=346655 max=346773 avg=346693 total=29468958
+[347] T= 34  GT=4  Pred=5  FAIL  spikes: 6 3 0 15 17 22 7 2 7 12
+L1 layer update cycles: calls=34 last=204153 min=203998 max=204385 avg=204177 total=6942031
+L2 layer update cycles: calls=34 last=346673 min=346663 max=346824 avg=346739 total=11789134
+[348] T= 23  GT=0  Pred=0  PASS  spikes: 22 0 8 6 5 7 12 5 0 0
+L1 layer update cycles: calls=23 last=204060 min=204060 max=204282 avg=204178 total=4696104
+L2 layer update cycles: calls=23 last=346674 min=346672 max=346880 avg=346753 total=7975332
+[349] T= 65  GT=0  Pred=0  PASS  spikes: 36 0 0 6 0 28 27 24 3 8
+L1 layer update cycles: calls=65 last=204159 min=204109 max=204551 avg=204248 total=13276150
+L2 layer update cycles: calls=65 last=346679 min=346667 max=346785 avg=346705 total=22535863
+[350] T= 74  GT=8  Pred=8  PASS  spikes: 18 3 9 22 0 13 11 5 61 9
+L1 layer update cycles: calls=74 last=204018 min=203910 max=204343 avg=204149 total=15107070
+L2 layer update cycles: calls=74 last=346671 min=346654 max=346816 avg=346713 total=25656762
+[351] T= 31  GT=2  Pred=2  PASS  spikes: 14 0 29 19 0 1 6 5 0 1
+L1 layer update cycles: calls=31 last=204118 min=203962 max=204556 avg=204245 total=6331604
+L2 layer update cycles: calls=31 last=346732 min=346675 max=346762 avg=346718 total=10748265
+[352] T= 31  GT=9  Pred=9  PASS  spikes: 7 0 0 9 2 11 7 2 5 23
+L1 layer update cycles: calls=31 last=204136 min=203893 max=204346 avg=204125 total=6327875
+L2 layer update cycles: calls=31 last=346663 min=346663 max=346795 avg=346729 total=10748623
+[353] T= 37  GT=4  Pred=5  FAIL  spikes: 16 8 5 12 6 20 0 10 7 0
+L1 layer update cycles: calls=37 last=204118 min=204118 max=204434 avg=204216 total=7556000
+L2 layer update cycles: calls=37 last=346708 min=346673 max=346911 avg=346784 total=12831043
+[354] T= 72  GT=4  Pred=4  PASS  spikes: 5 0 6 14 51 21 2 4 18 24
+L1 layer update cycles: calls=72 last=203928 min=203916 max=204338 avg=204112 total=14696116
+L2 layer update cycles: calls=72 last=346711 min=346662 max=346865 avg=346720 total=24963907
+[355] T= 71  GT=8  Pred=8  PASS  spikes: 17 5 10 6 17 20 22 11 46 26
+L1 layer update cycles: calls=71 last=204265 min=203915 max=204313 avg=204098 total=14490961
+L2 layer update cycles: calls=71 last=346665 min=346665 max=346815 avg=346716 total=24616884
+[356] T= 69  GT=6  Pred=6  PASS  spikes: 29 0 4 5 21 9 53 3 10 15
+L1 layer update cycles: calls=69 last=204274 min=204044 max=204517 avg=204215 total=14090871
+L2 layer update cycles: calls=69 last=346668 min=346656 max=346768 avg=346702 total=23922454
+[357] T= 53  GT=7  Pred=7  PASS  spikes: 1 0 15 2 0 1 4 52 23 0
+L1 layer update cycles: calls=53 last=204062 min=203953 max=204432 avg=204124 total=10818604
+L2 layer update cycles: calls=53 last=346667 min=346658 max=346819 avg=346715 total=18375934
+[358] T= 33  GT=4  Pred=4  PASS  spikes: 11 3 0 6 25 12 1 2 0 8
+L1 layer update cycles: calls=33 last=204036 min=203975 max=204458 avg=204165 total=6737465
+L2 layer update cycles: calls=33 last=346663 min=346660 max=346804 avg=346716 total=11441644
+[359] T= 32  GT=0  Pred=0  PASS  spikes: 18 0 5 4 3 11 9 8 12 11
+L1 layer update cycles: calls=32 last=204101 min=203981 max=204326 avg=204160 total=6533130
+L2 layer update cycles: calls=32 last=346673 min=346664 max=346908 avg=346717 total=11094956
+[360] T= 25  GT=7  Pred=5  FAIL  spikes: 2 0 8 11 5 22 3 10 0 3
+L1 layer update cycles: calls=25 last=204164 min=203974 max=204318 avg=204152 total=5103811
+L2 layer update cycles: calls=25 last=346722 min=346662 max=346850 avg=346756 total=8668912
+[361] T= 33  GT=4  Pred=0  FAIL  spikes: 17 1 0 3 16 1 9 2 5 1
+L1 layer update cycles: calls=33 last=204067 min=203901 max=204302 avg=204115 total=6735801
+L2 layer update cycles: calls=33 last=346675 min=346669 max=346807 avg=346730 total=11442092
+[362] T= 37  GT=4  Pred=4  PASS  spikes: 7 0 8 3 21 0 2 1 10 5
+L1 layer update cycles: calls=37 last=204102 min=204024 max=204377 avg=204168 total=7554216
+L2 layer update cycles: calls=37 last=346681 min=346677 max=346844 avg=346729 total=12828980
+[363] T= 83  GT=4  Pred=4  PASS  spikes: 4 1 18 30 68 13 0 0 12 1
+L1 layer update cycles: calls=83 last=203928 min=203928 max=204407 avg=204145 total=16944111
+L2 layer update cycles: calls=83 last=346721 min=346655 max=346793 avg=346701 total=28776204
+[364] T= 86  GT=7  Pred=7  PASS  spikes: 29 35 37 8 23 20 22 49 19 21
+L1 layer update cycles: calls=86 last=203986 min=203981 max=204457 avg=204201 total=17561362
+L2 layer update cycles: calls=86 last=346670 min=346657 max=346795 avg=346701 total=29816317
+[365] T= 29  GT=7  Pred=7  PASS  spikes: 3 1 13 16 3 6 7 17 16 4
+L1 layer update cycles: calls=29 last=204261 min=204057 max=204328 avg=204201 total=5921846
+L2 layer update cycles: calls=29 last=346674 min=346657 max=346773 avg=346712 total=10054664
+[366] T= 56  GT=8  Pred=8  PASS  spikes: 8 0 3 17 2 12 0 0 31 4
+L1 layer update cycles: calls=56 last=204205 min=203982 max=204331 avg=204181 total=11434183
+L2 layer update cycles: calls=56 last=346667 min=346661 max=346878 avg=346700 total=19415229
+[367] T= 34  GT=8  Pred=8  PASS  spikes: 6 5 12 1 0 15 2 3 25 5
+L1 layer update cycles: calls=34 last=204060 min=203942 max=204245 avg=204104 total=6939545
+L2 layer update cycles: calls=34 last=346728 min=346670 max=346882 avg=346751 total=11789561
+[368] T= 81  GT=8  Pred=9  FAIL  spikes: 19 5 4 13 17 5 6 0 9 35
+L1 layer update cycles: calls=81 last=204032 min=203966 max=204380 avg=204097 total=16531916
+L2 layer update cycles: calls=81 last=346677 min=346657 max=346826 avg=346699 total=28082623
+[369] T= 42  GT=2  Pred=2  PASS  spikes: 13 0 38 22 6 0 0 8 5 1
+L1 layer update cycles: calls=42 last=204153 min=203954 max=204352 avg=204163 total=8574864
+L2 layer update cycles: calls=42 last=346670 min=346670 max=346815 avg=346722 total=14562362
+[370] T= 85  GT=4  Pred=4  PASS  spikes: 21 9 16 4 73 19 3 1 10 0
+L1 layer update cycles: calls=85 last=203932 min=203921 max=204392 avg=204135 total=17351480
+L2 layer update cycles: calls=85 last=346681 min=346657 max=346832 avg=346697 total=29469290
+[371] T= 41  GT=9  Pred=9  PASS  spikes: 8 0 3 12 0 10 1 8 12 14
+L1 layer update cycles: calls=41 last=204123 min=203903 max=204355 avg=204136 total=8369614
+L2 layer update cycles: calls=41 last=346715 min=346685 max=346881 avg=346768 total=14217496
+[372] T= 81  GT=1  Pred=1  PASS  spikes: 1 44 29 7 16 3 20 32 9 28
+L1 layer update cycles: calls=81 last=203918 min=203880 max=204344 avg=204042 total=16527422
+L2 layer update cycles: calls=81 last=346680 min=346655 max=346781 avg=346700 total=28082758
+[373] T= 85  GT=5  Pred=5  PASS  spikes: 24 5 4 1 8 31 0 14 0 2
+L1 layer update cycles: calls=85 last=204208 min=204072 max=204457 avg=204264 total=17362500
+L2 layer update cycles: calls=85 last=346669 min=346658 max=346792 avg=346713 total=29470615
+[374] T= 27  GT=8  Pred=8  PASS  spikes: 4 3 6 12 1 5 3 3 24 11
+L1 layer update cycles: calls=27 last=204139 min=203931 max=204345 avg=204162 total=5512374
+L2 layer update cycles: calls=27 last=346704 min=346674 max=346819 avg=346719 total=9361435
+[375] T= 40  GT=6  Pred=6  PASS  spikes: 11 0 2 4 0 6 38 16 10 11
+L1 layer update cycles: calls=40 last=204161 min=203907 max=204312 avg=204112 total=8164481
+L2 layer update cycles: calls=40 last=346685 min=346674 max=346763 avg=346719 total=13868787
+[376] T= 88  GT=1  Pred=1  PASS  spikes: 7 50 7 19 11 24 8 24 20 9
+L1 layer update cycles: calls=88 last=203847 min=203843 max=204385 avg=204025 total=17954265
+L2 layer update cycles: calls=88 last=346657 min=346657 max=346936 avg=346720 total=30511424
+[377] T= 26  GT=2  Pred=7  FAIL  spikes: 7 1 10 12 5 0 1 14 7 1
+L1 layer update cycles: calls=26 last=204084 min=204033 max=204479 avg=204218 total=5309678
+L2 layer update cycles: calls=26 last=346757 min=346683 max=346812 avg=346725 total=9014870
+[378] T= 39  GT=1  Pred=1  PASS  spikes: 13 15 2 4 1 13 0 10 6 14
+L1 layer update cycles: calls=39 last=204046 min=204046 max=204302 avg=204140 total=7961475
+L2 layer update cycles: calls=39 last=346728 min=346689 max=346863 avg=346747 total=13523134
+[379] T= 60  GT=5  Pred=5  PASS  spikes: 17 0 24 19 5 43 7 42 5 12
+L1 layer update cycles: calls=60 last=204065 min=204065 max=204494 avg=204256 total=12255405
+L2 layer update cycles: calls=60 last=346665 min=346665 max=346782 avg=346717 total=20803029
+[380] T= 66  GT=1  Pred=1  PASS  spikes: 16 38 14 20 18 16 7 37 28 12
+L1 layer update cycles: calls=66 last=203845 min=203845 max=204301 avg=204012 total=13464808
+L2 layer update cycles: calls=66 last=346659 min=346659 max=346756 avg=346696 total=22881941
+[381] T= 38  GT=3  Pred=3  PASS  spikes: 24 0 0 31 0 2 0 14 5 0
+L1 layer update cycles: calls=38 last=204095 min=203948 max=204420 avg=204171 total=7758503
+L2 layer update cycles: calls=38 last=346699 min=346668 max=346758 avg=346711 total=13175036
+[382] T= 47  GT=9  Pred=3  FAIL  spikes: 5 2 20 37 0 0 14 4 8 8
+L1 layer update cycles: calls=47 last=204191 min=203963 max=204361 avg=204165 total=9595775
+L2 layer update cycles: calls=47 last=346681 min=346675 max=346840 avg=346737 total=16296643
+[383] T= 19  GT=6  Pred=4  FAIL  spikes: 1 0 2 1 14 4 2 3 2 0
+L1 layer update cycles: calls=19 last=204113 min=203989 max=204252 avg=204150 total=3878862
+L2 layer update cycles: calls=19 last=346721 min=346689 max=346845 avg=346742 total=6588116
+[384] T= 76  GT=9  Pred=9  PASS  spikes: 15 15 7 21 11 14 5 9 15 58
+L1 layer update cycles: calls=76 last=204018 min=203921 max=204405 avg=204065 total=15508951
+L2 layer update cycles: calls=76 last=346691 min=346661 max=346797 avg=346711 total=26350087
+[385] T= 86  GT=7  Pred=7  PASS  spikes: 29 35 37 8 23 20 22 49 19 21
+L1 layer update cycles: calls=86 last=203988 min=203960 max=204491 avg=204213 total=17562382
+L2 layer update cycles: calls=86 last=346706 min=346661 max=346787 avg=346691 total=29815482
+[386] T= 53  GT=2  Pred=2  PASS  spikes: 14 0 34 25 7 6 2 23 0 0
+L1 layer update cycles: calls=53 last=204232 min=204200 max=204462 avg=204272 total=10826432
+L2 layer update cycles: calls=53 last=346664 min=346662 max=346837 avg=346734 total=18376921
+[387] T= 59  GT=5  Pred=5  PASS  spikes: 16 0 3 9 6 53 15 25 9 6
+L1 layer update cycles: calls=59 last=204193 min=203892 max=204337 avg=204093 total=12041499
+L2 layer update cycles: calls=59 last=346721 min=346668 max=346912 avg=346745 total=20457961
+[388] T= 52  GT=6  Pred=0  FAIL  spikes: 23 2 17 7 16 7 10 5 6 4
+L1 layer update cycles: calls=52 last=203992 min=203944 max=204422 avg=204147 total=10615681
+L2 layer update cycles: calls=52 last=346667 min=346656 max=346868 avg=346705 total=18028704
+[389] T= 61  GT=3  Pred=3  PASS  spikes: 35 0 37 53 20 16 0 19 1 0
+L1 layer update cycles: calls=61 last=204011 min=204011 max=204410 avg=204192 total=12455760
+L2 layer update cycles: calls=61 last=346679 min=346674 max=346966 avg=346763 total=21152563
+[390] T= 19  GT=4  Pred=8  FAIL  spikes: 7 0 0 9 3 3 1 16 17 0
+L1 layer update cycles: calls=19 last=204222 min=203966 max=204322 avg=204146 total=3878779
+L2 layer update cycles: calls=19 last=346711 min=346683 max=346875 avg=346761 total=6588472
+[391] T= 19  GT=1  Pred=4  FAIL  spikes: 1 16 16 7 17 9 1 1 1 2
+L1 layer update cycles: calls=19 last=203955 min=203954 max=204158 avg=204032 total=3876614
+L2 layer update cycles: calls=19 last=346682 min=346682 max=346810 avg=346758 total=6588404
+[392] T= 89  GT=0  Pred=0  PASS  spikes: 68 12 9 39 5 24 3 15 5 12
+L1 layer update cycles: calls=89 last=204168 min=204046 max=204381 avg=204164 total=18170677
+L2 layer update cycles: calls=89 last=346669 min=346663 max=346852 avg=346718 total=30857965
+[393] T= 85  GT=8  Pred=8  PASS  spikes: 16 0 12 34 0 49 15 14 65 18
+L1 layer update cycles: calls=85 last=204241 min=203919 max=204329 avg=204120 total=17350260
+L2 layer update cycles: calls=85 last=346661 min=346661 max=346852 avg=346716 total=29470892
+[394] T= 27  GT=9  Pred=0  FAIL  spikes: 20 5 2 20 0 4 12 18 4 11
+L1 layer update cycles: calls=27 last=204055 min=204055 max=204289 avg=204141 total=5511820
+L2 layer update cycles: calls=27 last=346722 min=346710 max=346875 avg=346770 total=9362813
+[395] T= 63  GT=3  Pred=3  PASS  spikes: 19 1 0 50 0 4 0 21 22 27
+L1 layer update cycles: calls=63 last=204077 min=204052 max=204469 avg=204203 total=12864816
+L2 layer update cycles: calls=63 last=346701 min=346666 max=346864 avg=346733 total=21844237
+[396] T= 23  GT=1  Pred=0  FAIL  spikes: 22 0 3 13 7 13 0 21 0 0
+L1 layer update cycles: calls=23 last=204020 min=203944 max=204304 avg=204131 total=4695029
+L2 layer update cycles: calls=23 last=346724 min=346724 max=346866 avg=346785 total=7976076
+[397] T= 29  GT=8  Pred=3  FAIL  spikes: 11 3 0 20 0 1 10 5 9 2
+L1 layer update cycles: calls=29 last=204141 min=204044 max=204261 avg=204170 total=5920956
+L2 layer update cycles: calls=29 last=346717 min=346662 max=346811 avg=346726 total=10055058
+[398] T= 55  GT=5  Pred=5  PASS  spikes: 1 0 3 12 18 35 2 22 0 20
+L1 layer update cycles: calls=55 last=204069 min=204069 max=204524 avg=204206 total=11231377
+L2 layer update cycles: calls=55 last=346662 min=346658 max=346887 avg=346731 total=19070252
+[399] T= 42  GT=9  Pred=9  PASS  spikes: 2 0 8 6 0 0 11 3 5 36
+L1 layer update cycles: calls=42 last=203988 min=203988 max=204285 avg=204109 total=8572615
+L2 layer update cycles: calls=42 last=346685 min=346672 max=346835 avg=346730 total=14562687
+[400] T= 49  GT=8  Pred=8  PASS  spikes: 6 3 1 9 0 12 0 0 23 15
+L1 layer update cycles: calls=49 last=204133 min=203961 max=204268 avg=204113 total=10001576
+L2 layer update cycles: calls=49 last=346669 min=346657 max=346780 avg=346696 total=16988123
+[401] T=  7  GT=1  Pred=3  FAIL  spikes: 2 5 1 6 0 1 2 0 0 0
+L1 layer update cycles: calls=7 last=204053 min=204053 max=204235 avg=204169 total=1429189
+L2 layer update cycles: calls=7 last=346776 min=346732 max=346786 avg=346761 total=2427329
+[402] T= 45  GT=8  Pred=9  FAIL  spikes: 12 0 0 22 0 15 0 0 14 25
+L1 layer update cycles: calls=45 last=204140 min=204023 max=204589 avg=204215 total=9189676
+L2 layer update cycles: calls=45 last=346678 min=346673 max=346964 avg=346759 total=15604173
+[403] T= 49  GT=5  Pred=8  FAIL  spikes: 13 0 10 4 1 26 5 6 27 1
+L1 layer update cycles: calls=49 last=204060 min=203938 max=204435 avg=204112 total=10001489
+L2 layer update cycles: calls=49 last=346704 min=346664 max=346823 avg=346713 total=16988950
+[404] T= 97  GT=5  Pred=5  PASS  spikes: 11 27 5 11 8 44 10 37 33 6
+L1 layer update cycles: calls=97 last=204109 min=203854 max=204549 avg=204092 total=19796966
+L2 layer update cycles: calls=97 last=346717 min=346663 max=346785 avg=346700 total=33629944
+[405] T= 36  GT=6  Pred=6  PASS  spikes: 1 0 21 13 14 3 25 10 0 0
+L1 layer update cycles: calls=36 last=204187 min=204013 max=204390 avg=204215 total=7351771
+L2 layer update cycles: calls=36 last=346673 min=346662 max=346839 avg=346727 total=12482199
+[406] T= 75  GT=5  Pred=4  FAIL  spikes: 23 7 19 13 32 32 11 0 5 29
+L1 layer update cycles: calls=75 last=204029 min=203905 max=204325 avg=204086 total=15306469
+L2 layer update cycles: calls=75 last=346675 min=346668 max=346839 avg=346714 total=26003601
+[407] T= 44  GT=1  Pred=1  PASS  spikes: 1 41 9 1 10 6 10 18 11 4
+L1 layer update cycles: calls=44 last=204124 min=204072 max=204548 avg=204246 total=8986849
+L2 layer update cycles: calls=44 last=346691 min=346660 max=346768 avg=346708 total=15255186
+[408] T= 46  GT=6  Pred=6  PASS  spikes: 7 1 17 2 5 5 18 1 7 0
+L1 layer update cycles: calls=46 last=204224 min=204037 max=204353 avg=204183 total=9392436
+L2 layer update cycles: calls=46 last=346702 min=346656 max=346778 avg=346723 total=15949265
+[409] T= 48  GT=9  Pred=9  PASS  spikes: 15 4 5 0 0 6 21 13 7 33
+L1 layer update cycles: calls=48 last=204074 min=204037 max=204405 avg=204172 total=9800300
+L2 layer update cycles: calls=48 last=346666 min=346666 max=346801 avg=346700 total=16641617
+[410] T= 50  GT=3  Pred=3  PASS  spikes: 34 0 5 50 2 6 2 18 3 0
+L1 layer update cycles: calls=50 last=204133 min=204023 max=204368 avg=204199 total=10209998
+L2 layer update cycles: calls=50 last=346726 min=346684 max=346779 avg=346720 total=17336003
+[411] T= 79  GT=1  Pred=1  PASS  spikes: 9 50 17 5 10 21 7 21 7 19
+L1 layer update cycles: calls=79 last=203847 min=203842 max=204427 avg=203996 total=16115735
+L2 layer update cycles: calls=79 last=346697 min=346655 max=346840 avg=346708 total=27389946
+[412] T= 58  GT=0  Pred=0  PASS  spikes: 39 2 12 5 12 14 3 7 6 2
+L1 layer update cycles: calls=58 last=204070 min=204009 max=204575 avg=204170 total=11841910
+L2 layer update cycles: calls=58 last=346710 min=346663 max=346757 avg=346697 total=20108472
+[413] T= 33  GT=6  Pred=6  PASS  spikes: 23 0 0 11 6 7 27 4 4 4
+L1 layer update cycles: calls=33 last=204133 min=203975 max=204267 avg=204144 total=6736776
+L2 layer update cycles: calls=33 last=346676 min=346667 max=346789 avg=346726 total=11441988
+[414] T= 73  GT=6  Pred=6  PASS  spikes: 12 11 3 1 7 6 61 9 16 20
+L1 layer update cycles: calls=73 last=204068 min=203952 max=204297 avg=204162 total=14903826
+L2 layer update cycles: calls=73 last=346682 min=346660 max=346807 avg=346711 total=25309909
+[415] T= 56  GT=6  Pred=6  PASS  spikes: 17 0 7 0 4 4 18 8 11 14
+L1 layer update cycles: calls=56 last=204157 min=204022 max=204376 avg=204161 total=11433041
+L2 layer update cycles: calls=56 last=346732 min=346660 max=346766 avg=346699 total=19415198
+[416] T= 79  GT=4  Pred=4  PASS  spikes: 7 7 10 40 61 8 6 11 6 6
+L1 layer update cycles: calls=79 last=203968 min=203921 max=204351 avg=204062 total=16120969
+L2 layer update cycles: calls=79 last=346681 min=346656 max=346788 avg=346704 total=27389628
+[417] T= 48  GT=4  Pred=4  PASS  spikes: 14 0 0 12 42 4 11 2 4 3
+L1 layer update cycles: calls=48 last=204033 min=203900 max=204329 avg=204157 total=9799549
+L2 layer update cycles: calls=48 last=346706 min=346662 max=346854 avg=346713 total=16642257
+[418] T= 52  GT=8  Pred=8  PASS  spikes: 3 1 0 15 0 15 4 6 36 21
+L1 layer update cycles: calls=52 last=203988 min=203882 max=204425 avg=204111 total=10613785
+L2 layer update cycles: calls=52 last=346665 min=346656 max=346860 avg=346711 total=18028999
+[419] T= 15  GT=6  Pred=3  FAIL  spikes: 0 0 3 9 0 2 0 0 0 1
+L1 layer update cycles: calls=15 last=204139 min=204038 max=204359 avg=204180 total=3062712
+L2 layer update cycles: calls=15 last=346683 min=346677 max=346755 avg=346710 total=5200656
+[420] T= 72  GT=9  Pred=9  PASS  spikes: 14 20 24 16 5 8 5 1 27 45
+L1 layer update cycles: calls=72 last=204021 min=203908 max=204479 avg=204086 total=14694247
+L2 layer update cycles: calls=72 last=346709 min=346674 max=346802 avg=346719 total=24963771
+[421] T= 57  GT=2  Pred=2  PASS  spikes: 0 0 55 26 5 1 3 34 4 0
+L1 layer update cycles: calls=57 last=204120 min=204049 max=204342 avg=204149 total=11636511
+L2 layer update cycles: calls=57 last=346681 min=346674 max=346872 avg=346741 total=19764253
+[422] T= 69  GT=5  Pred=5  PASS  spikes: 16 13 2 16 0 57 18 5 16 24
+L1 layer update cycles: calls=69 last=204101 min=204025 max=204577 avg=204198 total=14089672
+L2 layer update cycles: calls=69 last=346683 min=346662 max=346825 avg=346721 total=23923785
+[423] T= 89  GT=0  Pred=0  PASS  spikes: 73 7 4 40 35 29 45 23 17 4
+L1 layer update cycles: calls=89 last=204052 min=204048 max=204390 avg=204164 total=18170678
+L2 layer update cycles: calls=89 last=346678 min=346673 max=346868 avg=346737 total=30859658
+[424] T= 72  GT=5  Pred=5  PASS  spikes: 14 0 0 6 0 61 5 28 24 6
+L1 layer update cycles: calls=72 last=204098 min=203961 max=204345 avg=204129 total=14697353
+L2 layer update cycles: calls=72 last=346668 min=346666 max=346812 avg=346718 total=24963744
+[425] T= 89  GT=8  Pred=8  PASS  spikes: 11 12 15 24 14 21 18 6 50 34
+L1 layer update cycles: calls=89 last=203945 min=203920 max=204528 avg=204114 total=18166197
+L2 layer update cycles: calls=89 last=346756 min=346673 max=346875 avg=346718 total=30857987
+[426] T= 46  GT=1  Pred=1  PASS  spikes: 6 39 1 14 6 4 15 0 9 7
+L1 layer update cycles: calls=46 last=203963 min=203952 max=204479 avg=204161 total=9391441
+L2 layer update cycles: calls=46 last=346681 min=346669 max=346781 avg=346721 total=15949181
+[427] T= 81  GT=0  Pred=0  PASS  spikes: 45 13 8 15 15 5 7 32 26 7
+L1 layer update cycles: calls=81 last=203937 min=203881 max=204507 avg=204103 total=16532343
+L2 layer update cycles: calls=81 last=346706 min=346658 max=346763 avg=346694 total=28082257
+[428] T= 18  GT=1  Pred=0  FAIL  spikes: 14 5 4 8 0 10 7 5 7 7
+L1 layer update cycles: calls=18 last=204115 min=204033 max=204326 avg=204178 total=3675207
+L2 layer update cycles: calls=18 last=346690 min=346690 max=346921 avg=346769 total=6241856
+[429] T= 25  GT=1  Pred=1  PASS  spikes: 6 24 5 18 0 17 14 0 13 1
+L1 layer update cycles: calls=25 last=204076 min=204075 max=204380 avg=204166 total=5104172
+L2 layer update cycles: calls=25 last=346683 min=346683 max=346838 avg=346756 total=8668914
+[430] T= 44  GT=3  Pred=3  PASS  spikes: 26 0 7 33 0 3 0 18 7 11
+L1 layer update cycles: calls=44 last=204206 min=204034 max=204338 avg=204183 total=8984084
+L2 layer update cycles: calls=44 last=346659 min=346659 max=346911 avg=346734 total=15256315
+[431] T= 42  GT=9  Pred=9  PASS  spikes: 1 4 4 11 6 0 5 2 7 24
+L1 layer update cycles: calls=42 last=204060 min=203959 max=204400 avg=204167 total=8575038
+L2 layer update cycles: calls=42 last=346663 min=346655 max=346776 avg=346713 total=14561947
+[432] T= 50  GT=0  Pred=0  PASS  spikes: 41 14 15 9 21 6 13 13 2 6
+L1 layer update cycles: calls=50 last=203958 min=203845 max=204347 avg=204014 total=10200704
+L2 layer update cycles: calls=50 last=346710 min=346656 max=346820 avg=346711 total=17335552
+[433] T= 47  GT=7  Pred=7  PASS  spikes: 13 0 5 3 0 16 0 47 6 0
+L1 layer update cycles: calls=47 last=204215 min=204002 max=204381 avg=204208 total=9597814
+L2 layer update cycles: calls=47 last=346662 min=346662 max=346797 avg=346723 total=16296016
+[434] T= 56  GT=5  Pred=7  FAIL  spikes: 4 10 19 22 3 26 23 28 19 4
+L1 layer update cycles: calls=56 last=204086 min=203955 max=204432 avg=204074 total=11428158
+L2 layer update cycles: calls=56 last=346677 min=346672 max=346837 avg=346726 total=19416707
+[435] T= 87  GT=3  Pred=3  PASS  spikes: 29 0 24 69 17 27 4 33 6 13
+L1 layer update cycles: calls=87 last=204187 min=203955 max=204351 avg=204149 total=17761036
+L2 layer update cycles: calls=87 last=346725 min=346656 max=346832 avg=346726 total=30165174
+[436] T= 94  GT=0  Pred=0  PASS  spikes: 69 6 27 4 6 13 24 8 28 25
+L1 layer update cycles: calls=94 last=204034 min=203878 max=204286 avg=204048 total=19180550
+L2 layer update cycles: calls=94 last=346672 min=346655 max=346865 avg=346707 total=32590514
+[437] T= 88  GT=8  Pred=9  FAIL  spikes: 7 13 17 18 23 8 13 23 29 30
+L1 layer update cycles: calls=88 last=203969 min=203855 max=204414 avg=204049 total=17956354
+L2 layer update cycles: calls=88 last=346709 min=346656 max=346906 avg=346718 total=30511214
+[438] T= 56  GT=5  Pred=3  FAIL  spikes: 31 3 8 48 1 40 0 13 14 15
+L1 layer update cycles: calls=56 last=204253 min=204131 max=204476 avg=204255 total=11438285
+L2 layer update cycles: calls=56 last=346720 min=346666 max=346933 avg=346745 total=19417754
+[439] T= 47  GT=2  Pred=2  PASS  spikes: 12 6 34 14 3 21 10 16 12 5
+L1 layer update cycles: calls=47 last=203986 min=203940 max=204472 avg=204155 total=9595302
+L2 layer update cycles: calls=47 last=346679 min=346674 max=346865 avg=346726 total=16296156
+[440] T= 19  GT=6  Pred=3  FAIL  spikes: 7 0 3 17 0 1 3 2 2 11
+L1 layer update cycles: calls=19 last=204152 min=204128 max=204391 avg=204233 total=3880435
+L2 layer update cycles: calls=19 last=346713 min=346683 max=346784 avg=346723 total=6587749
+[441] T= 50  GT=9  Pred=9  PASS  spikes: 6 1 2 4 0 21 10 6 9 39
+L1 layer update cycles: calls=50 last=204117 min=203983 max=204370 avg=204130 total=10206503
+L2 layer update cycles: calls=50 last=346702 min=346659 max=346845 avg=346703 total=17335187
+[442] T= 51  GT=4  Pred=4  PASS  spikes: 7 2 2 9 31 16 9 3 5 16
+L1 layer update cycles: calls=51 last=204177 min=203928 max=204349 avg=204144 total=10411364
+L2 layer update cycles: calls=51 last=346663 min=346661 max=346869 avg=346726 total=17683030
+[443] T= 46  GT=4  Pred=4  PASS  spikes: 4 0 11 7 39 14 1 7 3 7
+L1 layer update cycles: calls=46 last=204063 min=203928 max=204325 avg=204131 total=9390065
+L2 layer update cycles: calls=46 last=346700 min=346673 max=346892 avg=346739 total=15949995
+[444] T= 66  GT=5  Pred=5  PASS  spikes: 11 0 0 8 4 61 1 19 0 22
+L1 layer update cycles: calls=66 last=204131 min=203940 max=204349 avg=204134 total=13472859
+L2 layer update cycles: calls=66 last=346713 min=346669 max=346845 avg=346749 total=22885455
+[445] T= 45  GT=2  Pred=2  PASS  spikes: 0 0 38 1 0 2 0 0 1 6
+L1 layer update cycles: calls=45 last=204112 min=204058 max=204314 avg=204153 total=9186901
+L2 layer update cycles: calls=45 last=346702 min=346656 max=346930 avg=346745 total=15603532
+[446] T= 94  GT=8  Pred=8  PASS  spikes: 7 4 24 24 13 23 12 12 41 14
+L1 layer update cycles: calls=94 last=204006 min=203944 max=204302 avg=204072 total=19182815
+L2 layer update cycles: calls=94 last=346752 min=346659 max=346854 avg=346711 total=32590884
+[447] T= 83  GT=0  Pred=0  PASS  spikes: 73 6 16 10 14 8 4 15 28 23
+L1 layer update cycles: calls=83 last=203877 min=203870 max=204434 avg=204044 total=16935665
+L2 layer update cycles: calls=83 last=346667 min=346656 max=346805 avg=346713 total=28777195
+[448] T= 51  GT=4  Pred=4  PASS  spikes: 10 1 8 3 40 15 8 6 0 0
+L1 layer update cycles: calls=51 last=204077 min=204005 max=204345 avg=204135 total=10410894
+L2 layer update cycles: calls=51 last=346670 min=346660 max=346802 avg=346715 total=17682499
+[449] T= 59  GT=3  Pred=3  PASS  spikes: 20 0 6 54 9 16 0 28 6 0
+L1 layer update cycles: calls=59 last=204237 min=204065 max=204371 avg=204212 total=12048545
+L2 layer update cycles: calls=59 last=346705 min=346660 max=346900 avg=346740 total=20457691
+[450] T= 63  GT=2  Pred=2  PASS  spikes: 24 3 53 19 4 12 5 16 2 0
+L1 layer update cycles: calls=63 last=204189 min=203855 max=204435 avg=204211 total=12865304
+L2 layer update cycles: calls=63 last=346723 min=346661 max=346766 avg=346708 total=21842622
+[451] T= 68  GT=0  Pred=0  PASS  spikes: 42 0 28 16 0 11 3 0 1 2
+L1 layer update cycles: calls=68 last=203928 min=203924 max=204379 avg=204072 total=13876924
+L2 layer update cycles: calls=68 last=346724 min=346663 max=346749 avg=346707 total=23576096
+[452] T= 35  GT=4  Pred=3  FAIL  spikes: 12 0 0 22 11 17 0 4 0 11
+L1 layer update cycles: calls=35 last=204143 min=204088 max=204375 avg=204216 total=7147566
+L2 layer update cycles: calls=35 last=346663 min=346663 max=346926 avg=346735 total=12135755
+[453] T= 15  GT=1  Pred=1  PASS  spikes: 0 10 0 2 0 5 4 3 0 2
+L1 layer update cycles: calls=15 last=204177 min=203899 max=204384 avg=204172 total=3062584
+L2 layer update cycles: calls=15 last=346727 min=346670 max=346757 avg=346715 total=5200725
+[454] T= 39  GT=6  Pred=0  FAIL  spikes: 32 9 2 7 0 13 32 12 11 14
+L1 layer update cycles: calls=39 last=204143 min=204094 max=204297 avg=204175 total=7962826
+L2 layer update cycles: calls=39 last=346678 min=346671 max=346865 avg=346758 total=13523582
+[455] T= 27  GT=2  Pred=7  FAIL  spikes: 1 0 12 16 5 7 2 19 11 0
+L1 layer update cycles: calls=27 last=204130 min=204025 max=204375 avg=204202 total=5513455
+L2 layer update cycles: calls=27 last=346672 min=346662 max=346814 avg=346713 total=9361260
+[456] T= 66  GT=5  Pred=5  PASS  spikes: 0 4 6 7 0 47 4 3 6 26
+L1 layer update cycles: calls=66 last=204087 min=203990 max=204532 avg=204132 total=13472770
+L2 layer update cycles: calls=66 last=346667 min=346661 max=346804 avg=346705 total=22882538
+[457] T= 69  GT=3  Pred=3  PASS  spikes: 2 0 9 63 10 2 7 23 16 3
+L1 layer update cycles: calls=69 last=204044 min=204014 max=204383 avg=204167 total=14087580
+L2 layer update cycles: calls=69 last=346712 min=346660 max=346805 avg=346717 total=23923491
+[458] T= 54  GT=2  Pred=2  PASS  spikes: 16 4 50 20 18 10 9 1 17 13
+L1 layer update cycles: calls=54 last=204059 min=204042 max=204409 avg=204218 total=11027789
+L2 layer update cycles: calls=54 last=346721 min=346672 max=346805 avg=346708 total=18722261
+[459] T= 27  GT=3  Pred=3  PASS  spikes: 15 0 6 26 1 5 0 26 17 5
+L1 layer update cycles: calls=27 last=204199 min=204009 max=204366 avg=204176 total=5512758
+L2 layer update cycles: calls=27 last=346735 min=346699 max=346840 avg=346758 total=9362483
+[460] T= 23  GT=0  Pred=8  FAIL  spikes: 4 0 0 11 0 3 1 0 13 9
+L1 layer update cycles: calls=23 last=204130 min=203949 max=204419 avg=204173 total=4695986
+L2 layer update cycles: calls=23 last=346716 min=346672 max=346739 avg=346699 total=7974079
+[461] T= 12  GT=1  Pred=6  FAIL  spikes: 2 1 5 4 0 0 12 1 2 5
+L1 layer update cycles: calls=12 last=204233 min=203909 max=204333 avg=204111 total=2449340
+L2 layer update cycles: calls=12 last=346713 min=346700 max=346820 avg=346743 total=4160919
+[462] T= 34  GT=3  Pred=3  PASS  spikes: 4 0 4 28 0 7 3 9 5 1
+L1 layer update cycles: calls=34 last=204175 min=203909 max=204290 avg=204168 total=6941723
+L2 layer update cycles: calls=34 last=346695 min=346670 max=346814 avg=346723 total=11788612
+[463] T= 19  GT=0  Pred=3  FAIL  spikes: 11 0 0 12 4 12 4 7 2 0
+L1 layer update cycles: calls=19 last=204223 min=204100 max=204336 avg=204210 total=3880002
+L2 layer update cycles: calls=19 last=346711 min=346672 max=346822 avg=346753 total=6588318
+[464] T= 25  GT=0  Pred=0  PASS  spikes: 25 4 0 10 0 5 0 6 1 0
+L1 layer update cycles: calls=25 last=204124 min=204043 max=204364 avg=204180 total=5104510
+L2 layer update cycles: calls=25 last=346676 min=346661 max=346944 avg=346776 total=8669410
+[465] T= 44  GT=7  Pred=7  PASS  spikes: 13 0 14 11 0 9 2 33 2 0
+L1 layer update cycles: calls=44 last=204079 min=203924 max=204415 avg=204070 total=8979110
+L2 layer update cycles: calls=44 last=346699 min=346662 max=346802 avg=346718 total=15255594
+[466] T= 47  GT=6  Pred=6  PASS  spikes: 20 0 6 0 1 15 36 10 0 15
+L1 layer update cycles: calls=47 last=204062 min=204038 max=204352 avg=204152 total=9595183
+L2 layer update cycles: calls=47 last=346712 min=346661 max=346812 avg=346717 total=16295723
+[467] T= 34  GT=4  Pred=5  FAIL  spikes: 5 0 0 7 1 26 1 19 15 8
+L1 layer update cycles: calls=34 last=204215 min=203940 max=204329 avg=204153 total=6941216
+L2 layer update cycles: calls=34 last=346709 min=346689 max=346860 avg=346735 total=11788995
+[468] T= 38  GT=9  Pred=9  PASS  spikes: 2 2 2 13 0 3 11 9 7 27
+L1 layer update cycles: calls=38 last=204034 min=204004 max=204331 avg=204127 total=7756848
+L2 layer update cycles: calls=38 last=346734 min=346697 max=346949 avg=346755 total=13176724
+[469] T= 20  GT=8  Pred=6  FAIL  spikes: 1 1 0 7 12 8 13 1 0 0
+L1 layer update cycles: calls=20 last=204226 min=204075 max=204359 avg=204198 total=4083976
+L2 layer update cycles: calls=20 last=346720 min=346688 max=346810 avg=346736 total=6934730
+[470] T= 29  GT=8  Pred=8  PASS  spikes: 6 4 9 4 0 9 8 0 22 4
+L1 layer update cycles: calls=29 last=204105 min=204065 max=204307 avg=204158 total=5920586
+L2 layer update cycles: calls=29 last=346724 min=346663 max=346829 avg=346724 total=10055024
+[471] T= 35  GT=0  Pred=0  PASS  spikes: 24 0 0 4 1 6 15 0 0 1
+L1 layer update cycles: calls=35 last=204212 min=204051 max=204403 avg=204227 total=7147948
+L2 layer update cycles: calls=35 last=346660 min=346656 max=346760 avg=346694 total=12134308
+[472] T= 59  GT=6  Pred=6  PASS  spikes: 12 1 6 13 4 12 29 8 9 3
+L1 layer update cycles: calls=59 last=204134 min=203969 max=204414 avg=204168 total=12045961
+L2 layer update cycles: calls=59 last=346681 min=346656 max=346751 avg=346694 total=20454996
+[473] T= 88  GT=5  Pred=5  PASS  spikes: 23 7 10 4 8 46 2 20 26 19
+L1 layer update cycles: calls=88 last=203988 min=203872 max=204376 avg=204080 total=17959104
+L2 layer update cycles: calls=88 last=346706 min=346658 max=346861 avg=346710 total=30510516
+[474] T= 43  GT=5  Pred=5  PASS  spikes: 6 0 23 12 5 37 6 7 7 0
+L1 layer update cycles: calls=43 last=204014 min=203915 max=204346 avg=204114 total=8776907
+L2 layer update cycles: calls=43 last=346663 min=346656 max=346828 avg=346715 total=14908761
+[475] T= 23  GT=2  Pred=5  FAIL  spikes: 5 0 14 0 3 23 0 0 0 2
+L1 layer update cycles: calls=23 last=204093 min=204093 max=204633 avg=204369 total=4700491
+L2 layer update cycles: calls=23 last=346683 min=346683 max=346862 avg=346776 total=7975866
+[476] T= 61  GT=9  Pred=9  PASS  spikes: 11 0 8 24 0 9 19 12 11 54
+L1 layer update cycles: calls=61 last=204095 min=203975 max=204337 avg=204138 total=12452418
+L2 layer update cycles: calls=61 last=346684 min=346665 max=346767 avg=346713 total=21149530
+[477] T= 90  GT=3  Pred=3  PASS  spikes: 15 21 24 70 15 11 17 45 28 35
+L1 layer update cycles: calls=90 last=204119 min=203849 max=204556 avg=204155 total=18373979
+L2 layer update cycles: calls=90 last=346734 min=346658 max=346781 avg=346712 total=31204129
+[478] T= 34  GT=6  Pred=6  PASS  spikes: 14 0 0 11 0 10 21 5 0 15
+L1 layer update cycles: calls=34 last=204107 min=204097 max=204379 avg=204204 total=6942967
+L2 layer update cycles: calls=34 last=346728 min=346662 max=346787 avg=346712 total=11788227
+[479] T= 47  GT=4  Pred=4  PASS  spikes: 15 0 9 2 46 26 0 5 0 0
+L1 layer update cycles: calls=47 last=204030 min=204019 max=204356 avg=204121 total=9593716
+L2 layer update cycles: calls=47 last=346711 min=346667 max=346817 avg=346725 total=16296118
+[480] T= 36  GT=7  Pred=7  PASS  spikes: 13 0 0 21 6 18 0 32 10 0
+L1 layer update cycles: calls=36 last=204132 min=204105 max=204391 avg=204228 total=7352241
+L2 layer update cycles: calls=36 last=346724 min=346686 max=346946 avg=346772 total=12483819
+[481] T= 22  GT=0  Pred=0  PASS  spikes: 19 0 1 10 4 7 7 6 0 0
+L1 layer update cycles: calls=22 last=204086 min=204079 max=204398 avg=204195 total=4492301
+L2 layer update cycles: calls=22 last=346698 min=346672 max=346865 avg=346756 total=7628652
+[482] T= 50  GT=8  Pred=8  PASS  spikes: 14 2 0 15 11 23 6 11 29 2
+L1 layer update cycles: calls=50 last=204098 min=204065 max=204626 avg=204196 total=10209818
+L2 layer update cycles: calls=50 last=346674 min=346667 max=346866 avg=346726 total=17336318
+[483] T= 51  GT=7  Pred=3  FAIL  spikes: 16 14 0 45 13 30 7 27 3 1
+L1 layer update cycles: calls=51 last=204201 min=204062 max=204411 avg=204206 total=10414514
+L2 layer update cycles: calls=51 last=346709 min=346667 max=346904 avg=346755 total=17684538
+[484] T= 24  GT=0  Pred=0  PASS  spikes: 24 0 8 12 9 3 9 6 3 0
+L1 layer update cycles: calls=24 last=204111 min=204111 max=204329 avg=204178 total=4900286
+L2 layer update cycles: calls=24 last=346727 min=346672 max=346915 avg=346753 total=8322093
+[485] T= 42  GT=4  Pred=4  PASS  spikes: 7 9 9 0 27 1 14 1 0 0
+L1 layer update cycles: calls=42 last=204123 min=204045 max=204560 avg=204192 total=8576084
+L2 layer update cycles: calls=42 last=346686 min=346673 max=346776 avg=346712 total=14561909
+[486] T= 64  GT=0  Pred=5  FAIL  spikes: 29 0 0 19 0 38 0 3 13 2
+L1 layer update cycles: calls=64 last=204036 min=204018 max=204440 avg=204177 total=13067388
+L2 layer update cycles: calls=64 last=346672 min=346671 max=346907 avg=346752 total=22192173
+[487] T= 34  GT=9  Pred=3  FAIL  spikes: 11 1 3 25 0 6 12 17 21 9
+L1 layer update cycles: calls=34 last=204104 min=203987 max=204202 avg=204080 total=6938728
+L2 layer update cycles: calls=34 last=346764 min=346673 max=346869 avg=346765 total=11790041
+[488] T= 63  GT=5  Pred=5  PASS  spikes: 13 18 2 0 0 63 6 21 0 0
+L1 layer update cycles: calls=63 last=204177 min=204115 max=204629 avg=204296 total=12870656
+L2 layer update cycles: calls=63 last=346717 min=346661 max=346817 avg=346723 total=21843581
+[489] T= 39  GT=7  Pred=7  PASS  spikes: 14 0 2 26 2 7 1 38 0 0
+L1 layer update cycles: calls=39 last=204184 min=204147 max=204416 avg=204228 total=7964897
+L2 layer update cycles: calls=39 last=346708 min=346662 max=346894 avg=346743 total=13522979
+[490] T= 55  GT=0  Pred=0  PASS  spikes: 41 14 13 22 0 18 0 8 29 12
+L1 layer update cycles: calls=55 last=204123 min=204100 max=204398 avg=204201 total=11231074
+L2 layer update cycles: calls=55 last=346675 min=346675 max=346837 avg=346720 total=19069653
+[491] T= 42  GT=0  Pred=8  FAIL  spikes: 5 0 8 8 0 0 7 7 9 8
+L1 layer update cycles: calls=42 last=204020 min=203977 max=204424 avg=204134 total=8573644
+L2 layer update cycles: calls=42 last=346688 min=346664 max=346779 avg=346703 total=14561563
+[492] T=  7  GT=1  Pred=3  FAIL  spikes: 2 3 0 6 0 3 0 2 5 1
+L1 layer update cycles: calls=7 last=204139 min=204121 max=204312 avg=204184 total=1429292
+L2 layer update cycles: calls=7 last=346703 min=346703 max=346838 avg=346755 total=2427286
+[493] T= 49  GT=3  Pred=3  PASS  spikes: 27 12 9 49 0 7 1 19 1 0
+L1 layer update cycles: calls=49 last=204088 min=204048 max=204377 avg=204206 total=10006120
+L2 layer update cycles: calls=49 last=346677 min=346656 max=346935 avg=346731 total=16989831
+[494] T= 74  GT=2  Pred=3  FAIL  spikes: 10 8 8 49 5 34 4 0 17 12
+L1 layer update cycles: calls=74 last=204050 min=204031 max=204438 avg=204174 total=15108925
+L2 layer update cycles: calls=74 last=346712 min=346658 max=346793 avg=346718 total=25657142
+[495] T= 42  GT=0  Pred=0  PASS  spikes: 35 0 0 0 2 0 14 0 0 3
+L1 layer update cycles: calls=42 last=203991 min=203991 max=204451 avg=204182 total=8575672
+L2 layer update cycles: calls=42 last=346657 min=346657 max=346774 avg=346706 total=14561685
+[496] T= 21  GT=2  Pred=5  FAIL  spikes: 11 0 13 11 0 20 0 6 0 0
+L1 layer update cycles: calls=21 last=204138 min=204134 max=204500 avg=204279 total=4289862
+L2 layer update cycles: calls=21 last=346692 min=346688 max=346822 avg=346741 total=7281581
+[497] T= 52  GT=4  Pred=4  PASS  spikes: 0 3 24 19 29 4 1 0 2 5
+L1 layer update cycles: calls=52 last=203945 min=203938 max=204405 avg=204086 total=10612497
+L2 layer update cycles: calls=52 last=346674 min=346659 max=346886 avg=346710 total=18028922
+[498] T= 41  GT=6  Pred=0  FAIL  spikes: 21 0 0 8 9 2 13 6 7 8
+L1 layer update cycles: calls=41 last=204199 min=203894 max=204529 avg=204151 total=8370206
+L2 layer update cycles: calls=41 last=346688 min=346671 max=346964 avg=346733 total=14216071
+[499] T= 96  GT=5  Pred=5  PASS  spikes: 10 7 9 17 23 71 13 20 18 2
+L1 layer update cycles: calls=96 last=204106 min=203958 max=204637 avg=204198 total=19603057
+L2 layer update cycles: calls=96 last=346720 min=346657 max=346807 avg=346703 total=33283525
+[500] T= 65  GT=9  Pred=9  PASS  spikes: 6 2 5 23 4 16 5 5 17 52
+L1 layer update cycles: calls=65 last=203986 min=203961 max=204504 avg=204162 total=13270575
+L2 layer update cycles: calls=65 last=346674 min=346655 max=346796 avg=346715 total=22536478
+[501] T= 87  GT=9  Pred=9  PASS  spikes: 3 9 13 29 7 16 16 17 16 67
+L1 layer update cycles: calls=87 last=204049 min=203872 max=204460 avg=204074 total=17754513
+L2 layer update cycles: calls=87 last=346689 min=346657 max=346806 avg=346710 total=30163832
+[502] T= 95  GT=4  Pred=4  PASS  spikes: 5 20 6 21 49 25 15 24 22 29
+L1 layer update cycles: calls=95 last=204052 min=203860 max=204493 avg=204103 total=19389873
+L2 layer update cycles: calls=95 last=346668 min=346656 max=346836 avg=346708 total=32937321
+[503] T= 54  GT=8  Pred=8  PASS  spikes: 10 6 1 6 2 27 1 10 39 6
+L1 layer update cycles: calls=54 last=204010 min=204010 max=204511 avg=204165 total=11024925
+L2 layer update cycles: calls=54 last=346683 min=346670 max=346771 avg=346703 total=18721969
+[504] T= 40  GT=7  Pred=7  PASS  spikes: 11 0 0 7 0 0 0 40 17 2
+L1 layer update cycles: calls=40 last=204121 min=204058 max=204384 avg=204179 total=8167181
+L2 layer update cycles: calls=40 last=346708 min=346672 max=346800 avg=346723 total=13868926
+[505] T= 86  GT=4  Pred=4  PASS  spikes: 21 0 28 14 58 27 2 11 9 21
+L1 layer update cycles: calls=86 last=203984 min=203870 max=204342 avg=204081 total=17551027
+L2 layer update cycles: calls=86 last=346716 min=346658 max=346834 avg=346706 total=29816778
+[506] T= 42  GT=7  Pred=7  PASS  spikes: 6 2 6 8 1 9 1 34 1 0
+L1 layer update cycles: calls=42 last=204041 min=204010 max=204439 avg=204167 total=8575024
+L2 layer update cycles: calls=42 last=346680 min=346672 max=346799 avg=346716 total=14562094
+[507] T= 41  GT=4  Pred=0  FAIL  spikes: 23 0 0 19 23 20 0 10 2 0
+L1 layer update cycles: calls=41 last=204081 min=204074 max=204395 avg=204200 total=8372230
+L2 layer update cycles: calls=41 last=346685 min=346685 max=346865 avg=346779 total=14217942
+[508] T= 99  GT=4  Pred=5  FAIL  spikes: 19 28 7 12 48 62 23 19 5 42
+L1 layer update cycles: calls=99 last=204019 min=204006 max=204409 avg=204190 total=20214838
+L2 layer update cycles: calls=99 last=346722 min=346665 max=346885 avg=346740 total=34327298
+[509] T= 89  GT=4  Pred=4  PASS  spikes: 6 14 13 14 57 8 7 13 25 29
+L1 layer update cycles: calls=89 last=204063 min=203846 max=204386 avg=204092 total=18164275
+L2 layer update cycles: calls=89 last=346704 min=346656 max=346776 avg=346702 total=30856523
+[510] T= 72  GT=8  Pred=8  PASS  spikes: 22 0 20 29 1 6 2 22 48 29
+L1 layer update cycles: calls=72 last=204118 min=204017 max=204378 avg=204172 total=14700402
+L2 layer update cycles: calls=72 last=346680 min=346667 max=346953 avg=346722 total=24964031
+[511] T= 89  GT=0  Pred=0  PASS  spikes: 62 20 3 48 9 17 3 11 2 11
+L1 layer update cycles: calls=89 last=204115 min=204025 max=204434 avg=204149 total=18169295
+L2 layer update cycles: calls=89 last=346696 min=346666 max=346852 avg=346723 total=30858350
+[512] T= 34  GT=7  Pred=7  PASS  spikes: 3 0 0 10 0 0 0 28 15 0
+L1 layer update cycles: calls=34 last=204189 min=204021 max=204333 avg=204190 total=6942480
+L2 layer update cycles: calls=34 last=346685 min=346665 max=346795 avg=346708 total=11788088
+[513] T= 96  GT=2  Pred=2  PASS  spikes: 13 21 63 11 9 11 27 9 25 10
+L1 layer update cycles: calls=96 last=204018 min=203873 max=204398 avg=204151 total=19598556
+L2 layer update cycles: calls=96 last=346674 min=346655 max=346765 avg=346693 total=33282573
+[514] T= 46  GT=4  Pred=4  PASS  spikes: 3 0 10 4 32 5 7 6 2 7
+L1 layer update cycles: calls=46 last=204120 min=203987 max=204430 avg=204150 total=9390939
+L2 layer update cycles: calls=46 last=346674 min=346666 max=346858 avg=346727 total=15949443
+[515] T= 40  GT=9  Pred=9  PASS  spikes: 3 3 1 0 7 0 12 0 11 34
+L1 layer update cycles: calls=40 last=204087 min=203941 max=204259 avg=204117 total=8164690
+L2 layer update cycles: calls=40 last=346734 min=346668 max=346900 avg=346745 total=13869812
+[516] T= 39  GT=2  Pred=2  PASS  spikes: 6 4 19 4 0 7 1 4 1 2
+L1 layer update cycles: calls=39 last=204095 min=204070 max=204328 avg=204192 total=7963509
+L2 layer update cycles: calls=39 last=346682 min=346660 max=346734 avg=346686 total=13520776
+[517] T= 74  GT=1  Pred=1  PASS  spikes: 16 54 15 1 2 13 9 28 18 11
+L1 layer update cycles: calls=74 last=203847 min=203843 max=204248 avg=203975 total=15094210
+L2 layer update cycles: calls=74 last=346694 min=346656 max=346779 avg=346695 total=25655499
+[518] T= 39  GT=7  Pred=7  PASS  spikes: 0 0 14 11 3 7 0 38 5 1
+L1 layer update cycles: calls=39 last=204140 min=204110 max=204401 avg=204178 total=7962950
+L2 layer update cycles: calls=39 last=346663 min=346662 max=346906 avg=346736 total=13522720
+[519] T= 92  GT=3  Pred=3  PASS  spikes: 31 13 20 89 9 5 5 26 15 11
+L1 layer update cycles: calls=92 last=204108 min=203900 max=204403 avg=204145 total=18781381
+L2 layer update cycles: calls=92 last=346672 min=346672 max=346837 avg=346739 total=31900028
+[520] T= 18  GT=1  Pred=6  FAIL  spikes: 0 6 2 0 0 0 9 0 8 3
+L1 layer update cycles: calls=18 last=204073 min=203913 max=204303 avg=204073 total=3673320
+L2 layer update cycles: calls=18 last=346723 min=346684 max=346847 avg=346737 total=6241274
+[521] T= 70  GT=5  Pred=5  PASS  spikes: 13 3 3 6 14 50 9 25 17 0
+L1 layer update cycles: calls=70 last=204203 min=203972 max=204410 avg=204171 total=14292005
+L2 layer update cycles: calls=70 last=346674 min=346673 max=346844 avg=346722 total=24270594
+[522] T= 60  GT=8  Pred=8  PASS  spikes: 3 6 5 9 6 16 10 0 54 18
+L1 layer update cycles: calls=60 last=203995 min=203984 max=204434 avg=204159 total=12249567
+L2 layer update cycles: calls=60 last=346696 min=346666 max=346811 avg=346706 total=20802366
+[523] T= 46  GT=2  Pred=2  PASS  spikes: 8 6 27 15 7 5 9 25 1 0
+L1 layer update cycles: calls=46 last=204240 min=204067 max=204371 avg=204257 total=9395862
+L2 layer update cycles: calls=46 last=346708 min=346673 max=346797 avg=346725 total=15949375
+[524] T= 74  GT=5  Pred=5  PASS  spikes: 16 4 5 6 10 73 19 34 0 4
+L1 layer update cycles: calls=74 last=204227 min=204036 max=204458 avg=204201 total=15110902
+L2 layer update cycles: calls=74 last=346669 min=346663 max=346883 avg=346722 total=25657439
+[525] T= 37  GT=3  Pred=3  PASS  spikes: 19 0 0 31 0 6 0 8 1 0
+L1 layer update cycles: calls=37 last=204146 min=204085 max=204437 avg=204273 total=7558130
+L2 layer update cycles: calls=37 last=346694 min=346681 max=346813 avg=346746 total=12829615
+[526] T= 44  GT=8  Pred=5  FAIL  spikes: 18 2 4 3 4 27 0 9 25 9
+L1 layer update cycles: calls=44 last=204070 min=203972 max=204445 avg=204171 total=8983560
+L2 layer update cycles: calls=44 last=346702 min=346657 max=346848 avg=346716 total=15255520
+[527] T= 74  GT=2  Pred=2  PASS  spikes: 16 12 71 14 16 19 1 28 7 14
+L1 layer update cycles: calls=74 last=204230 min=203935 max=204515 avg=204113 total=15104420
+L2 layer update cycles: calls=74 last=346686 min=346665 max=346828 avg=346723 total=25657555
+[528] T= 55  GT=3  Pred=3  PASS  spikes: 7 0 12 53 10 13 7 22 2 4
+L1 layer update cycles: calls=55 last=204103 min=204043 max=204375 avg=204234 total=11232901
+L2 layer update cycles: calls=55 last=346662 min=346662 max=346896 avg=346738 total=19070608
+[529] T= 44  GT=0  Pred=5  FAIL  spikes: 15 0 6 27 0 40 2 4 14 0
+L1 layer update cycles: calls=44 last=204072 min=204014 max=204473 avg=204197 total=8984700
+L2 layer update cycles: calls=44 last=346766 min=346696 max=346868 avg=346756 total=15257285
+[530] T= 61  GT=6  Pred=6  PASS  spikes: 10 8 0 8 4 7 33 1 5 7
+L1 layer update cycles: calls=61 last=204290 min=203958 max=204494 avg=204182 total=12455158
+L2 layer update cycles: calls=61 last=346656 min=346655 max=346775 avg=346689 total=21148059
+[531] T= 56  GT=3  Pred=3  PASS  spikes: 19 12 0 36 2 17 3 22 10 0
+L1 layer update cycles: calls=56 last=204076 min=204021 max=204546 avg=204152 total=11432556
+L2 layer update cycles: calls=56 last=346702 min=346661 max=346782 avg=346705 total=19415507
+[532] T= 34  GT=7  Pred=7  PASS  spikes: 8 0 2 17 1 5 1 23 8 3
+L1 layer update cycles: calls=34 last=204090 min=204049 max=204354 avg=204166 total=6941675
+L2 layer update cycles: calls=34 last=346717 min=346661 max=346823 avg=346732 total=11788901
+[533] T= 45  GT=1  Pred=1  PASS  spikes: 4 31 7 5 3 9 11 12 5 6
+L1 layer update cycles: calls=45 last=204173 min=203876 max=204609 avg=204121 total=9185451
+L2 layer update cycles: calls=45 last=346672 min=346661 max=346752 avg=346693 total=15601222
+[534] T= 45  GT=7  Pred=7  PASS  spikes: 0 0 27 38 0 2 0 45 16 0
+L1 layer update cycles: calls=45 last=204167 min=204006 max=204281 avg=204168 total=9187599
+L2 layer update cycles: calls=45 last=346678 min=346678 max=346911 avg=346786 total=15605401
+[535] T= 89  GT=4  Pred=4  PASS  spikes: 21 2 25 7 67 10 18 9 7 24
+L1 layer update cycles: calls=89 last=204114 min=204034 max=204559 avg=204216 total=18175294
+L2 layer update cycles: calls=89 last=346656 min=346656 max=346836 avg=346718 total=30857976
+[536] T= 54  GT=0  Pred=0  PASS  spikes: 37 0 2 7 6 10 18 17 0 9
+L1 layer update cycles: calls=54 last=204272 min=204052 max=204504 avg=204221 total=11027935
+L2 layer update cycles: calls=54 last=346701 min=346672 max=346782 avg=346721 total=18722974
+[537] T= 45  GT=1  Pred=1  PASS  spikes: 5 38 4 20 2 9 7 12 0 2
+L1 layer update cycles: calls=45 last=204121 min=203855 max=204331 avg=204160 total=9187244
+L2 layer update cycles: calls=45 last=346695 min=346662 max=346782 avg=346723 total=15602565
+[538] T= 37  GT=1  Pred=8  FAIL  spikes: 11 15 1 10 13 6 7 14 24 1
+L1 layer update cycles: calls=37 last=203987 min=203965 max=204408 avg=204152 total=7553657
+L2 layer update cycles: calls=37 last=346662 min=346658 max=346811 avg=346718 total=12828600
+[539] T= 30  GT=0  Pred=0  PASS  spikes: 25 1 0 5 8 6 15 5 2 3
+L1 layer update cycles: calls=30 last=204053 min=204027 max=204350 avg=204137 total=6124130
+L2 layer update cycles: calls=30 last=346661 min=346661 max=346786 avg=346721 total=10401630
+[540] T= 20  GT=1  Pred=1  PASS  spikes: 8 15 1 15 4 12 1 7 4 0
+L1 layer update cycles: calls=20 last=204101 min=204031 max=204238 avg=204143 total=4082860
+L2 layer update cycles: calls=20 last=346695 min=346695 max=346940 avg=346792 total=6935857
+[541] T= 49  GT=1  Pred=1  PASS  spikes: 25 33 14 12 19 12 21 17 9 20
+L1 layer update cycles: calls=49 last=203967 min=203850 max=204345 avg=204056 total=9998756
+L2 layer update cycles: calls=49 last=346732 min=346659 max=346779 avg=346716 total=16989114
+[542] T= 53  GT=7  Pred=7  PASS  spikes: 27 13 0 18 2 26 0 38 2 2
+L1 layer update cycles: calls=53 last=204099 min=204074 max=204339 avg=204160 total=10820483
+L2 layer update cycles: calls=53 last=346675 min=346666 max=346829 avg=346740 total=18377262
+[543] T= 70  GT=4  Pred=4  PASS  spikes: 5 0 5 16 37 16 7 12 19 19
+L1 layer update cycles: calls=70 last=204030 min=203932 max=204255 avg=204078 total=14285522
+L2 layer update cycles: calls=70 last=346704 min=346662 max=346801 avg=346711 total=24269789
+[544] T= 24  GT=0  Pred=0  PASS  spikes: 23 3 0 8 2 10 5 5 2 1
+L1 layer update cycles: calls=24 last=204132 min=204068 max=204317 avg=204173 total=4900166
+L2 layer update cycles: calls=24 last=346728 min=346674 max=346867 avg=346764 total=8322337
+[545] T= 51  GT=8  Pred=8  PASS  spikes: 5 5 1 3 0 26 1 4 41 9
+L1 layer update cycles: calls=51 last=204046 min=203925 max=204527 avg=204189 total=10413652
+L2 layer update cycles: calls=51 last=346705 min=346671 max=346822 avg=346712 total=17682328
+[546] T= 33  GT=7  Pred=7  PASS  spikes: 8 13 6 0 0 7 6 33 0 3
+L1 layer update cycles: calls=33 last=204396 min=203934 max=204419 avg=204247 total=6740162
+L2 layer update cycles: calls=33 last=346706 min=346670 max=346958 avg=346745 total=11442602
+[547] T= 27  GT=0  Pred=0  PASS  spikes: 27 9 9 9 9 8 12 6 1 0
+L1 layer update cycles: calls=27 last=204073 min=203950 max=204326 avg=204126 total=5511416
+L2 layer update cycles: calls=27 last=346695 min=346663 max=346787 avg=346717 total=9361377
+[548] T= 46  GT=6  Pred=0  FAIL  spikes: 16 1 7 10 0 8 16 2 9 9
+L1 layer update cycles: calls=46 last=204117 min=203944 max=204321 avg=204127 total=9389883
+L2 layer update cycles: calls=46 last=346711 min=346657 max=346835 avg=346717 total=15949002
+[549] T= 35  GT=8  Pred=7  FAIL  spikes: 0 0 3 13 0 0 12 20 17 12
+L1 layer update cycles: calls=35 last=204064 min=204022 max=204355 avg=204151 total=7145306
+L2 layer update cycles: calls=35 last=346717 min=346671 max=346806 avg=346729 total=12135526
+[550] T= 50  GT=3  Pred=3  PASS  spikes: 18 0 12 45 4 2 0 17 0 0
+L1 layer update cycles: calls=50 last=204206 min=203892 max=204407 avg=204130 total=10206548
+L2 layer update cycles: calls=50 last=346658 min=346657 max=346777 avg=346709 total=17335472
+[551] T= 44  GT=1  Pred=1  PASS  spikes: 1 32 14 13 7 4 1 29 0 8
+L1 layer update cycles: calls=44 last=203969 min=203879 max=204276 avg=204056 total=8978505
+L2 layer update cycles: calls=44 last=346717 min=346658 max=346770 avg=346712 total=15255358
+[552] T= 50  GT=9  Pred=5  FAIL  spikes: 9 0 20 15 8 39 17 13 0 21
+L1 layer update cycles: calls=50 last=204268 min=204105 max=204401 avg=204219 total=10210957
+L2 layer update cycles: calls=50 last=346759 min=346718 max=346951 avg=346800 total=17340028
+[553] T= 26  GT=1  Pred=0  FAIL  spikes: 18 8 6 2 0 0 10 3 1 7
+L1 layer update cycles: calls=26 last=204071 min=203907 max=204145 avg=204078 total=5306028
+L2 layer update cycles: calls=26 last=346680 min=346670 max=346768 avg=346706 total=9014359
+[554] T= 50  GT=2  Pred=2  PASS  spikes: 12 6 41 0 0 20 8 0 15 0
+L1 layer update cycles: calls=50 last=204207 min=204073 max=204440 avg=204189 total=10209487
+L2 layer update cycles: calls=50 last=346686 min=346673 max=346926 avg=346732 total=17336623
+[555] T= 14  GT=1  Pred=1  PASS  spikes: 1 12 0 7 1 5 2 1 3 2
+L1 layer update cycles: calls=14 last=204192 min=204001 max=204437 avg=204211 total=2858955
+L2 layer update cycles: calls=14 last=346715 min=346679 max=346754 avg=346720 total=4854088
+[556] T= 61  GT=5  Pred=5  PASS  spikes: 3 1 2 20 6 40 15 25 7 36
+L1 layer update cycles: calls=61 last=204246 min=203975 max=204380 avg=204159 total=12453741
+L2 layer update cycles: calls=61 last=346717 min=346672 max=346943 avg=346763 total=21152558
+[557] T= 57  GT=3  Pred=3  PASS  spikes: 24 4 34 48 3 8 12 13 0 0
+L1 layer update cycles: calls=57 last=204168 min=204005 max=204469 avg=204210 total=11639998
+L2 layer update cycles: calls=57 last=346703 min=346662 max=346835 avg=346738 total=19764094
+[558] T= 43  GT=6  Pred=6  PASS  spikes: 12 6 10 9 0 16 29 1 6 22
+L1 layer update cycles: calls=43 last=204223 min=204076 max=204312 avg=204172 total=8779399
+L2 layer update cycles: calls=43 last=346674 min=346664 max=346808 avg=346730 total=14909402
+[559] T= 23  GT=8  Pred=8  PASS  spikes: 0 1 3 5 0 4 5 0 18 3
+L1 layer update cycles: calls=23 last=204141 min=204038 max=204290 avg=204148 total=4695416
+L2 layer update cycles: calls=23 last=346699 min=346662 max=346743 avg=346704 total=7974193
+[560] T= 83  GT=6  Pred=6  PASS  spikes: 12 9 21 0 20 6 48 26 38 15
+L1 layer update cycles: calls=83 last=204148 min=204010 max=204444 avg=204175 total=16946547
+L2 layer update cycles: calls=83 last=346675 min=346663 max=346801 avg=346705 total=28776566
+[561] T= 26  GT=6  Pred=0  FAIL  spikes: 20 0 0 3 3 5 10 3 2 1
+L1 layer update cycles: calls=26 last=204084 min=203897 max=204350 avg=204174 total=5308540
+L2 layer update cycles: calls=26 last=346722 min=346673 max=346774 avg=346713 total=9014563
+[562] T= 37  GT=1  Pred=1  PASS  spikes: 11 21 6 8 9 7 9 1 12 12
+L1 layer update cycles: calls=37 last=204094 min=204049 max=204448 avg=204215 total=7555990
+L2 layer update cycles: calls=37 last=346743 min=346678 max=346790 avg=346718 total=12828587
+[563] T= 23  GT=8  Pred=8  PASS  spikes: 0 1 3 5 0 4 5 0 18 3
+L1 layer update cycles: calls=23 last=204142 min=204039 max=204288 avg=204143 total=4695305
+L2 layer update cycles: calls=23 last=346700 min=346661 max=346734 avg=346695 total=7973995
+[564] T= 60  GT=5  Pred=5  PASS  spikes: 2 4 5 34 1 47 20 16 26 3
+L1 layer update cycles: calls=60 last=204186 min=204012 max=204348 avg=204160 total=12249645
+L2 layer update cycles: calls=60 last=346674 min=346672 max=346851 avg=346738 total=20804324
+[565] T= 47  GT=4  Pred=4  PASS  spikes: 3 0 7 4 25 19 7 8 3 12
+L1 layer update cycles: calls=47 last=204008 min=203920 max=204232 avg=204104 total=9592929
+L2 layer update cycles: calls=47 last=346718 min=346667 max=346839 avg=346728 total=16296258
+[566] T= 86  GT=5  Pred=5  PASS  spikes: 27 10 23 30 10 46 11 14 12 22
+L1 layer update cycles: calls=86 last=203991 min=203947 max=204419 avg=204115 total=17553906
+L2 layer update cycles: calls=86 last=346735 min=346656 max=346930 avg=346720 total=29818001
+[567] T= 65  GT=8  Pred=8  PASS  spikes: 24 0 4 27 0 21 4 15 46 2
+L1 layer update cycles: calls=65 last=203985 min=203976 max=204468 avg=204128 total=13268354
+L2 layer update cycles: calls=65 last=346695 min=346657 max=346847 avg=346717 total=22536628
+[568] T= 76  GT=1  Pred=1  PASS  spikes: 31 70 25 15 20 9 18 15 6 14
+L1 layer update cycles: calls=76 last=204005 min=203846 max=204427 avg=204002 total=15504214
+L2 layer update cycles: calls=76 last=346663 min=346656 max=346808 avg=346716 total=26350456
+[569] T= 52  GT=3  Pred=3  PASS  spikes: 20 0 5 40 3 9 0 23 6 0
+L1 layer update cycles: calls=52 last=204182 min=203872 max=204406 avg=204150 total=10615823
+L2 layer update cycles: calls=52 last=346672 min=346670 max=346790 avg=346720 total=18029489
+[570] T= 69  GT=3  Pred=3  PASS  spikes: 11 0 15 49 13 0 1 13 5 5
+L1 layer update cycles: calls=69 last=203985 min=203941 max=204492 avg=204121 total=14084416
+L2 layer update cycles: calls=69 last=346725 min=346655 max=346820 avg=346698 total=23922208
+[571] T= 34  GT=3  Pred=3  PASS  spikes: 4 0 4 28 0 7 3 9 5 1
+L1 layer update cycles: calls=34 last=204177 min=203941 max=204267 avg=204162 total=6941512
+L2 layer update cycles: calls=34 last=346695 min=346683 max=346782 avg=346728 total=11788778
+[572] T= 28  GT=2  Pred=3  FAIL  spikes: 13 5 13 21 1 5 5 14 7 0
+L1 layer update cycles: calls=28 last=204134 min=204022 max=204399 avg=204208 total=5717839
+L2 layer update cycles: calls=28 last=346719 min=346673 max=346965 avg=346760 total=9709285
+[573] T= 21  GT=3  Pred=3  PASS  spikes: 12 0 4 19 0 4 1 9 2 0
+L1 layer update cycles: calls=21 last=204140 min=204108 max=204358 avg=204200 total=4288202
+L2 layer update cycles: calls=21 last=346685 min=346663 max=346846 avg=346751 total=7281771
+[574] T= 54  GT=2  Pred=2  PASS  spikes: 18 0 45 15 7 21 12 33 0 0
+L1 layer update cycles: calls=54 last=204061 min=204047 max=204504 avg=204194 total=11026498
+L2 layer update cycles: calls=54 last=346715 min=346660 max=346833 avg=346715 total=18722648
+[575] T= 22  GT=1  Pred=1  PASS  spikes: 1 22 0 9 0 9 2 0 1 0
+L1 layer update cycles: calls=22 last=204093 min=204091 max=204361 avg=204168 total=4491717
+L2 layer update cycles: calls=22 last=346692 min=346686 max=346772 avg=346719 total=7627831
+[576] T= 49  GT=0  Pred=0  PASS  spikes: 40 0 6 10 30 9 9 10 4 4
+L1 layer update cycles: calls=49 last=204038 min=203922 max=204354 avg=204154 total=10003577
+L2 layer update cycles: calls=49 last=346707 min=346673 max=346892 avg=346734 total=16989990
+[577] T= 20  GT=1  Pred=1  PASS  spikes: 3 18 2 4 0 4 2 1 1 1
+L1 layer update cycles: calls=20 last=204075 min=203997 max=204256 avg=204118 total=4082372
+L2 layer update cycles: calls=20 last=346712 min=346667 max=346754 avg=346699 total=6933980
+[578] T= 86  GT=8  Pred=3  FAIL  spikes: 15 11 5 30 9 25 9 12 22 25
+L1 layer update cycles: calls=86 last=203997 min=203842 max=204378 avg=204089 total=17551707
+L2 layer update cycles: calls=86 last=346699 min=346658 max=346863 avg=346702 total=29816423
+[579] T= 50  GT=2  Pred=2  PASS  spikes: 12 0 31 13 4 20 0 9 0 8
+L1 layer update cycles: calls=50 last=204241 min=204087 max=204380 avg=204237 total=10211862
+L2 layer update cycles: calls=50 last=346715 min=346674 max=346843 avg=346729 total=17336460
+[580] T= 44  GT=6  Pred=6  PASS  spikes: 20 0 0 3 22 21 34 2 0 11
+L1 layer update cycles: calls=44 last=204209 min=203896 max=204440 avg=204239 total=8986521
+L2 layer update cycles: calls=44 last=346681 min=346675 max=346849 avg=346738 total=15256510
+[581] T= 81  GT=0  Pred=0  PASS  spikes: 61 9 20 30 3 20 4 15 37 6
+L1 layer update cycles: calls=81 last=204113 min=203999 max=204512 avg=204173 total=16538090
+L2 layer update cycles: calls=81 last=346677 min=346665 max=346904 avg=346731 total=28085239
+[582] T= 60  GT=2  Pred=2  PASS  spikes: 25 0 41 41 0 0 10 25 9 6
+L1 layer update cycles: calls=60 last=204169 min=203904 max=204348 avg=204164 total=12249872
+L2 layer update cycles: calls=60 last=346691 min=346685 max=346838 avg=346730 total=20803808
+[583] T= 52  GT=6  Pred=6  PASS  spikes: 10 9 5 17 12 10 37 11 3 0
+L1 layer update cycles: calls=52 last=203998 min=203995 max=204313 avg=204098 total=10613103
+L2 layer update cycles: calls=52 last=346707 min=346655 max=346856 avg=346693 total=18028040
+[584] T= 68  GT=0  Pred=0  PASS  spikes: 56 19 4 28 2 25 20 18 0 10
+L1 layer update cycles: calls=68 last=203970 min=203970 max=204328 avg=204107 total=13879329
+L2 layer update cycles: calls=68 last=346658 min=346658 max=346871 avg=346748 total=23578918
+[585] T= 70  GT=4  Pred=4  PASS  spikes: 3 0 6 2 68 24 0 2 9 13
+L1 layer update cycles: calls=70 last=204144 min=204038 max=204453 avg=204192 total=14293453
+L2 layer update cycles: calls=70 last=346690 min=346660 max=346849 avg=346712 total=24269879
+[586] T= 42  GT=9  Pred=9  PASS  spikes: 2 0 8 6 0 0 11 3 5 36
+L1 layer update cycles: calls=42 last=203989 min=203989 max=204283 avg=204106 total=8572483
+L2 layer update cycles: calls=42 last=346685 min=346674 max=346821 avg=346730 total=14562680
+[587] T= 12  GT=1  Pred=6  FAIL  spikes: 2 1 5 4 0 0 12 1 2 5
+L1 layer update cycles: calls=12 last=204234 min=203912 max=204296 avg=204122 total=2449467
+L2 layer update cycles: calls=12 last=346745 min=346684 max=346834 avg=346733 total=4160798
+[588] T= 49  GT=2  Pred=2  PASS  spikes: 1 1 45 0 6 10 0 0 10 3
+L1 layer update cycles: calls=49 last=204170 min=203997 max=204352 avg=204157 total=10003722
+L2 layer update cycles: calls=49 last=346714 min=346664 max=346927 avg=346739 total=16990231
+[589] T= 43  GT=2  Pred=2  PASS  spikes: 3 0 40 27 1 9 0 30 9 0
+L1 layer update cycles: calls=43 last=203994 min=203981 max=204385 avg=204171 total=8779353
+L2 layer update cycles: calls=43 last=346700 min=346673 max=346935 avg=346753 total=14910397
+[590] T= 81  GT=5  Pred=5  PASS  spikes: 12 15 18 6 7 53 40 3 22 1
+L1 layer update cycles: calls=81 last=204084 min=203974 max=204564 avg=204174 total=16538139
+L2 layer update cycles: calls=81 last=346679 min=346662 max=346813 avg=346709 total=28083432
+[591] T= 81  GT=8  Pred=8  PASS  spikes: 33 8 16 19 22 3 0 16 64 24
+L1 layer update cycles: calls=81 last=203922 min=203922 max=204188 avg=204037 total=16527001
+L2 layer update cycles: calls=81 last=346677 min=346666 max=346901 avg=346731 total=28085211
+[592] T= 61  GT=3  Pred=3  PASS  spikes: 27 10 10 43 0 13 18 4 4 11
+L1 layer update cycles: calls=61 last=204137 min=203994 max=204425 avg=204152 total=12453319
+L2 layer update cycles: calls=61 last=346700 min=346662 max=346836 avg=346709 total=21149285
+[593] T= 55  GT=4  Pred=4  PASS  spikes: 14 3 8 4 27 6 16 1 12 13
+L1 layer update cycles: calls=55 last=204191 min=203949 max=204394 avg=204142 total=11227823
+L2 layer update cycles: calls=55 last=346712 min=346655 max=346866 avg=346711 total=19069156
+[594] T= 89  GT=1  Pred=1  PASS  spikes: 18 46 25 8 34 14 8 29 41 9
+L1 layer update cycles: calls=89 last=204127 min=203853 max=204626 avg=204181 total=18172138
+L2 layer update cycles: calls=89 last=346711 min=346656 max=346751 avg=346688 total=30855284
+[595] T= 63  GT=6  Pred=6  PASS  spikes: 10 3 6 11 0 4 48 7 8 33
+L1 layer update cycles: calls=63 last=204237 min=203925 max=204428 avg=204151 total=12861517
+L2 layer update cycles: calls=63 last=346694 min=346656 max=346763 avg=346695 total=21841846
+[596] T= 86  GT=6  Pred=6  PASS  spikes: 19 20 10 7 11 3 49 17 11 20
+L1 layer update cycles: calls=86 last=204067 min=203980 max=204455 avg=204185 total=17559946
+L2 layer update cycles: calls=86 last=346695 min=346651 max=346751 avg=346692 total=29815594
+[597] T= 29  GT=8  Pred=8  PASS  spikes: 12 3 0 7 0 8 3 8 22 3
+L1 layer update cycles: calls=29 last=204204 min=203999 max=204370 avg=204174 total=5921065
+L2 layer update cycles: calls=29 last=346672 min=346672 max=346783 avg=346707 total=10054509
+[598] T= 48  GT=6  Pred=8  FAIL  spikes: 1 13 11 0 0 4 16 10 44 2
+L1 layer update cycles: calls=48 last=204223 min=204039 max=204491 avg=204162 total=9799804
+L2 layer update cycles: calls=48 last=346735 min=346673 max=346756 avg=346719 total=16642520
+[599] T= 11  GT=1  Pred=1  PASS  spikes: 1 6 0 3 0 1 1 1 0 3
+L1 layer update cycles: calls=11 last=204259 min=204158 max=204340 avg=204257 total=2246835
+L2 layer update cycles: calls=11 last=346734 min=346676 max=346769 avg=346718 total=3813901
+[600] T= 40  GT=0  Pred=0  PASS  spikes: 20 2 2 15 5 12 1 0 8 2
+L1 layer update cycles: calls=40 last=204016 min=203958 max=204501 avg=204168 total=8166742
+L2 layer update cycles: calls=40 last=346695 min=346661 max=346750 avg=346696 total=13867852
+[601] T= 90  GT=0  Pred=0  PASS  spikes: 46 3 19 13 15 8 19 9 34 12
+L1 layer update cycles: calls=90 last=203955 min=203926 max=204541 avg=204106 total=18369547
+L2 layer update cycles: calls=90 last=346680 min=346668 max=346764 avg=346711 total=31204054
+[602] T= 13  GT=1  Pred=9  FAIL  spikes: 6 0 2 9 0 1 1 3 0 11
+L1 layer update cycles: calls=13 last=204240 min=204030 max=204394 avg=204260 total=2655382
+L2 layer update cycles: calls=13 last=346712 min=346674 max=346778 avg=346712 total=4507268
+[603] T= 70  GT=8  Pred=8  PASS  spikes: 13 0 19 29 12 4 9 17 59 5
+L1 layer update cycles: calls=70 last=203965 min=203948 max=204428 avg=204115 total=14288078
+L2 layer update cycles: calls=70 last=346700 min=346656 max=346793 avg=346718 total=24270307
+[604] T= 53  GT=5  Pred=5  PASS  spikes: 4 9 8 3 5 42 16 22 16 7
+L1 layer update cycles: calls=53 last=204177 min=203884 max=204425 avg=204151 total=10820008
+L2 layer update cycles: calls=53 last=346706 min=346664 max=346846 avg=346727 total=18376553
+[605] T= 93  GT=8  Pred=8  PASS  spikes: 10 21 9 34 18 11 32 14 70 32
+L1 layer update cycles: calls=93 last=204012 min=203952 max=204413 avg=204075 total=18979055
+L2 layer update cycles: calls=93 last=346737 min=346667 max=346819 avg=346711 total=32244151
+[606] T= 24  GT=1  Pred=1  PASS  spikes: 1 20 2 9 0 3 7 1 5 1
+L1 layer update cycles: calls=24 last=204002 min=203974 max=204304 avg=204095 total=4898284
+L2 layer update cycles: calls=24 last=346707 min=346674 max=346867 avg=346740 total=8321780
+[607] T= 57  GT=4  Pred=3  FAIL  spikes: 17 1 16 29 28 17 17 2 4 11
+L1 layer update cycles: calls=57 last=204064 min=204048 max=204486 avg=204172 total=11637835
+L2 layer update cycles: calls=57 last=346722 min=346672 max=346758 avg=346699 total=19761875
+[608] T= 78  GT=3  Pred=3  PASS  spikes: 16 9 25 44 13 25 10 15 35 9
+L1 layer update cycles: calls=78 last=203879 min=203879 max=204433 avg=204072 total=15917692
+L2 layer update cycles: calls=78 last=346755 min=346658 max=346838 avg=346716 total=27043899
+[609] T= 58  GT=9  Pred=9  PASS  spikes: 9 0 0 20 27 1 3 6 10 31
+L1 layer update cycles: calls=58 last=204211 min=204024 max=204375 avg=204161 total=11841359
+L2 layer update cycles: calls=58 last=346712 min=346652 max=346853 avg=346712 total=20109343
+[610] T= 76  GT=4  Pred=4  PASS  spikes: 30 0 5 11 53 19 3 8 7 3
+L1 layer update cycles: calls=76 last=204107 min=204000 max=204542 avg=204190 total=15518450
+L2 layer update cycles: calls=76 last=346676 min=346663 max=346911 avg=346734 total=26351795
+[611] T= 39  GT=2  Pred=2  PASS  spikes: 19 0 33 22 10 7 2 31 8 0
+L1 layer update cycles: calls=39 last=204070 min=204033 max=204333 avg=204154 total=7962011
+L2 layer update cycles: calls=39 last=346684 min=346680 max=346891 avg=346742 total=13522968
+[612] T= 97  GT=9  Pred=9  PASS  spikes: 21 22 22 29 1 24 7 22 24 44
+L1 layer update cycles: calls=97 last=204021 min=203904 max=204315 avg=204050 total=19792941
+L2 layer update cycles: calls=97 last=346680 min=346657 max=346858 avg=346726 total=33632493
+[613] T= 39  GT=4  Pred=3  FAIL  spikes: 11 0 2 29 19 15 0 3 4 4
+L1 layer update cycles: calls=39 last=204072 min=204072 max=204429 avg=204231 total=7965025
+L2 layer update cycles: calls=39 last=346673 min=346665 max=346850 avg=346736 total=13522729
+[614] T= 33  GT=1  Pred=6  FAIL  spikes: 1 4 12 0 10 0 25 11 5 2
+L1 layer update cycles: calls=33 last=204205 min=203882 max=204287 avg=204111 total=6735691
+L2 layer update cycles: calls=33 last=346706 min=346664 max=346774 avg=346711 total=11441468
+[615] T= 44  GT=9  Pred=9  PASS  spikes: 21 0 4 38 0 5 13 11 0 39
+L1 layer update cycles: calls=44 last=204156 min=204030 max=204474 avg=204200 total=8984816
+L2 layer update cycles: calls=44 last=346694 min=346684 max=346872 avg=346763 total=15257614
+[616] T= 39  GT=5  Pred=5  PASS  spikes: 20 0 24 12 0 29 2 10 6 11
+L1 layer update cycles: calls=39 last=203968 min=203909 max=204428 avg=204114 total=7960476
+L2 layer update cycles: calls=39 last=346681 min=346664 max=346882 avg=346733 total=13522611
+[617] T= 35  GT=0  Pred=7  FAIL  spikes: 1 2 0 0 0 11 0 32 13 0
+L1 layer update cycles: calls=35 last=204126 min=204071 max=204623 avg=204314 total=7150992
+L2 layer update cycles: calls=35 last=346684 min=346668 max=346750 avg=346713 total=12134982
+[618] T= 31  GT=1  Pred=1  PASS  spikes: 5 8 1 3 5 2 5 5 0 6
+L1 layer update cycles: calls=31 last=204007 min=203843 max=204381 avg=204010 total=6324321
+L2 layer update cycles: calls=31 last=346696 min=346655 max=346764 avg=346680 total=10747099
+[619] T= 70  GT=8  Pred=8  PASS  spikes: 4 0 2 12 1 17 4 19 62 4
+L1 layer update cycles: calls=70 last=204076 min=203898 max=204432 avg=204157 total=14291018
+L2 layer update cycles: calls=70 last=346707 min=346667 max=346819 avg=346724 total=24270701
+[620] T= 43  GT=2  Pred=2  PASS  spikes: 3 0 40 27 1 9 0 30 9 0
+L1 layer update cycles: calls=43 last=203990 min=203982 max=204390 avg=204171 total=8779365
+L2 layer update cycles: calls=43 last=346666 min=346661 max=346934 avg=346748 total=14910186
+[621] T= 86  GT=4  Pred=4  PASS  spikes: 30 13 14 1 38 14 9 22 21 15
+L1 layer update cycles: calls=86 last=203917 min=203917 max=204470 avg=204069 total=17549941
+L2 layer update cycles: calls=86 last=346655 min=346655 max=346834 avg=346706 total=29816740
+[622] T= 54  GT=0  Pred=9  FAIL  spikes: 18 5 0 17 0 14 10 2 14 19
+L1 layer update cycles: calls=54 last=204031 min=203995 max=204345 avg=204114 total=11022170
+L2 layer update cycles: calls=54 last=346676 min=346655 max=346813 avg=346705 total=18722078
+[623] T= 52  GT=2  Pred=2  PASS  spikes: 15 0 46 24 0 0 5 20 10 0
+L1 layer update cycles: calls=52 last=204107 min=204025 max=204427 avg=204142 total=10615384
+L2 layer update cycles: calls=52 last=346675 min=346661 max=346768 avg=346713 total=18029087
+[624] T= 22  GT=3  Pred=3  PASS  spikes: 3 0 1 18 5 2 4 7 2 6
+L1 layer update cycles: calls=22 last=204098 min=203983 max=204406 avg=204201 total=4492428
+L2 layer update cycles: calls=22 last=346739 min=346695 max=346852 avg=346755 total=7628631
+[625] T= 82  GT=1  Pred=1  PASS  spikes: 26 69 28 11 22 23 15 13 31 13
+L1 layer update cycles: calls=82 last=204017 min=204017 max=204502 avg=204248 total=16748379
+L2 layer update cycles: calls=82 last=346703 min=346661 max=346769 avg=346693 total=28428891
+[626] T= 18  GT=6  Pred=3  FAIL  spikes: 2 0 3 5 1 5 1 2 4 3
+L1 layer update cycles: calls=18 last=204160 min=203926 max=204230 avg=204100 total=3673801
+L2 layer update cycles: calls=18 last=346769 min=346689 max=346786 avg=346740 total=6241320
+[627] T= 31  GT=4  Pred=4  PASS  spikes: 4 0 2 5 22 5 1 4 3 2
+L1 layer update cycles: calls=31 last=204142 min=203996 max=204414 avg=204144 total=6328478
+L2 layer update cycles: calls=31 last=346704 min=346674 max=346788 avg=346712 total=10748090
+[628] T= 65  GT=8  Pred=3  FAIL  spikes: 18 2 5 51 23 10 9 18 36 29
+L1 layer update cycles: calls=65 last=204153 min=203978 max=204534 avg=204225 total=13274651
+L2 layer update cycles: calls=65 last=346686 min=346656 max=346803 avg=346723 total=22537046
+[629] T= 89  GT=7  Pred=7  PASS  spikes: 10 3 12 19 4 11 8 55 4 21
+L1 layer update cycles: calls=89 last=204054 min=203841 max=204294 avg=204027 total=18158424
+L2 layer update cycles: calls=89 last=346716 min=346656 max=346792 avg=346707 total=30856939
+[630] T= 51  GT=6  Pred=6  PASS  spikes: 15 0 18 14 0 5 34 10 10 7
+L1 layer update cycles: calls=51 last=204089 min=203896 max=204323 avg=204093 total=10408774
+L2 layer update cycles: calls=51 last=346666 min=346661 max=346796 avg=346704 total=17681944
+[631] T= 22  GT=3  Pred=3  PASS  spikes: 6 2 1 17 5 7 0 9 3 0
+L1 layer update cycles: calls=22 last=204117 min=204083 max=204446 avg=204222 total=4492891
+L2 layer update cycles: calls=22 last=346752 min=346700 max=346805 avg=346750 total=7628515
+[632] T= 84  GT=5  Pred=5  PASS  spikes: 14 10 5 0 7 84 22 2 46 3
+L1 layer update cycles: calls=84 last=204044 min=203976 max=204522 avg=204159 total=17149393
+L2 layer update cycles: calls=84 last=346670 min=346664 max=346839 avg=346715 total=29124143
+[633] T= 53  GT=4  Pred=0  FAIL  spikes: 30 0 14 3 28 0 2 1 13 7
+L1 layer update cycles: calls=53 last=204131 min=203884 max=204520 avg=204153 total=10820112
+L2 layer update cycles: calls=53 last=346710 min=346672 max=346775 avg=346706 total=18375460
+[634] T= 81  GT=8  Pred=8  PASS  spikes: 33 8 16 19 22 3 0 16 64 24
+L1 layer update cycles: calls=81 last=203923 min=203923 max=204212 avg=204038 total=16527089
+L2 layer update cycles: calls=81 last=346676 min=346672 max=346869 avg=346730 total=28085139
+[635] T= 84  GT=3  Pred=3  PASS  spikes: 11 19 22 58 0 13 22 29 0 3
+L1 layer update cycles: calls=84 last=204020 min=203976 max=204304 avg=204117 total=17145844
+L2 layer update cycles: calls=84 last=346685 min=346661 max=346759 avg=346706 total=29123310
+[636] T= 74  GT=5  Pred=5  PASS  spikes: 9 1 20 5 17 50 4 2 4 31
+L1 layer update cycles: calls=74 last=204143 min=203964 max=204421 avg=204158 total=15107724
+L2 layer update cycles: calls=74 last=346676 min=346657 max=346854 avg=346717 total=25657088
+[637] T= 29  GT=2  Pred=2  PASS  spikes: 12 2 26 24 0 8 0 6 1 7
+L1 layer update cycles: calls=29 last=204224 min=204130 max=204493 avg=204319 total=5925258
+L2 layer update cycles: calls=29 last=346682 min=346676 max=346820 avg=346753 total=10055848
+[638] T= 78  GT=8  Pred=8  PASS  spikes: 12 15 22 15 11 24 16 8 61 20
+L1 layer update cycles: calls=78 last=203973 min=203931 max=204532 avg=204109 total=15920519
+L2 layer update cycles: calls=78 last=346741 min=346663 max=346806 avg=346709 total=27043348
+[639] T= 89  GT=2  Pred=2  PASS  spikes: 39 11 71 14 12 22 1 0 27 16
+L1 layer update cycles: calls=89 last=204096 min=204085 max=204392 avg=204202 total=18174008
+L2 layer update cycles: calls=89 last=346726 min=346668 max=346871 avg=346716 total=30857752
+[640] T= 22  GT=1  Pred=3  FAIL  spikes: 11 0 0 20 4 13 1 4 9 1
+L1 layer update cycles: calls=22 last=204124 min=203974 max=204358 avg=204201 total=4492434
+L2 layer update cycles: calls=22 last=346787 min=346680 max=346853 avg=346771 total=7628982
+[641] T= 55  GT=3  Pred=3  PASS  spikes: 8 4 0 52 0 18 0 22 1 11
+L1 layer update cycles: calls=55 last=204218 min=204074 max=204397 avg=204196 total=11230789
+L2 layer update cycles: calls=55 last=346662 min=346662 max=346909 avg=346727 total=19069992
+[642] T= 53  GT=8  Pred=3  FAIL  spikes: 3 10 9 28 10 11 3 5 26 1
+L1 layer update cycles: calls=53 last=203992 min=203992 max=204387 avg=204196 total=10822391
+L2 layer update cycles: calls=53 last=346682 min=346672 max=346793 avg=346712 total=18375745
+[643] T= 70  GT=8  Pred=8  PASS  spikes: 6 8 0 37 0 14 19 12 57 16
+L1 layer update cycles: calls=70 last=204077 min=204025 max=204437 avg=204195 total=14293688
+L2 layer update cycles: calls=70 last=346720 min=346661 max=346854 avg=346716 total=24270170
+[644] T= 42  GT=6  Pred=6  PASS  spikes: 19 20 0 14 0 17 38 0 6 11
+L1 layer update cycles: calls=42 last=204167 min=204069 max=204279 avg=204169 total=8575102
+L2 layer update cycles: calls=42 last=346689 min=346667 max=346852 avg=346742 total=14563196
+[645] T= 30  GT=4  Pred=3  FAIL  spikes: 9 1 1 20 18 19 4 0 0 5
+L1 layer update cycles: calls=30 last=204072 min=203975 max=204345 avg=204139 total=6124199
+L2 layer update cycles: calls=30 last=346668 min=346664 max=346801 avg=346712 total=10401380
+[646] T= 91  GT=3  Pred=3  PASS  spikes: 9 11 8 38 9 26 3 28 21 20
+L1 layer update cycles: calls=91 last=203968 min=203856 max=204331 avg=204064 total=18569914
+L2 layer update cycles: calls=91 last=346669 min=346658 max=346804 avg=346707 total=31550407
+[647] T= 37  GT=7  Pred=7  PASS  spikes: 2 0 1 26 6 11 9 37 5 0
+L1 layer update cycles: calls=37 last=204162 min=204000 max=204373 avg=204135 total=7552995
+L2 layer update cycles: calls=37 last=346657 min=346656 max=346840 avg=346731 total=12829060
+[648] T= 42  GT=9  Pred=9  PASS  spikes: 9 5 6 12 0 18 11 0 4 27
+L1 layer update cycles: calls=42 last=204043 min=204015 max=204351 avg=204122 total=8573156
+L2 layer update cycles: calls=42 last=346747 min=346674 max=346843 avg=346731 total=14562730
+[649] T= 34  GT=2  Pred=2  PASS  spikes: 14 0 34 17 3 8 0 16 0 0
+L1 layer update cycles: calls=34 last=204071 min=204071 max=204321 avg=204177 total=6942033
+L2 layer update cycles: calls=34 last=346674 min=346664 max=346861 avg=346735 total=11789023
+[650] T= 60  GT=5  Pred=5  PASS  spikes: 14 16 13 21 3 47 5 17 26 13
+L1 layer update cycles: calls=60 last=203965 min=203942 max=204396 avg=204145 total=12248725
+L2 layer update cycles: calls=60 last=346657 min=346657 max=346993 avg=346742 total=20804565
+[651] T= 57  GT=2  Pred=2  PASS  spikes: 24 0 46 25 0 1 11 16 11 5
+L1 layer update cycles: calls=57 last=204191 min=204080 max=204385 avg=204221 total=11640623
+L2 layer update cycles: calls=57 last=346718 min=346673 max=346829 avg=346727 total=19763452
+[652] T= 93  GT=2  Pred=2  PASS  spikes: 21 23 66 14 16 23 21 6 10 14
+L1 layer update cycles: calls=93 last=203856 min=203856 max=204275 avg=204064 total=18977972
+L2 layer update cycles: calls=93 last=346657 min=346657 max=346827 avg=346700 total=32243152
+[653] T= 41  GT=6  Pred=9  FAIL  spikes: 13 0 7 9 0 24 4 0 2 26
+L1 layer update cycles: calls=41 last=204313 min=204088 max=204426 avg=204245 total=8374055
+L2 layer update cycles: calls=41 last=346675 min=346675 max=346819 avg=346731 total=14215986
+[654] T= 54  GT=8  Pred=0  FAIL  spikes: 18 1 6 8 8 11 0 0 9 4
+L1 layer update cycles: calls=54 last=204152 min=204036 max=204296 avg=204179 total=11025707
+L2 layer update cycles: calls=54 last=346707 min=346661 max=346779 avg=346697 total=18721676
+[655] T= 58  GT=8  Pred=8  PASS  spikes: 18 6 2 23 0 16 14 15 35 14
+L1 layer update cycles: calls=58 last=203987 min=203957 max=204424 avg=204155 total=11840999
+L2 layer update cycles: calls=58 last=346667 min=346654 max=346776 avg=346708 total=20109100
+[656] T= 39  GT=7  Pred=7  PASS  spikes: 0 0 11 16 2 13 2 37 12 0
+L1 layer update cycles: calls=39 last=203997 min=203977 max=204388 avg=204067 total=7958626
+L2 layer update cycles: calls=39 last=346717 min=346671 max=346798 avg=346719 total=13522059
+[657] T= 61  GT=2  Pred=2  PASS  spikes: 15 0 41 34 14 1 16 9 6 18
+L1 layer update cycles: calls=61 last=204164 min=203893 max=204398 avg=204120 total=12451380
+L2 layer update cycles: calls=61 last=346749 min=346671 max=346830 avg=346711 total=21149427
+[658] T= 97  GT=6  Pred=6  PASS  spikes: 17 36 9 28 27 12 50 32 49 3
+L1 layer update cycles: calls=97 last=203996 min=203856 max=204330 avg=204028 total=19790801
+L2 layer update cycles: calls=97 last=346727 min=346657 max=346788 avg=346704 total=33630291
+[659] T= 54  GT=6  Pred=6  PASS  spikes: 19 0 2 18 0 0 54 2 14 21
+L1 layer update cycles: calls=54 last=204103 min=203907 max=204394 avg=204146 total=11023899
+L2 layer update cycles: calls=54 last=346678 min=346655 max=346854 avg=346717 total=18722722
+[660] T= 24  GT=1  Pred=1  PASS  spikes: 1 19 0 12 0 0 7 0 6 0
+L1 layer update cycles: calls=24 last=204058 min=203962 max=204248 avg=204100 total=4898418
+L2 layer update cycles: calls=24 last=346696 min=346696 max=346830 avg=346749 total=8321992
+[661] T= 87  GT=8  Pred=8  PASS  spikes: 15 2 13 25 2 15 7 17 73 11
+L1 layer update cycles: calls=87 last=204037 min=204006 max=204422 avg=204150 total=17761095
+L2 layer update cycles: calls=87 last=346713 min=346665 max=346823 avg=346714 total=30164204
+[662] T= 41  GT=0  Pred=0  PASS  spikes: 25 5 1 13 10 11 14 0 5 1
+L1 layer update cycles: calls=41 last=204031 min=203933 max=204384 avg=204161 total=8370640
+L2 layer update cycles: calls=41 last=346684 min=346668 max=346860 avg=346727 total=14215818
+[663] T= 43  GT=3  Pred=3  PASS  spikes: 14 0 0 42 7 13 3 14 14 12
+L1 layer update cycles: calls=43 last=204105 min=204047 max=204378 avg=204203 total=8780738
+L2 layer update cycles: calls=43 last=346709 min=346659 max=346796 avg=346721 total=14909030
+[664] T= 55  GT=3  Pred=3  PASS  spikes: 10 11 11 40 6 12 18 13 16 4
+L1 layer update cycles: calls=55 last=204175 min=203854 max=204367 avg=204153 total=11228459
+L2 layer update cycles: calls=55 last=346666 min=346657 max=346766 avg=346703 total=19068672
+[665] T= 86  GT=8  Pred=8  PASS  spikes: 26 9 2 21 0 16 9 17 66 28
+L1 layer update cycles: calls=86 last=204053 min=203961 max=204445 avg=204154 total=17557316
+L2 layer update cycles: calls=86 last=346739 min=346656 max=346806 avg=346712 total=29817277
+[666] T= 92  GT=5  Pred=5  PASS  spikes: 15 10 20 10 6 43 5 10 16 1
+L1 layer update cycles: calls=92 last=204191 min=203970 max=204349 avg=204141 total=18781019
+L2 layer update cycles: calls=92 last=346670 min=346656 max=346783 avg=346691 total=31895595
+[667] T= 31  GT=0  Pred=5  FAIL  spikes: 15 6 1 6 0 24 0 8 6 1
+L1 layer update cycles: calls=31 last=204108 min=204038 max=204507 avg=204202 total=6330266
+L2 layer update cycles: calls=31 last=346665 min=346665 max=347000 avg=346762 total=10749630
+[668] T= 55  GT=0  Pred=0  PASS  spikes: 38 17 9 26 0 15 8 11 25 5
+L1 layer update cycles: calls=55 last=204125 min=204106 max=204491 avg=204213 total=11231715
+L2 layer update cycles: calls=55 last=346678 min=346673 max=346894 avg=346740 total=19070703
+[669] T= 34  GT=9  Pred=9  PASS  spikes: 18 1 9 18 0 1 8 14 19 29
+L1 layer update cycles: calls=34 last=204014 min=203960 max=204353 avg=204110 total=6939773
+L2 layer update cycles: calls=34 last=346737 min=346705 max=346904 avg=346765 total=11790019
+[670] T= 44  GT=9  Pred=9  PASS  spikes: 11 5 8 10 0 12 12 1 11 31
+L1 layer update cycles: calls=44 last=204025 min=204025 max=204361 avg=204157 total=8982925
+L2 layer update cycles: calls=44 last=346723 min=346672 max=346781 avg=346723 total=15255823
+[671] T= 26  GT=7  Pred=9  FAIL  spikes: 19 0 0 16 0 8 0 20 8 21
+L1 layer update cycles: calls=26 last=204248 min=204214 max=204472 avg=204313 total=5312154
+L2 layer update cycles: calls=26 last=346699 min=346699 max=346863 avg=346765 total=9015892
+[672] T= 34  GT=5  Pred=3  FAIL  spikes: 3 4 4 16 4 13 13 4 6 0
+L1 layer update cycles: calls=34 last=203967 min=203957 max=204388 avg=204148 total=6941039
+L2 layer update cycles: calls=34 last=346668 min=346660 max=346907 avg=346733 total=11788927
+[673] T= 42  GT=7  Pred=5  FAIL  spikes: 8 7 29 19 22 35 8 22 3 0
+L1 layer update cycles: calls=42 last=204079 min=203856 max=204324 avg=204137 total=8573791
+L2 layer update cycles: calls=42 last=346684 min=346666 max=346887 avg=346776 total=14564623
+[674] T= 50  GT=6  Pred=6  PASS  spikes: 20 0 14 15 1 13 50 0 15 11
+L1 layer update cycles: calls=50 last=204081 min=203918 max=204341 avg=204086 total=10204341
+L2 layer update cycles: calls=50 last=346707 min=346666 max=346849 avg=346724 total=17336223
+[675] T= 50  GT=2  Pred=3  FAIL  spikes: 3 0 11 31 6 15 8 21 4 6
+L1 layer update cycles: calls=50 last=204170 min=204075 max=204352 avg=204185 total=10209280
+L2 layer update cycles: calls=50 last=346684 min=346673 max=346833 avg=346745 total=17337256
+[676] T= 39  GT=6  Pred=4  FAIL  spikes: 1 1 0 6 20 18 9 5 2 8
+L1 layer update cycles: calls=39 last=204172 min=203921 max=204435 avg=204220 total=7964618
+L2 layer update cycles: calls=39 last=346662 min=346657 max=346783 avg=346705 total=13521515
+[677] T= 49  GT=8  Pred=5  FAIL  spikes: 14 5 0 11 3 21 1 5 19 4
+L1 layer update cycles: calls=49 last=204041 min=204004 max=204379 avg=204157 total=10003699
+L2 layer update cycles: calls=49 last=346672 min=346655 max=346931 avg=346712 total=16988928
+[678] T= 50  GT=2  Pred=2  PASS  spikes: 4 2 43 2 6 14 4 4 10 4
+L1 layer update cycles: calls=50 last=204048 min=203877 max=204380 avg=204123 total=10206162
+L2 layer update cycles: calls=50 last=346721 min=346671 max=346888 avg=346736 total=17336845
+[679] T= 85  GT=2  Pred=2  PASS  spikes: 18 15 65 12 20 19 3 2 28 11
+L1 layer update cycles: calls=85 last=203984 min=203969 max=204418 avg=204098 total=17348412
+L2 layer update cycles: calls=85 last=346706 min=346655 max=346748 avg=346694 total=29469015
+[680] T= 63  GT=9  Pred=3  FAIL  spikes: 14 3 1 24 3 16 14 14 0 15
+L1 layer update cycles: calls=63 last=204069 min=203948 max=204397 avg=204134 total=12860445
+L2 layer update cycles: calls=63 last=346717 min=346661 max=346767 avg=346705 total=21842477
+[681] T= 36  GT=4  Pred=4  PASS  spikes: 9 0 1 5 26 15 0 2 0 10
+L1 layer update cycles: calls=36 last=204093 min=204041 max=204427 avg=204196 total=7351080
+L2 layer update cycles: calls=36 last=346668 min=346665 max=346969 avg=346755 total=12483182
+[682] T= 27  GT=8  Pred=8  PASS  spikes: 13 0 0 19 0 0 6 9 24 5
+L1 layer update cycles: calls=27 last=204107 min=204035 max=204499 avg=204197 total=5513345
+L2 layer update cycles: calls=27 last=346694 min=346669 max=346942 avg=346767 total=9362715
+[683] T= 46  GT=9  Pred=9  PASS  spikes: 4 0 13 14 0 0 2 8 17 38
+L1 layer update cycles: calls=46 last=203988 min=203988 max=204276 avg=204091 total=9388225
+L2 layer update cycles: calls=46 last=346685 min=346671 max=346846 avg=346745 total=15950278
+[684] T= 61  GT=6  Pred=6  PASS  spikes: 8 0 6 14 7 10 28 8 1 10
+L1 layer update cycles: calls=61 last=204178 min=203924 max=204273 avg=204137 total=12452367
+L2 layer update cycles: calls=61 last=346705 min=346655 max=346806 avg=346698 total=21148599
+[685] T= 58  GT=8  Pred=8  PASS  spikes: 1 2 3 15 0 12 11 48 51 21
+L1 layer update cycles: calls=58 last=204050 min=203991 max=204532 avg=204201 total=11843686
+L2 layer update cycles: calls=58 last=346673 min=346657 max=346854 avg=346723 total=20109961
+[686] T= 42  GT=3  Pred=3  PASS  spikes: 12 0 11 42 5 16 10 15 6 1
+L1 layer update cycles: calls=42 last=204099 min=204035 max=204322 avg=204172 total=8575263
+L2 layer update cycles: calls=42 last=346663 min=346662 max=346839 avg=346726 total=14562510
+[687] T= 72  GT=2  Pred=2  PASS  spikes: 36 2 45 17 9 0 0 17 15 9
+L1 layer update cycles: calls=72 last=203953 min=203948 max=204323 avg=204058 total=14692225
+L2 layer update cycles: calls=72 last=346679 min=346658 max=346810 avg=346723 total=24964099
+[688] T= 86  GT=9  Pred=9  PASS  spikes: 23 7 8 4 2 4 12 24 12 57
+L1 layer update cycles: calls=86 last=204132 min=203980 max=204461 avg=204173 total=17558923
+L2 layer update cycles: calls=86 last=346672 min=346657 max=346756 avg=346692 total=29815532
+[689] T= 33  GT=7  Pred=7  PASS  spikes: 2 13 0 12 14 28 5 33 20 0
+L1 layer update cycles: calls=33 last=204199 min=204123 max=204374 avg=204226 total=6739481
+L2 layer update cycles: calls=33 last=346685 min=346685 max=346874 avg=346778 total=11443681
+[690] T= 54  GT=6  Pred=0  FAIL  spikes: 17 0 2 13 0 0 9 1 4 14
+L1 layer update cycles: calls=54 last=204155 min=203949 max=204414 avg=204150 total=11024111
+L2 layer update cycles: calls=54 last=346669 min=346655 max=346827 avg=346706 total=18722163
+[691] T= 40  GT=6  Pred=6  PASS  spikes: 12 3 1 9 0 3 33 0 7 8
+L1 layer update cycles: calls=40 last=204139 min=204040 max=204345 avg=204158 total=8166322
+L2 layer update cycles: calls=40 last=346707 min=346668 max=346838 avg=346727 total=13869109
+[692] T= 88  GT=8  Pred=3  FAIL  spikes: 27 19 8 54 11 13 16 16 49 18
+L1 layer update cycles: calls=88 last=204200 min=203854 max=204291 avg=204053 total=17956725
+L2 layer update cycles: calls=88 last=346715 min=346656 max=346810 avg=346708 total=30510322
+[693] T= 28  GT=9  Pred=8  FAIL  spikes: 3 0 0 12 0 2 7 16 27 17
+─────────────────────────────────────────
+Accuracy: 528/694  (76.08%)
+─────────────────────────────────────────

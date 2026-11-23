@@ -37,13 +37,13 @@ add_executable(${CMAKE_PROJECT_NAME})
 # Added compiler and link options for DSP
 target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
     -mcpu=cortex-m7
-    -mfpu=fpv5-sp-d16
+    -mfpu=fpv5-d16
     -mfloat-abi=hard
     -O3
 )
 target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
     -mcpu=cortex-m7
-    -mfpu=fpv5-sp-d16
+    -mfpu=fpv5-d16
     -mfloat-abi=hard
 )
 
@@ -57,6 +57,12 @@ add_subdirectory(Drivers/CMSIS-DSP)
 
 # Add NN
 add_subdirectory(Drivers/CMSIS-NN)
+
+# Build the CMSIS libraries with the same optimization as our kernels.
+# Target options come after CMAKE_C_FLAGS_DEBUG (-O0 -g3) on the command line, so -O3 wins.
+# For cmsis-nn this also overrides its own default (CMSIS_OPTIMIZATION_LEVEL = -Ofast).
+target_compile_options(CMSISDSP PRIVATE -O3)
+target_compile_options(cmsis-nn PRIVATE -O3)
 
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE

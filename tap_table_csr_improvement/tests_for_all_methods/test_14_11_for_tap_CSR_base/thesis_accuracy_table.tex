@@ -1,0 +1,19 @@
+\begin{table}[htbp]
+\centering
+\caption{Accuracy on the 694 test samples, with each sample run for its real length and with a fixed
+100-step (2\,s) window. Agreement is the share of samples with the same prediction as the Python model.}
+\label{tab:accuracy}
+\begin{tabular}{lrrrr}
+\toprule
+ & \multicolumn{2}{c}{Real length} & \multicolumn{2}{c}{100-step window} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+ & Accuracy [\%] & Agreement [\%] & Accuracy [\%] & Agreement [\%] \\
+\midrule
+Python (float) & 67.44 & -- & 86.17 & -- \\
+MCU, Basic & 67.44 & 94.1 & 84.73 & 97.3 \\
+MCU, CMSIS-NN & 67.44 & 93.7 & 85.01 & 95.8 \\
+MCU, CSR table & 67.44 & 94.1 & 84.73 & 97.3 \\
+MCU, Tap table & 67.44 & 94.1 & 84.73 & 97.3 \\
+\bottomrule
+\end{tabular}
+\end{table}

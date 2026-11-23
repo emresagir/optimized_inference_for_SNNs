@@ -1,0 +1,21 @@
+\begin{table}[htbp]
+\centering
+\caption{Layer update cost of the four methods (694 test samples, 64\,MHz). Cycles are
+the mean per timestep; the time per sample is for Conv~1 + Conv~2 (mean sample length 54 timesteps).}
+\label{tab:method_comparison}
+\begin{tabular}{lrrrr}
+\toprule
+ & Basic & CMSIS-NN & CSR table & Tap table \\
+\midrule
+Conv 1 cycles / timestep & 78\,565 & 73\,361 & 13\,929 & 12\,835 \\
+Conv 2 cycles / timestep & 92\,441 & 35\,222 & 14\,677 & 12\,217 \\
+Speed-up Conv 1 & -- & 1.07$\times$ & 5.64$\times$ & 6.12$\times$ \\
+Speed-up Conv 2 & -- & 2.62$\times$ & 6.30$\times$ & 7.57$\times$ \\
+Time / timestep [ms] & 2.67 & 1.70 & 0.45 & 0.39 \\
+Time / sample [ms] & 143.1 & 90.9 & 23.9 & 21.0 \\
+\midrule
+Same output spikes as tap table & 683/694 & 7/694 & 694/694 & -- \\
+Same prediction as tap table & 694/694 & 655/694 & 694/694 & -- \\
+\bottomrule
+\end{tabular}
+\end{table}

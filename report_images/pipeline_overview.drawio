@@ -1,0 +1,76 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="pipeline" name="Pipeline overview">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="700" pageHeight="500" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="host" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;dashed=1;fillColor=none;strokeColor=#888780;align=left;verticalAlign=top;spacingLeft=10;spacingTop=4;fontSize=13;" value="&lt;b&gt;Host PC (Python)&lt;/b&gt;" vertex="1">
+          <mxGeometry height="220" width="620" x="30" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="mcu" parent="1" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;dashed=1;fillColor=none;strokeColor=#888780;align=left;verticalAlign=top;spacingLeft=10;spacingTop=4;fontSize=13;" value="&lt;b&gt;STM32H750B-DK&lt;/b&gt;" vertex="1">
+          <mxGeometry height="120" width="620" x="30" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="train" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;" value="&lt;b&gt;snnTorch training&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Braille, ST-MNIST&lt;/font&gt;" vertex="1">
+          <mxGeometry height="56" width="170" x="50" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="nir" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;" value="&lt;b&gt;NIR graph&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;N&lt;/font&gt;&lt;span style=&quot;font-size: 11px; background-color: transparent; color: light-dark(rgb(38, 33, 92), rgb(205, 200, 251));&quot;&gt;etwork parameters&lt;/span&gt;" vertex="1">
+          <mxGeometry height="56" width="170" x="245" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="gen" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;" value="&lt;b&gt;C code generator&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Conv, CSR, tap table&lt;/font&gt;" vertex="1">
+          <mxGeometry height="56" width="170" x="440" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="golden" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" value="&lt;b&gt;Golden reference&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Same weights, float&lt;/font&gt;" vertex="1">
+          <mxGeometry height="56" width="170" x="50" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="cmp" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" value="&lt;b&gt;Comparison&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Accuracy, membrane traces&lt;/font&gt;" vertex="1">
+          <mxGeometry height="56" width="170" x="245" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="fw" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;" value="&lt;b&gt;Inference firmware&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Q15, DWT cycle count&lt;/font&gt;" vertex="1">
+          <mxGeometry height="56" width="170" x="440" y="325" as="geometry" />
+        </mxCell>
+        <mxCell id="uart" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" value="&lt;b&gt;UART&lt;/b&gt;" vertex="1">
+          <mxGeometry height="56" width="170" x="245" y="325" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="train" style="endArrow=classic;html=1;strokeColor=#444441;" target="nir">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="nir" style="endArrow=classic;html=1;strokeColor=#444441;" target="gen">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="train" style="endArrow=classic;html=1;strokeColor=#444441;" target="golden">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="golden" style="endArrow=classic;html=1;strokeColor=#444441;" target="cmp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="gen" style="endArrow=classic;html=1;strokeColor=#444441;labelBackgroundColor=#FFFFFF;fontSize=11;" target="fw" value="Build, flash">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="fw" style="startArrow=classic;endArrow=classic;html=1;strokeColor=#444441;" target="uart">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="uart" style="startArrow=classic;endArrow=classic;html=1;strokeColor=#444441;" target="cmp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XB473lCZr7D3I3SywiMZ-1" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;innerLoopWaypoints=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;defaultLabelBackgroundColor=page;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="340" y="420" as="sourcePoint" />
+            <mxPoint x="340" y="420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XB473lCZr7D3I3SywiMZ-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" value="" vertex="1">
+          <mxGeometry height="20" width="20" x="152.5" y="425" as="geometry" />
+        </mxCell>
+        <mxCell id="XB473lCZr7D3I3SywiMZ-3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Validation Path" vertex="1">
+          <mxGeometry height="30" width="60" x="182.5" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="XB473lCZr7D3I3SywiMZ-4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;" value="" vertex="1">
+          <mxGeometry height="20" width="20" x="417.5" y="425" as="geometry" />
+        </mxCell>
+        <mxCell id="XB473lCZr7D3I3SywiMZ-5" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Deployment Path" vertex="1">
+          <mxGeometry height="30" width="60" x="447.5" y="420" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,143 @@
+% Needs \usepackage{listings} and \usepackage{booktabs}.
+% Source: tap_vs_csr_objdump/ (objdump/inner_loop_*.txt, results_*.txt)
+\subsection{Why the Tap Table Is Faster than the CSR Table}
+\label{sec:tap-vs-csr}
+
+The tap table reaches a better inference speed than the CSR table with a much smaller table
+(Table~\ref{tab:tap-vs-csr}). Both tables are placed in DTCM, which has no wait states, so the
+smaller size does not make a single load faster. The gain comes from the number of loads and
+instructions that are executed for each MAC. Two things reduce them:
+\begin{enumerate}
+    \item Strided memory accesses lower the number of metadata fetches.
+    \item The compiler unrolls the output-channel loop, which removes the loop overhead.
+\end{enumerate}
+To check this, the two kernels were disassembled from the same builds that were used for the
+measurements (GCC 14.3.1, \texttt{-O3}), with \texttt{arm-none-eabi-objdump}. The CSR kernel is
+a separate function that is called for both layers. The tap kernel is inlined twice into
+\texttt{SNN\_Run\_Timestep}, once for each layer.
+
+\subsubsection*{Strided Memory Accesses}
+
+In the CSR table, every connection stores its own output neuron and weight index. For each MAC,
+the kernel first loads \texttt{out\_idx[c]} and \texttt{weight\_idx[c]}, and only then can it load
+the weight and the membrane potential (Listing~\ref{lst:csr-inner}). This gives two metadata
+fetches for every MAC.
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize, columns=fullflexible, keepspaces=true,
+    frame=single, caption={CSR kernel: index fetches and loop control, both for every MAC.},
+    label={lst:csr-inner}]
+// Index fetches (every MAC):
+const uint16_t o = out_idx[c];
+    800bf0a:  ldrh.w  r3, [r1, ip, lsl #1]
+const uint16_t w = weight_idx[c];
+    800bf0e:  ldrh.w  lr, [r4, ip, lsl #1]
+// Weight load with the fetched index:
+q31_t v = ... (q31_t)weights[w];
+    800bf1a:  ldrh.w  lr, [r2, lr, lsl #1]
+// Loop control (every MAC):
+for (uint16_t c = row_ptr[i]; c < row_ptr[i + 1]; c++)
+    800bf2a:  add.w   ip, ip, #1
+    800bf32:  ldrh    r3, [r7, #2]
+    800bf34:  uxth.w  ip, ip
+    800bf38:  cmp     r3, ip
+    800bf3a:  bhi.n   800bf0a
+\end{lstlisting}
+
+The tap table stores only the spatial part of a connection. One entry gives the output position
+(\texttt{tap\_out[t]}) and the kernel position (\texttt{tap\_w[t]}), and it is fetched once.
+The same entry is then used for every output channel, because the neuron and the weight of the
+next output channel are at a fixed distance (stride): \texttt{out\_spatial} neurons and
+\texttt{in\_ch}$\cdot$\texttt{kernel\_size} weights. In Listing~\ref{lst:tap-inner}, the two
+index fetches at the top are shared by eight MACs. For the second output channel, the neuron
+address is the first one plus a constant ($49 \cdot 8 = 392$\,bytes), and the weight is read with
+the same index register \texttt{r2} from the next weight block. So the metadata fetches drop from
+two per MAC to two per \texttt{out\_ch} MACs: $2/8$ in Conv~1 and $2/16$ in Conv~2.
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize, columns=fullflexible, keepspaces=true,
+    frame=single, caption={Tap kernel in Conv~1: index fetches and loop control once per tap,
+    shared by the eight unrolled output channels.},
+    label={lst:tap-inner}]
+// Index fetches (once per tap, before the out_ch loop):
+LIFNeuron* n0 = neurons + tap_out[t];
+    800ccfa:  ldrh.w  r3, [r5], #2
+const q15_t* w0 = w_ic + tap_w[t];
+    800ccfe:  ldrb.w  r2, [r4], #1
+// Neuron of each out_ch: constant stride, no index fetch:
+LIFNeuron* n = &n0[(uint32_t)oc * out_spatial];
+    800cd1e:  add.w   r8, r3, #392           (oc = 1)
+    800cd3e:  add.w   r8, r3, #784           (oc = 2)
+// Weight of each out_ch: same index r2, next weight block:
+... (q31_t)w0[(uint32_t)oc * w_oc_stride];
+    800cd0e:  ldrh.w  r8, [ip, r2, lsl #1]   (oc = 0)
+    800cd22:  ldr     r0, [pc, #492]         (oc = 1, block address)
+    800cd2a:  ldrh.w  r0, [r0, r2, lsl #1]   (oc = 1)
+// Loop control (once per tap, out_ch loop unrolled):
+for (uint16_t t = tap_ptr[p]; t < tap_ptr[p + 1]; t++)
+    800cdfa:  ldr     r3, [r7, #56]
+    800cdfc:  cmp     r3, r5
+    800cdfe:  bne.w   800ccf6
+\end{lstlisting}
+
+Not all eight weight-block addresses fit in registers. Six of them are reloaded from the stack
+or the literal pool (\texttt{ldr r0, [pc, \#492]} above). These are extra loads, but they read
+constants and not the table. Even with them, the tap loop executes 4.1 loads per MAC in Conv~1
+and 3.0 in Conv~2, compared with 6 in the CSR loop (Table~\ref{tab:tap-vs-csr}).
+
+\subsubsection*{Loop Unrolling}
+
+The output-channel loop of the tap kernel has a fixed length: \texttt{out\_ch} is 8 in Conv~1
+and 16 in Conv~2. The kernel is inlined with these values as constants, so the compiler unrolls
+the loop completely. Listing~\ref{lst:tap-inner} has no counter, compare or branch for the
+output channels, and the neuron offsets ($392, 784, \dots, 2744$) are encoded directly in the
+instructions. The only loop control is three instructions at the end of each tap, shared by 8
+or 16 MACs.
+
+The CSR inner loop cannot be unrolled in the same way, because its length,
+\texttt{row\_ptr[i+1]}$-$\texttt{row\_ptr[i]}, is only known at run time and is different for
+pixels at the edge of the input. Every MAC therefore pays five instructions of loop control
+(Listing~\ref{lst:csr-inner}):
+the counter increment, a zero-extension because the counter is \texttt{uint16\_t}, a re-read of
+\texttt{row\_ptr[i+1]}, the compare and the branch. The bound and the input spike are read again
+in every iteration because the CSR kernel is a separate function with pointer arguments, and the
+compiler cannot prove that the store to the membrane potential does not change them. In the
+inlined tap kernel the arrays are known, so the bound is computed once per pixel. In Conv~2 the
+input spike also stays in a register, while in Conv~1 it is still re-read, because the input
+comes through a pointer argument of \texttt{SNN\_Run\_Timestep}.
+
+\subsubsection*{Effect on the Measured Cycles}
+
+The per-sample cycles of the 694-sample runs were fitted as
+$\mathrm{cycles} = a \cdot T + b \cdot \mathrm{MACs}$, where $T$ is the number of timesteps of the
+sample, $a$ is the fixed cost per timestep and $b$ is the cost per MAC ($R^2 \geq 0.9999$ for
+all four fits). Table~\ref{tab:tap-vs-csr} shows that the cost per MAC drops from about 13 to
+about 9.2--9.5 cycles, about 28\,\% lower in both layers. This is in line with the lower number
+of instructions and loads per MAC in the inner loops. The fixed cost per timestep is almost the same for both kernels, because
+the decay and the soft-reset loops over all neurons are identical. For this reason the gain per
+timestep is smaller than the gain per MAC: 7.9\,\% in Conv~1, where the fixed part is about
+two thirds of the CSR time, and 16.8\,\% in Conv~2, where it is about one third.
+
+\begin{table}[htbp]
+\centering
+\caption{CSR and tap kernels: inner loop from the disassembly, cost fitted from the 694-sample
+runs, and table size.}
+\label{tab:tap-vs-csr}
+\begin{tabular}{lrrrr}
+\toprule
+ & \multicolumn{2}{c}{Conv~1} & \multicolumn{2}{c}{Conv~2} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+ & CSR & Tap & CSR & Tap \\
+\midrule
+MACs per loop iteration       & 1     & 8     & 1     & 16    \\
+Instructions per MAC          & 14    & 9.5   & 14    & 8.25  \\
+Loads per MAC                 & 6     & 4.1   & 6     & 3.0   \\
+Metadata loads per MAC        & 2     & 0.25  & 2     & 0.125 \\
+Loop-control instructions per MAC & 5 & 0.38  & 5     & 0.19  \\
+\midrule
+Fixed cost $a$ [cycles/timestep] & 9{,}267 & 9{,}516 & 5{,}075 & 5{,}292 \\
+Cost per MAC $b$ [cycles]        & 12.98   & 9.24    & 13.16   & 9.49    \\
+Mean cycles per timestep         & 13{,}929 & 12{,}835 & 14{,}677 & 12{,}217 \\
+\midrule
+Table size [bytes]            & 50{,}578 & 2{,}554 & 42{,}258 & 343 \\
+\bottomrule
+\end{tabular}
+\end{table}

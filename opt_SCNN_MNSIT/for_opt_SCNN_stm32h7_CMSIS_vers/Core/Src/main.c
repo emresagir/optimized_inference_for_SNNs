@@ -53,6 +53,14 @@
 #define HSEM_ID_0 (0U) /* HW semaphore 0*/
 #endif
 
+/* Evaluation window (timesteps per sample):
+ *   0   = run only the real timesteps of each sample (default, all speed tests)
+ *   N>0 = run N timesteps per sample; after the end of the recording the input is all zeros.
+ *         100 x 20 ms = the full 2 s ST-MNIST recording (accuracy test only). */
+#ifndef SNN_WINDOW
+#define SNN_WINDOW 0
+#endif
+
 #define TEST_OUTPUT 20
 #define NUM_STEPS 256 //number of timesteps to simulate
 #define INPUTS 12
@@ -126,16 +134,21 @@ uint8_t classify_sample(const TestSample *sample,
     /* Reset neuron membrane potentials before the new gesture */
     SNN_Reset_State();
 
-    /* Feed every timestep */
-    for (uint16_t t = 0; t < sample->num_timesteps; t++) {
+    /* Feed every timestep (padded with empty input up to SNN_WINDOW if it is set) */
+    const uint16_t n_steps = (SNN_WINDOW > sample->num_timesteps) ? SNN_WINDOW : sample->num_timesteps;
+    for (uint16_t t = 0; t < n_steps; t++) {
 
-      //TEST 
+      //TEST
         // char bufferotso [50];
         // snprintf(bufferotso, sizeof(bufferotso), "timestep = %d, \t\n", t);
         // usart1_print(bufferotso);
 
         //The samples are moved from flash to RAM.
-        memcpy(sample_in, sample->spikes[t], 200);  
+        if (t < sample->num_timesteps) {
+            memcpy(sample_in, sample->spikes[t], 200);
+        } else if (t == sample->num_timesteps) {
+            memset(sample_in, 0, 200);          /* after the recording: no input spikes */
+        }
 
         SNN_Run_Timestep(sample_in, output_spikes);
 
@@ -180,6 +193,8 @@ uint8_t classify_sample(const TestSample *sample,
  *   ─────────────────────────────────
  */
 void SNN_Run_Tests(void) {
+
+    #if !BARE_FOR_ENERGY_MEASUREMENT
     /* ── Banner ── */
     usart1_print("\r\n");
     usart1_print("╔══════════════════════════════════════╗\r\n");
@@ -195,15 +210,21 @@ void SNN_Run_Tests(void) {
         n  = 0;
         n += snprintf(buf + n, sizeof(buf) - n, "  Classes : %u\r\n", (unsigned)TD_NUM_CLASSES);
         usart1_print(buf);
+        n  = 0;
+        n += snprintf(buf + n, sizeof(buf) - n, "  WINDOW=%u (0 = real length)\r\n", (unsigned)SNN_WINDOW);
+        usart1_print(buf);
     }
     usart1_print("\r\n");
+    #endif
 
     /* Initialise SNN weights + neuron parameters once */
     SNN_Init();
 
     uint32_t correct = 0;
     uint32_t spike_totals[TD_NUM_CLASSES];
-
+    
+    //For the measurement of the time of all the samples for power.
+    uint32_t t0 = HAL_GetTick();
     for (uint16_t s = 0; s < TD_NUM_SAMPLES; s++) {
         const TestSample *smp = &test_samples[s];
 
@@ -212,6 +233,7 @@ void SNN_Run_Tests(void) {
         uint8_t pass      = (predicted == gt);
         if (pass) correct++;
 
+        #if !BARE_FOR_ENERGY_MEASUREMENT
         /* ── Per-sample line ─────────────────────────────────────────── */
         char line[160];
         int  pos = 0;
@@ -238,8 +260,15 @@ void SNN_Run_Tests(void) {
 
         pos += snprintf(line + pos, sizeof(line) - pos, "\r\n");
         usart1_print(line);
+        #endif
     }
+    uint32_t t_pass = HAL_GetTick() - t0;
 
+    char tb[64];
+    snprintf(tb, sizeof(tb), "PASS_MS=%lu\r\n", (unsigned long)t_pass);
+    usart1_print(tb); 
+
+    #if !BARE_FOR_ENERGY_MEASUREMENT
     /* ── Summary ── */
     usart1_print("─────────────────────────────────────────\r\n");
     {
@@ -256,6 +285,7 @@ void SNN_Run_Tests(void) {
         usart1_print(buf);
     }
     usart1_print("─────────────────────────────────────────\r\n");
+    #endif
 }
 
 
@@ -294,14 +324,18 @@ int main(void)
   SystemClock_Config();
 
   /* Configure the peripherals common clocks */
-  PeriphCommonClock_Config();
+#if !BARE_FOR_ENERGY_MEASUREMENT
+  PeriphCommonClock_Config();       /* only the ADC clock (PLL2) */
+#endif
 
   /* USER CODE BEGIN SysInit */
 
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+  /* Energy measurement: only GPIO (LED), QUADSPI (test data, memory-mapped) and USART3 (usart1_print) are used. */
   MX_GPIO_Init();
+#if !BARE_FOR_ENERGY_MEASUREMENT
   MX_ADC1_Init();
   MX_ADC2_Init();
   MX_ADC3_Init();
@@ -310,15 +344,23 @@ int main(void)
   MX_FDCAN2_Init();
   MX_FMC_Init();
   MX_LTDC_Init();
+#endif
   MX_QUADSPI_Init();
+#if !BARE_FOR_ENERGY_MEASUREMENT
   MX_RTC_Init();
   MX_SAI2_Init();
   MX_USART1_UART_Init();
+#endif
   MX_USART3_UART_Init();
+#if !BARE_FOR_ENERGY_MEASUREMENT
   MX_USB_OTG_FS_PCD_Init();
+#endif
   /* USER CODE BEGIN 2 */
 
   BSP_QSPI_EnableMemoryMappedMode(0);
+
+  HAL_GPIO_WritePin(GPIOI, GPIO_PIN_13, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);
 
   char msg[] = "U are sane, board works!\r\n";
   /* USER CODE END 2 */
@@ -330,10 +372,12 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    #if !BARE_FOR_ENERGY_MEASUREMENT
     HAL_UART_Transmit(&huart3, (uint8_t*)msg, strlen(msg), 100);
     HAL_GPIO_TogglePin(GPIOI, GPIO_PIN_13);  
     HAL_Delay(1000);
     HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_3);
+    #endif
 
     // char buf[32];
     // result = dsp_test();
@@ -341,9 +385,11 @@ int main(void)
     // HAL_UART_Transmit(&huart3, (uint8_t*)buf, len, 100);
 
 
-    //test_cmsis_nn(&huart3); 
-
-    SNN_Run_Tests();
+    usart1_print("INFER\r\n");
+    SNN_Run_Tests();                       // prints PASS_MS=... at the end
+    usart1_print("IDLE\r\n");
+    uint32_t t_idle = HAL_GetTick();
+    while (HAL_GetTick() - t_idle < 15000) { __WFI(); }
   }
   /* USER CODE END 3 */
 }

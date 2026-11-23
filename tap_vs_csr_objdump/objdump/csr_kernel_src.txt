@@ -1,0 +1,175 @@
+
+elf/csr_opt_SCNN_debug.elf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+0800be6c <LIFNeuron_Conv2d_Update_Subtract_CSR>:
+        const uint16_t* out_idx,      // CSR column data: output neuron per connection
+        const uint16_t* weight_idx,    // CSR column data: weight index per connection
+        uint16_t num_inputs,
+        uint16_t num_outputs,
+        q7_t* output_spikes           // Output spikes [out_ch*out_h*out_w]
+    ) {
+ 800be6c:	e92d 4ff0 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, lr}
+ 800be70:	f8bd 5030 	ldrh.w	r5, [sp, #48]	@ 0x30
+ 800be74:	4688      	mov	r8, r1
+ 800be76:	461f      	mov	r7, r3
+ 800be78:	9909      	ldr	r1, [sp, #36]	@ 0x24
+ 800be7a:	9c0a      	ldr	r4, [sp, #40]	@ 0x28
+ 800be7c:	f8bd 602c 	ldrh.w	r6, [sp, #44]	@ 0x2c
+        // Decay: V(t+1) = V(t) * beta   (Q15 fixed point)
+        for (uint16_t o = 0; o < num_outputs; o++) {
+ 800be80:	2d00      	cmp	r5, #0
+ 800be82:	f000 8089 	beq.w	800bf98 <LIFNeuron_Conv2d_Update_Subtract_CSR+0x12c>
+ 800be86:	4686      	mov	lr, r0
+ 800be88:	eb00 09c5 	add.w	r9, r0, r5, lsl #3
+            q31_t decayed = ((q31_t)neurons[o].membrane_potential *
+ 800be8c:	f8be c004 	ldrh.w	ip, [lr, #4]
+ 800be90:	f8be 3006 	ldrh.w	r3, [lr, #6]
+ 800be94:	fb1c fc03 	smulbb	ip, ip, r3
+ 800be98:	ea4f 3cec 	mov.w	ip, ip, asr #15
+                            (q31_t)neurons[o].decay_factor) >> 15;
+            neurons[o].membrane_potential = (q15_t)__SSAT(decayed, 16);
+ 800be9c:	f30c 0c0f 	ssat	ip, #16, ip
+ 800bea0:	f8ae c004 	strh.w	ip, [lr, #4]
+        for (uint16_t o = 0; o < num_outputs; o++) {
+ 800bea4:	f10e 0e08 	add.w	lr, lr, #8
+ 800bea8:	45f1      	cmp	r9, lr
+ 800beaa:	d1ef      	bne.n	800be8c <LIFNeuron_Conv2d_Update_Subtract_CSR+0x20>
+        }
+    
+        // Event-driven accumulation: only walk rows for inputs that spiked,
+        // instead of visiting every (output, kernel-tap) pair unconditionally.
+        for (uint16_t i = 0; i < num_inputs; i++) {
+ 800beac:	2e00      	cmp	r6, #0
+ 800beae:	d04d      	beq.n	800bf4c <LIFNeuron_Conv2d_Update_Subtract_CSR+0xe0>
+ 800beb0:	f108 38ff 	add.w	r8, r8, #4294967295	@ 0xffffffff
+ 800beb4:	f04f 0900 	mov.w	r9, #0
+ 800beb8:	e006      	b.n	800bec8 <LIFNeuron_Conv2d_Update_Subtract_CSR+0x5c>
+ 800beba:	f109 0901 	add.w	r9, r9, #1
+ 800bebe:	3702      	adds	r7, #2
+ 800bec0:	fa1f f989 	uxth.w	r9, r9
+ 800bec4:	454e      	cmp	r6, r9
+ 800bec6:	d940      	bls.n	800bf4a <LIFNeuron_Conv2d_Update_Subtract_CSR+0xde>
+            if (input_spikes[i] == 0) {
+ 800bec8:	f918 3f01 	ldrsb.w	r3, [r8, #1]!
+ 800becc:	2b00      	cmp	r3, #0
+ 800bece:	d0f4      	beq.n	800beba <LIFNeuron_Conv2d_Update_Subtract_CSR+0x4e>
+                continue;
+            }
+            for (uint16_t c = row_ptr[i]; c < row_ptr[i + 1]; c++) {
+ 800bed0:	f8b7 c000 	ldrh.w	ip, [r7]
+ 800bed4:	f8b7 e002 	ldrh.w	lr, [r7, #2]
+ 800bed8:	45e6      	cmp	lr, ip
+ 800beda:	d9ee      	bls.n	800beba <LIFNeuron_Conv2d_Update_Subtract_CSR+0x4e>
+                const uint16_t o = out_idx[c];
+                const uint16_t  w = weight_idx[c];
+                // BCS the ST-MNIST dataset has input spikes other than 0 and 1s the MAC is needed.
+                q31_t v = (q31_t)neurons[o].membrane_potential + (q31_t)input_spikes[i] * (q31_t)weights[w];
+ 800bedc:	f831 e01c 	ldrh.w	lr, [r1, ip, lsl #1]
+ 800bee0:	f834 a01c 	ldrh.w	sl, [r4, ip, lsl #1]
+ 800bee4:	eb00 0ece 	add.w	lr, r0, lr, lsl #3
+ 800bee8:	f832 a01a 	ldrh.w	sl, [r2, sl, lsl #1]
+ 800beec:	f9be b004 	ldrsh.w	fp, [lr, #4]
+ 800bef0:	fb1a b303 	smlabb	r3, sl, r3, fp
+                neurons[o].membrane_potential = (q15_t)__SSAT(v, 16);
+ 800bef4:	f303 030f 	ssat	r3, #16, r3
+            for (uint16_t c = row_ptr[i]; c < row_ptr[i + 1]; c++) {
+ 800bef8:	f10c 0c01 	add.w	ip, ip, #1
+                neurons[o].membrane_potential = (q15_t)__SSAT(v, 16);
+ 800befc:	f8ae 3004 	strh.w	r3, [lr, #4]
+            for (uint16_t c = row_ptr[i]; c < row_ptr[i + 1]; c++) {
+ 800bf00:	887b      	ldrh	r3, [r7, #2]
+ 800bf02:	fa1f fc8c 	uxth.w	ip, ip
+ 800bf06:	4563      	cmp	r3, ip
+ 800bf08:	d9d7      	bls.n	800beba <LIFNeuron_Conv2d_Update_Subtract_CSR+0x4e>
+                q31_t v = (q31_t)neurons[o].membrane_potential + (q31_t)input_spikes[i] * (q31_t)weights[w];
+ 800bf0a:	f831 301c 	ldrh.w	r3, [r1, ip, lsl #1]
+ 800bf0e:	f834 e01c 	ldrh.w	lr, [r4, ip, lsl #1]
+ 800bf12:	eb00 03c3 	add.w	r3, r0, r3, lsl #3
+ 800bf16:	f998 b000 	ldrsb.w	fp, [r8]
+ 800bf1a:	f832 e01e 	ldrh.w	lr, [r2, lr, lsl #1]
+ 800bf1e:	f9b3 a004 	ldrsh.w	sl, [r3, #4]
+ 800bf22:	fb1e ae0b 	smlabb	lr, lr, fp, sl
+                neurons[o].membrane_potential = (q15_t)__SSAT(v, 16);
+ 800bf26:	f30e 0e0f 	ssat	lr, #16, lr
+            for (uint16_t c = row_ptr[i]; c < row_ptr[i + 1]; c++) {
+ 800bf2a:	f10c 0c01 	add.w	ip, ip, #1
+                neurons[o].membrane_potential = (q15_t)__SSAT(v, 16);
+ 800bf2e:	f8a3 e004 	strh.w	lr, [r3, #4]
+            for (uint16_t c = row_ptr[i]; c < row_ptr[i + 1]; c++) {
+ 800bf32:	887b      	ldrh	r3, [r7, #2]
+ 800bf34:	fa1f fc8c 	uxth.w	ip, ip
+ 800bf38:	4563      	cmp	r3, ip
+ 800bf3a:	d8e6      	bhi.n	800bf0a <LIFNeuron_Conv2d_Update_Subtract_CSR+0x9e>
+        for (uint16_t i = 0; i < num_inputs; i++) {
+ 800bf3c:	f109 0901 	add.w	r9, r9, #1
+ 800bf40:	3702      	adds	r7, #2
+ 800bf42:	fa1f f989 	uxth.w	r9, r9
+ 800bf46:	454e      	cmp	r6, r9
+ 800bf48:	d8be      	bhi.n	800bec8 <LIFNeuron_Conv2d_Update_Subtract_CSR+0x5c>
+            }
+        }
+    
+        // Soft reset (subtract previous threshold if it spiked last step) + spike check
+        for (uint16_t o = 0; o < num_outputs; o++) {
+ 800bf4a:	b1cd      	cbz	r5, 800bf80 <LIFNeuron_Conv2d_Update_Subtract_CSR+0x114>
+ 800bf4c:	9a0d      	ldr	r2, [sp, #52]	@ 0x34
+    
+            if (neurons[o].membrane_potential > neurons[o].threshold) {
+                output_spikes[o] = 1;
+                neurons[o].reset_value = neurons[o].threshold;  // subtract next step
+            } else {
+                output_spikes[o] = 0;
+ 800bf4e:	2400      	movs	r4, #0
+                output_spikes[o] = 1;
+ 800bf50:	2601      	movs	r6, #1
+ 800bf52:	4415      	add	r5, r2
+            neurons[o].membrane_potential = (q15_t)__SSAT((q31_t)neurons[o].membrane_potential -
+ 800bf54:	f9b0 3004 	ldrsh.w	r3, [r0, #4]
+ 800bf58:	f9b0 1002 	ldrsh.w	r1, [r0, #2]
+ 800bf5c:	1a5b      	subs	r3, r3, r1
+ 800bf5e:	f303 030f 	ssat	r3, #16, r3
+ 800bf62:	b21b      	sxth	r3, r3
+            if (neurons[o].membrane_potential > neurons[o].threshold) {
+ 800bf64:	f9b0 1000 	ldrsh.w	r1, [r0]
+ 800bf68:	4299      	cmp	r1, r3
+            neurons[o].membrane_potential = (q15_t)__SSAT((q31_t)neurons[o].membrane_potential -
+ 800bf6a:	8083      	strh	r3, [r0, #4]
+            if (neurons[o].membrane_potential > neurons[o].threshold) {
+ 800bf6c:	da0a      	bge.n	800bf84 <LIFNeuron_Conv2d_Update_Subtract_CSR+0x118>
+                output_spikes[o] = 1;
+ 800bf6e:	f802 6b01 	strb.w	r6, [r2], #1
+        for (uint16_t o = 0; o < num_outputs; o++) {
+ 800bf72:	3008      	adds	r0, #8
+                neurons[o].reset_value = neurons[o].threshold;  // subtract next step
+ 800bf74:	f830 3c08 	ldrh.w	r3, [r0, #-8]
+        for (uint16_t o = 0; o < num_outputs; o++) {
+ 800bf78:	42aa      	cmp	r2, r5
+                neurons[o].reset_value = neurons[o].threshold;  // subtract next step
+ 800bf7a:	f820 3c06 	strh.w	r3, [r0, #-6]
+        for (uint16_t o = 0; o < num_outputs; o++) {
+ 800bf7e:	d1e9      	bne.n	800bf54 <LIFNeuron_Conv2d_Update_Subtract_CSR+0xe8>
+                neurons[o].reset_value = 0;
+            }
+
+            SNN_MEMBRANE_DEBUG_HOOK(num_outputs, o, &neurons[o], output_spikes[o]);
+        }
+    }
+ 800bf80:	e8bd 8ff0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, pc}
+                output_spikes[o] = 0;
+ 800bf84:	f802 4b01 	strb.w	r4, [r2], #1
+        for (uint16_t o = 0; o < num_outputs; o++) {
+ 800bf88:	4295      	cmp	r5, r2
+ 800bf8a:	f100 0008 	add.w	r0, r0, #8
+                neurons[o].reset_value = neurons[o].threshold;  // subtract next step
+ 800bf8e:	f820 4c06 	strh.w	r4, [r0, #-6]
+        for (uint16_t o = 0; o < num_outputs; o++) {
+ 800bf92:	d1df      	bne.n	800bf54 <LIFNeuron_Conv2d_Update_Subtract_CSR+0xe8>
+    }
+ 800bf94:	e8bd 8ff0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, pc}
+        for (uint16_t i = 0; i < num_inputs; i++) {
+ 800bf98:	2e00      	cmp	r6, #0
+ 800bf9a:	d189      	bne.n	800beb0 <LIFNeuron_Conv2d_Update_Subtract_CSR+0x44>
+ 800bf9c:	e7f0      	b.n	800bf80 <LIFNeuron_Conv2d_Update_Subtract_CSR+0x114>

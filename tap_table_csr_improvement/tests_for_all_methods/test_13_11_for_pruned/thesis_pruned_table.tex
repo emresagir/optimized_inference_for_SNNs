@@ -1,0 +1,24 @@
+\begin{table}[htbp]
+\centering
+\caption{CSR method on the dense and the pruned network (694 test samples). The pruned network
+is run with the full and with the pruned CSR table; both give identical outputs.}
+\label{tab:pruned_results}
+\begin{tabular}{lrrr}
+\toprule
+ & Dense model & \multicolumn{2}{c}{Pruned model} \\
+\cmidrule(lr){3-4}
+ & & Full table & Pruned table \\
+\midrule
+Connections Conv 1 & 12\,544 & 12\,544 & 8\,134 \\
+Connections Conv 2 & 10\,368 & 10\,368 & 7\,371 \\
+CSR table size [B] & 92\,836 & 92\,836 & 63\,208 \\
+Accuracy, float [\%] & 67.44 & 70.61 & 70.61 \\
+Accuracy, MCU [\%] & 67.44 & 69.88 & 69.88 \\
+Conv 1 cycles / timestep & 13\,929 & 14\,349 & 12\,776 \\
+Conv 2 cycles / timestep & 14\,677 & 15\,430 & 11\,781 \\
+\midrule
+Speed-up Conv 1 (vs.\ full table) & -- & -- & 1.12$\times$ \\
+Speed-up Conv 2 (vs.\ full table) & -- & -- & 1.31$\times$ \\
+\bottomrule
+\end{tabular}
+\end{table}

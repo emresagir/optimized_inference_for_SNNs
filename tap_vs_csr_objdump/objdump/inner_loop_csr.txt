@@ -1,0 +1,15 @@
+# CSR (Conv 1 and Conv 2): 1 MAC(s) per iteration
+ 800bf0a:	f831 301c 	ldrh.w	r3, [r1, ip, lsl #1]
+ 800bf0e:	f834 e01c 	ldrh.w	lr, [r4, ip, lsl #1]
+ 800bf12:	eb00 03c3 	add.w	r3, r0, r3, lsl #3
+ 800bf16:	f998 b000 	ldrsb.w	fp, [r8]
+ 800bf1a:	f832 e01e 	ldrh.w	lr, [r2, lr, lsl #1]
+ 800bf1e:	f9b3 a004 	ldrsh.w	sl, [r3, #4]
+ 800bf22:	fb1e ae0b 	smlabb	lr, lr, fp, sl
+ 800bf26:	f30e 0e0f 	ssat	lr, #16, lr
+ 800bf2a:	f10c 0c01 	add.w	ip, ip, #1
+ 800bf2e:	f8a3 e004 	strh.w	lr, [r3, #4]
+ 800bf32:	887b      	ldrh	r3, [r7, #2]
+ 800bf34:	fa1f fc8c 	uxth.w	ip, ip
+ 800bf38:	4563      	cmp	r3, ip
+ 800bf3a:	d8e6      	bhi.n	800bf0a <LIFNeuron_Conv2d_Update_Subtract_CSR+0x9e>

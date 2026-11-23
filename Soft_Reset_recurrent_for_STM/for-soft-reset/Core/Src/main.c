@@ -203,6 +203,7 @@ void example_usage(void) {
         input_spikes[k] = test_input[i][j][k]; //take each 12 elements array to compute, 256 for each classification until 140 classifications
       }
       SNN_Run_Timestep(input_spikes, output_spikes);
+      if (i == 0) SNN_Print_Membrane(j);   // membrane trace of sample 0
       // accumulate integer spike counts for classification
       for (int o = 0; o < OUTPUTS; o++) {
         /* output_spikes[o] is q7_t with values 0 or 1; add to int32 counter */

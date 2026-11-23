@@ -1,0 +1,86 @@
+
+PLC layer1             addr=0x200196A0 size=  3136  DTCM
+PLC layer2             addr=0x20019220 size=  1152  DTCM
+PLC layer3             addr=0x200191C0 size=    80  DTCM
+PLC l1_spikes          addr=0x20019020 size=   392  DTCM
+PLC l2_spikes          addr=0x20018F80 size=   144  DTCM
+PLC weights1           addr=0x20018D60 size=   512  DTCM
+PLC weights2           addr=0x20018460 size=  2304  DTCM
+PLC weights3           addr=0x20017920 size=  2880  DTCM
+PLC row_ptr1_r         addr=0x2001777C size=   402  DTCM
+PLC out_idx1_r         addr=0x2001157C size= 25088  DTCM
+PLC weight_idx1_r      addr=0x2000B37C size= 25088  DTCM
+PLC row_ptr2_r         addr=0x2000B068 size=   786  DTCM
+PLC out_idx2_r         addr=0x20005F68 size= 20736  DTCM
+PLC weight_idx2_r      addr=0x20000E68 size= 20736  DTCM
+PLC LIFNeuron_Conv2d_Update_Subtract_CSR addr=0x0800C109 size=     0  FLASH
+PLC LIFNeuron_Conv2d_Update_Subtract_Base addr=0x0800BE65 size=     0  FLASH
+ICACHE=1 DCACHE=1 CLK=64000000 METHOD=L1:BASE,L2:BASE GCC=14.3.1 20250623
+L1 layer update cycles: calls=0 last=0 min=4294967295 max=0 avg=0 total=0
+L2 layer update cycles: calls=0 last=0 min=4294967295 max=0 avg=0 total=0
+PLC input_spikes       addr=0x200001A0 size=   200  DTCM
+L2 V:0 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:0 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:0 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:0 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:0 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:0 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:0 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:-2 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:-4 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:-50 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:43 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:27 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:12 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:-39 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:65 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:15 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:-12 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:-38 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:86 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:241 | threshold: 109 S:1 | nindex = 100 | reset_next = 109
+L2 V:279 | threshold: 109 S:1 | nindex = 100 | reset_next = 109
+L2 V:290 | threshold: 109 S:1 | nindex = 100 | reset_next = 109
+L2 V:285 | threshold: 109 S:1 | nindex = 100 | reset_next = 109
+L2 V:280 | threshold: 109 S:1 | nindex = 100 | reset_next = 109
+L2 V:396 | threshold: 109 S:1 | nindex = 100 | reset_next = 109
+L2 V:510 | threshold: 109 S:1 | nindex = 100 | reset_next = 109
+L2 V:615 | threshold: 109 S:1 | nindex = 100 | reset_next = 109
+L2 V:501 | threshold: 109 S:1 | nindex = 100 | reset_next = 109
+L2 V:395 | threshold: 109 S:1 | nindex = 100 | reset_next = 109
+L2 V:295 | threshold: 109 S:1 | nindex = 100 | reset_next = 109
+L2 V:200 | threshold: 109 S:1 | nindex = 100 | reset_next = 109
+L2 V:109 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:109 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:109 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:109 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:135 | threshold: 109 S:1 | nindex = 100 | reset_next = 109
+L2 V:51 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:80 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:107 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:133 | threshold: 109 S:1 | nindex = 100 | reset_next = 109
+L2 V:-85 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:-26 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:8 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:40 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:70 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:99 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:131 | threshold: 109 S:1 | nindex = 100 | reset_next = 109
+L2 V:52 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:86 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:118 | threshold: 109 S:1 | nindex = 100 | reset_next = 109
+L2 V:40 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:50 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:60 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:93 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:125 | threshold: 109 S:1 | nindex = 100 | reset_next = 109
+L2 V:22 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:21 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:20 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:19 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:19 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:18 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+L2 V:17 | threshold: 109 S:0 | nindex = 100 | reset_next = 0
+[00] T= 62  GT=8  Pred=8  PASS  spikes: 5 12 12 12 19 9 7 9 44 8
+L1 layer update cycles: calls=62 last=78027 min=77984 max=78286 avg=78118 total=4843317
+L2 layer update cycles: calls=62 last=422538 min=416876 max=439338 avg=427375 total=26497275

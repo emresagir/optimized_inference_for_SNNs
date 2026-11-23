@@ -58,6 +58,9 @@ add_subdirectory(Drivers/CMSIS-DSP)
 # Add NN
 add_subdirectory(Drivers/CMSIS-NN)
 
+# Round (not truncate) in arm_float_to_q15, same as Delvecchio's build
+target_compile_definitions(CMSISDSP PRIVATE ARM_MATH_ROUNDING)
+
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined library search paths

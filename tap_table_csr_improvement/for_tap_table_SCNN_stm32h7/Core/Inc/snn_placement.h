@@ -39,6 +39,7 @@ static void plc_print(const char *name, const void *p, uint32_t bytes)
     usart1_print(b);
 }
 
+                            /* plc_print("weights1", (const void *)(weights1), (uint32_t)sizeof(weights1)); */
 #define PLC(sym)               plc_print(#sym, (const void *)(sym), (uint32_t)sizeof(sym))
 #define PLC_PTR(name, p, n)    plc_print((name), (const void *)(p), (uint32_t)(n))
 #define PLC_FUNC(fn)           plc_print(#fn, (const void *)(fn), 0u)
