@@ -267,6 +267,9 @@ void SNN_Run_Tests(void) {
     char tb[64];
     snprintf(tb, sizeof(tb), "PASS_MS=%lu\r\n", (unsigned long)t_pass);
     usart1_print(tb); 
+#if FC_BENCH
+    FCBench_PassEnd(correct, TD_NUM_SAMPLES);   // cycles and accuracy of the pruned FC
+#endif
 
     #if !BARE_FOR_ENERGY_MEASUREMENT
     /* ── Summary ── */

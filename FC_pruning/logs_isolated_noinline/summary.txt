@@ -1,0 +1,17 @@
+# 2026-11-22 23:24  run_all_tests.sh 
+FCB method=VEC prune=0% nnz=1440/1440 calls=37138 cyc_acc=794 acc=69/694
+FCB method=VEC prune=20% nnz=1152/1440 calls=37138 cyc_acc=793 acc=68/694
+FCB method=VEC prune=40% nnz=864/1440 calls=37138 cyc_acc=794 acc=65/694
+FCB method=VEC prune=60% nnz=576/1440 calls=37138 cyc_acc=794 acc=67/694
+FCB method=VEC prune=80% nnz=288/1440 calls=37138 cyc_acc=794 acc=71/694
+FCB method=VEC prune=90% nnz=144/1440 calls=37138 cyc_acc=794 acc=57/694
+FCB method=VEC prune=95% nnz=72/1440 calls=37138 cyc_acc=793 acc=62/694
+FCB method=VEC prune=100% nnz=0/1440 calls=37138 cyc_acc=792 acc=74/694
+FCB method=CSR prune=0% nnz=1440/1440 calls=37138 cyc_acc=1061 acc=69/694
+FCB method=CSR prune=20% nnz=1152/1440 calls=37138 cyc_acc=984 acc=68/694
+FCB method=CSR prune=40% nnz=864/1440 calls=37138 cyc_acc=903 acc=65/694
+FCB method=CSR prune=60% nnz=576/1440 calls=37138 cyc_acc=828 acc=67/694
+FCB method=CSR prune=80% nnz=288/1440 calls=37138 cyc_acc=753 acc=71/694
+FCB method=CSR prune=90% nnz=144/1440 calls=37138 cyc_acc=692 acc=57/694
+FCB method=CSR prune=95% nnz=72/1440 calls=37138 cyc_acc=663 acc=62/694
+FCB method=CSR prune=100% nnz=0/1440 calls=37138 cyc_acc=628 acc=74/694

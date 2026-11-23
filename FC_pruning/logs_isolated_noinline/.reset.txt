@@ -1,0 +1,24 @@
+[36m[01m      -------------------------------------------------------------------
+[39;49m[0m[36m[01m                        STM32CubeProgrammer v2.22.0                  
+[39;49m[0m[36m[01m      -------------------------------------------------------------------
+
+[39;49m[0m[90mST-LINK SN  : 004100413137510E33333639
+[39;49m[0m[90mST-LINK FW  : V3J17M10
+[39;49m[0m[90mBoard       : STM32H750B-DK
+[39;49m[0m[90mVoltage     : 3,28V
+[39;49m[0m[90mSWD freq    : 8000 KHz
+[39;49m[0m[90mConnect mode: Normal
+[39;49m[0m[90mReset mode  : Software reset
+[39;49m[0m[90mDevice ID   : 0x450
+[39;49m[0m[90mRevision ID : Rev V
+[39;49m[0m[39;49m[0m[39;49mDevice name : STM32H7xx
+[39;49m[0m[39;49mNVM size  : 128 KBytes
+[39;49m[0m[39;49mDevice type : MCU
+[39;49m[0m[39;49mDevice CPU  : Cortex-M7
+[39;49m[0m[39;49mBL Version  : 0x90
+[39;49m[0m[39;49m
+[39;49m[0m[39;49m[0m[39;49m[0m[39;49m[0m[00;32m
+MCU Reset
+[39;49m[0m[39;49m[0m[00;32m
+Software reset is performed
+[39;49m[0m[39;49m[0m
